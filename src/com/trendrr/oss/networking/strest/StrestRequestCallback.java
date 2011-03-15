@@ -7,7 +7,7 @@ package com.trendrr.oss.networking.strest;
  * @author dustin
  *
  */
-public interface StrestCallback {
+public interface StrestRequestCallback {
 	
 	public void messageRecieved(StrestResponse response);
 	

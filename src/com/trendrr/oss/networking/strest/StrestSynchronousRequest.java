@@ -18,7 +18,7 @@ import org.apache.commons.logging.LogFactory;
  * @created Mar 15, 2011
  * 
  */
-class StrestSynchronousRequest implements StrestCallback{
+class StrestSynchronousRequest implements StrestRequestCallback{
 
 	protected Log log = LogFactory.getLog(StrestSynchronousRequest.class);
 
