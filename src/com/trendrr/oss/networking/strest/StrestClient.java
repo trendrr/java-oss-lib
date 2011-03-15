@@ -13,7 +13,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.exceptions.TrendrrException;
-import com.trendrr.oss.networking.buffer.SocketChannelWrapper;
+import com.trendrr.oss.networking.SocketChannelWrapper;
 
 
 

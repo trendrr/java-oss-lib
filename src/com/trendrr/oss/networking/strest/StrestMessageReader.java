@@ -10,8 +10,8 @@ import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.exceptions.TrendrrException;
 import com.trendrr.oss.networking.ByteReadCallback;
+import com.trendrr.oss.networking.SocketChannelWrapper;
 import com.trendrr.oss.networking.StringReadCallback;
-import com.trendrr.oss.networking.buffer.SocketChannelWrapper;
 
 
 /**
