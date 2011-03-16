@@ -104,8 +104,8 @@ public class TypeCast {
 	 * String (will split based on delimiters).
 	 * 
 	 * in all other cases:
-	 * Will return null on key not found, or null value.
-	 * otherwise will return a list of length 1, with the value (never an empty list)
+	 * Will return null on null value.
+	 * otherwise will return a list of length 1, with the value
 	 * 
 	 * 
 	 * @param obj
