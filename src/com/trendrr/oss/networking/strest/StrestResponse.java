@@ -26,7 +26,7 @@ public class StrestResponse {
 		String firstLine = lines[0];
 		int index = firstLine.indexOf(' ');
 		String protocol = firstLine.substring(0, index).trim();
-		firstLine = firstLine.substring(index);
+		firstLine = firstLine.substring(index).trim();
 		index = firstLine.indexOf(' ');
 		String code = firstLine.substring(0, index).trim();
 		String message = firstLine.substring(index).trim();

@@ -35,6 +35,7 @@ public class StrestRequest {
 	/**
 	 * gets the bytes prepared and ready for sending to the server.
 	 * 
+	 * buffer is flipped
 	 * 
 	 * @return
 	 * @throws UnsupportedEncodingException 
@@ -45,6 +46,7 @@ public class StrestRequest {
 		ByteBuffer buf = ByteBuffer.allocate(header.length + this.content.length);
 		buf.put(header);
 		buf.put(content);
+		buf.flip();
 		return buf;
 	}
 	

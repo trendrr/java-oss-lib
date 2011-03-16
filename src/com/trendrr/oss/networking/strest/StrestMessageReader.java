@@ -31,6 +31,7 @@ public class StrestMessageReader implements StringReadCallback,
 	public void start(StrestClient client, SocketChannelWrapper socket) {
 		this.client.set(client);
 		this.socket.set(socket);
+		this.readNextMessage();
 	}
 	
 	public void stop() {
@@ -65,7 +66,8 @@ public class StrestMessageReader implements StringReadCallback,
 	@Override
 	public void byteResult(byte[] result) {
 		this.current.setContent(result);
-		//TODO: do the callback.
+//		System.out.println("GOT REQUESTED BYTES: " + result);
+
 		StrestClient client = this.client.get();
 		if (client == null)
 			return;
@@ -88,6 +90,7 @@ public class StrestMessageReader implements StringReadCallback,
 		String contentLength = current.getHeader(StrestHeaders.Names.CONTENT_LENGTH);
 		if (contentLength == null) {
 			log.warn("No content length set by server. ");
+			this.readNextMessage();
 			return;
 		}
 		int length = Integer.parseInt(contentLength);

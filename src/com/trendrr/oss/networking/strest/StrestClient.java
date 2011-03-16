@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.trendrr.oss.concurrent.Sleep;
 import com.trendrr.oss.exceptions.TrendrrException;
 import com.trendrr.oss.networking.SocketChannelWrapper;
 
@@ -26,7 +27,7 @@ import com.trendrr.oss.networking.SocketChannelWrapper;
  * The client is implemented using non-blocking sockets, there is a single io thread which is shared
  * across any StrestClient instances. 
  * 
- * Callbacks are executed in the oi thread, so it is recommended that any heavy processing be done in a separate thread.
+ * Callbacks are executed in the io thread, so it is recommended that any heavy processing be done in a separate thread.
  * 
  * 
  * @author Dustin Norlander
@@ -48,16 +49,51 @@ public class StrestClient {
 		this.port = port;
 	}
 	
+	public static void main(String...strings) throws Exception{
+		StrestClient client = new StrestClient("localhost", 8000);
+		client.connect();
+//		StrestResponse response = client.send(new RequestBuilder().uri("/hello/world").method("GET").getRequest());
+//		System.out.println("GOT RESPONSE!");
+//		System.out.println(response.getContent());
+		
+		
+		client.send(new RequestBuilder().uri("/firehose").method("GET").getRequest(), new StrestRequestCallback() {
+			
+			@Override
+			public void txnComplete() {
+				// TODO Auto-generated method stub
+				System.out.println("TRANSACTION COMPLETE!");
+			}
+			
+			@Override
+			public void messageRecieved(StrestResponse response) {
+				System.out.println("***********************************");
+				System.out.println(new String(response.getContent()));
+				System.out.println("***********************************");
+			}
+			
+			@Override
+			public void error(Throwable x) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		Sleep.seconds(30);
+	}
+	
+	
 	public synchronized void connect() {
 		SocketChannel channel;
 		try {
 			channel = SocketChannel.open();
-			channel.configureBlocking(true); //set to blocking so we wait on connection.
-			channel.connect(new InetSocketAddress(this.host, this.port));
+//			channel.configureBlocking(true); //set to blocking so we wait on connection.
+			boolean connected = channel.connect(new InetSocketAddress(this.host, this.port));
+			log.info("CONNECTED: " + connected);
 			socket = new SocketChannelWrapper(channel);
 			reader = new StrestMessageReader();
 			reader.start(this, socket);
-			connected.set(true);
+			this.connected.set(true);
 		} catch (Exception x) {
 			x.printStackTrace();
 		}
@@ -88,6 +124,7 @@ public class StrestClient {
 	 */
 	public synchronized void send(StrestRequest request, StrestRequestCallback callback){
 		try {
+			request.setHeaderIfAbsent(StrestHeaders.Names.STREST_TXN_ACCEPT, StrestHeaders.Values.MULTI);
 			ByteBuffer buf = request.getBytesAsBuffer();
 			if (callback != null)
 				this.callbacks.put(request.getHeader(StrestHeaders.Names.STREST_TXN_ID), callback);
@@ -124,11 +161,17 @@ public class StrestClient {
 		String txnId = response.getHeader(StrestHeaders.Names.STREST_TXN_ID);
 		String txnStatus = response.getHeader(StrestHeaders.Names.STREST_TXN_STATUS);
 		StrestRequestCallback cb = this.callbacks.get(txnId);
+		if (cb == null) {
+			//Server sent us a response to transaction that doesn't exist or is already closed!
+			log.error("SERVER SENT Response to Transaction: " + txnId + " Which is either closed or doesn't exist!");
+			return;
+		}
 		try {
 			cb.messageRecieved(response);
 		} catch (Exception x) {
 			log.error("Caught", x);
 		}
+		
 		if (!StrestHeaders.Values.CONTINUE.equalsIgnoreCase(txnStatus)) {
 			this.callbacks.remove(txnId);
 			cb.txnComplete();

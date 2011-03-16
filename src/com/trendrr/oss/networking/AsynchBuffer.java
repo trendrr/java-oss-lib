@@ -49,16 +49,6 @@ public class AsynchBuffer {
 	
 	ConcurrentLinkedQueue<ChannelCallback> callbacks = new ConcurrentLinkedQueue<ChannelCallback>();
 	
-	//for requested bytes
-//	ByteBuffer outbytebuf = null;
-//	int requestBytes = 0;
-//	
-//	//for requested string.
-//	StringBuilder outstringbuf = null;
-//	String requestedString = null;
-//	Charset charset = Charset.forName("utf8");
-	
-	
 	
 	/**
 	 * Reads from the socketchannel until the delimiter is encountered. this method returns immediately, the
@@ -153,7 +143,6 @@ public class AsynchBuffer {
 			ByteBuffer buf = this.getBuffer();
 			numRead = channel.read(buf);
 			totalRead += numRead;
-			System.out.println(numRead);
 			if (numRead < 0) {
 				this.returnBuffer(buf);
 				throw new TrendrrDisconnectedException("EOF reached!");
@@ -195,7 +184,6 @@ public class AsynchBuffer {
 		while(!this.callbacks.isEmpty()) {
 			if (!this.process(this.callbacks.peek()))
 				break;
-			this.callbacks.poll();
 		}	
 	}
 	
@@ -218,9 +206,11 @@ public class AsynchBuffer {
 	
 	private boolean process(ChannelCallback callback){
 		if (this.databuffers.isEmpty()) {
-			log.info("Buffer is empty!");
+//			log.info("Buffer is empty!");
 			return false;
 		}
+//		System.out.println("Processing callback: " + callback);
+//		System.out.println(this.callbacks);
 		try {
 			if (callback instanceof StringReadRequest) {
 				try {
@@ -229,6 +219,7 @@ public class AsynchBuffer {
 					throw new TrendrrException("Error trying to read string", e);
 				}
 			} else if (callback instanceof ByteReadRequest) {
+//				System.out.println("Reading bytes");
 				return this.readBytes((ByteReadRequest)callback);
 			} else {
 				throw new TrendrrException("UNknown callback type: " + callback);
@@ -236,6 +227,7 @@ public class AsynchBuffer {
 		} catch (TrendrrException x) {
 			callback.onError(x);
 		}
+		this.callbacks.poll();
 		return true; //unknown type
 	}
 	
@@ -249,7 +241,7 @@ public class AsynchBuffer {
 	 */
 	private boolean readBytes(ByteReadRequest request) {
 		List<ByteBuffer> databufs = new ArrayList<ByteBuffer>();
-		log.info("reading bytes");
+//		log.info("reading bytes");
 		for (ByteBuffer buf : this.databuffers) {
 			if (request.getBuf().hasRemaining()) {
 				try {
@@ -269,8 +261,10 @@ public class AsynchBuffer {
 		this.databuffers = databufs;
 
 		if (!request.getBuf().hasRemaining()) {
-			log.info("GOT The requested # of bytes!");
+//			log.info("GOT The requested # of bytes!");
+			this.callbacks.poll(); //remove from the queue, must be done BEFORE the callback is called.
 			request.getCallback().byteResult(request.getBuf().array());
+			
 			return true;
 		}
 		return false;
@@ -299,7 +293,7 @@ public class AsynchBuffer {
 				//decode as many bytes into characters as we can.
 				decoder.decode(buf, charBuf, false);
 				charBuf.flip();
-				log.info(charBuf.toString());
+//				log.info(charBuf.toString());
 				
 				request.getBuf().append(charBuf);
 //				log.info(this.outstringbuf.length() + " :" + this.outstringbuf.toString() + ": end");
@@ -310,10 +304,10 @@ public class AsynchBuffer {
 					int found = builder.indexOf(delimiter, fromIndex);
 					if (found != -1) {
 						String val = builder.toString();
-						log.info(val);
+//						log.info(val);
 						retVal = val.substring(0, found);
 						String remaining = val.substring(found+delimiter.length());
-						log.info(remaining);
+//						log.info(remaining);
 						//now need to add this back to the ByteBuffer..
 						ByteBuffer remainingAsBuf = this.getBuffer().put(remaining.getBytes(request.getCharset()));
 						remainingAsBuf.flip();
@@ -337,8 +331,9 @@ public class AsynchBuffer {
 		
 		this.databuffers = databufs;
 		if (retVal != null) {
-			log.info("GOT The requested String!");
-			log.info(retVal);
+//			log.info("GOT The requested String!");
+//			log.info(retVal);
+			this.callbacks.poll(); //remove from the queue, must be done BEFORE the callback is called.
 			request.getCallback().stringResult(retVal);
 			return true;
 		}

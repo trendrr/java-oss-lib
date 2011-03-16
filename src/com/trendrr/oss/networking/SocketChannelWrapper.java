@@ -136,7 +136,7 @@ public class SocketChannelWrapper {
 	public void doRead() throws TrendrrNoCallbackException, TrendrrDisconnectedException, TrendrrException {
 		int numRead = 1;
 		while (numRead > 0 && this.buffer.hasCallbacksWaiting()) {
-			this.buffer.read(this.channel);
+			numRead = this.buffer.read(this.channel);
 			this.buffer.process();
 		}
 	}

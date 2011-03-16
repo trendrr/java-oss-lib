@@ -34,8 +34,10 @@ public class Test {
 		
 			channel.connect(new InetSocketAddress("localhost", 8000));
 			
+			Sleep.seconds(30);
+			
 			SocketChannelWrapper wrapper = new SocketChannelWrapper(channel);
-			wrapper.write("GET /echo HTTP/1.0\r\n\r\n".getBytes());
+			wrapper.write("GET /hello/jerk HTTP/1.0\r\n\r\n".getBytes());
 		
 			wrapper.readUntil("\r\n\r\n", Charset.forName("utf8"), new StringReadCallback(){
 				@Override

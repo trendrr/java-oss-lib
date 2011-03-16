@@ -63,7 +63,7 @@ public class SelectorThread implements Runnable{
 	public void register(SocketChannelWrapper wrapper) throws IOException {
 		this.channels.put(wrapper.getChannel(), wrapper);
 		wrapper.getChannel().configureBlocking(false); //set to non-blocking
-		log.info("REGISTER OP READ!");
+//		log.info("REGISTER OP READ!");
 		wrapper.getChannel().register(this.selector, SelectionKey.OP_READ); //set our interest to reads
 	}
 	
@@ -90,12 +90,17 @@ public class SelectorThread implements Runnable{
 				while(!this.changeQueue.isEmpty()) {
 					SocketChannelWrapper wrapper = changeQueue.poll();
 					if (wrapper.hasWrites()) {
+//						System.out.println("HAS WRITES!");
 						key = wrapper.getChannel().keyFor(this.selector);
 						key.interestOps(SelectionKey.OP_WRITE);
 					} else if (wrapper.hasReads()) {
+//						System.out.println("HAS READS!");
 						key = wrapper.getChannel().keyFor(this.selector);
 						key.interestOps(SelectionKey.OP_READ);
-					} 
+					} else {
+						key = wrapper.getChannel().keyFor(this.selector);
+						key.interestOps(0);
+					}
 					
 					if (wrapper.isClosed()) {
 						continue;
@@ -103,7 +108,7 @@ public class SelectorThread implements Runnable{
 				}
 								
 				// Wait for an event one of the registered channels
-				log.info("SELECTOR WAITING>>>");
+//				log.info("SELECTOR WAITING>>>");
 				this.selector.select();
 
 				// Iterate over the set of keys for which events are available
@@ -118,10 +123,10 @@ public class SelectorThread implements Runnable{
 
 					// Check what event is available and deal with it
 					if (key.isReadable()) {
-						log.info("READING!");
+//						log.info("READING!");
 						this.read(key);
 					} else if (key.isWritable()) {
-						log.info("WRITING!");
+//						log.info("WRITING!");
 						this.write(key);
 					}
 				}
@@ -173,15 +178,18 @@ public class SelectorThread implements Runnable{
 		
 		Queue<ByteBuffer> queue = wrapper.getWrites();
 		while (!queue.isEmpty()) {
+			
 			//does not remove the head element until the buf is completely written
 			//maybe that's now, maybe later..
 			ByteBuffer buf = queue.peek(); 
+//			System.out.println("WRITING: " + buf);
 			if (buf == null) {
 				break; //queue is empty.
 			}
 			socketChannel.write(buf);
 			if (buf.remaining() > 0) {
 				// ... or the socket's buffer fills up
+//				System.out.println("buffer isn't totally written");
 				break; 
 			}
 			queue.poll(); //remove the head element
