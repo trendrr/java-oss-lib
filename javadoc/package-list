@@ -1,0 +1,9 @@
+com.trendrr.json.simple
+com.trendrr.json.simple.parser
+com.trendrr.oss
+com.trendrr.oss.casting
+com.trendrr.oss.concurrent
+com.trendrr.oss.exceptions
+com.trendrr.oss.networking
+com.trendrr.oss.networking.strest
+com.trendrr.oss.tests
