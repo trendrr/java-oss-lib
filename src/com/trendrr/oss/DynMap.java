@@ -144,15 +144,12 @@ public class DynMap extends HashMap<String,Object>{
 			//try to reach into the object..
 			String[] items = key.split("\\.");
 			DynMap cur = this.get(DynMap.class, items[0]);
-			for (int i= 1; i < items.length-1; i++) {
-				
+			for (int i= 1; i < items.length-1; i++) {				
 				cur = cur.get(DynMap.class, items[i]);
-//				log.info("got map: " + items[i] + " " + cur);
 				
 				if (cur == null)
 					return null;
 			}
-//			log.info("returning : " + items[items.length-1] + " " + cur.get(items[items.length-1]));
 			return cur.get(items[items.length-1]);
 		}
 		return null;
@@ -179,6 +176,22 @@ public class DynMap extends HashMap<String,Object>{
 		if (val == null )
 			return defaultValue;
 		return val;
+	}
+	
+	public String getString(String key) {
+		return this.get(String.class, key);
+	}
+	
+	public String getString(String key, String defaultValue) {
+		return this.get(String.class, key, defaultValue);
+	}
+	
+	public Integer getInteger(String key) {
+		return this.get(Integer.class, key);
+	}
+	
+	public Integer getInteger(String key, Integer defaultValue) {
+		return this.get(Integer.class, key, defaultValue);
 	}
 	
 	/**

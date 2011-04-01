@@ -75,6 +75,8 @@ public class DynMapFactory {
 		String q = url.split("\\?")[1];
 		for (String param : q.split("\\&")) {
 			String[] tmp = param.split("\\=");
+			if (tmp == null || tmp.length != 2)
+				continue;
 			try {
 				String key = URLDecoder.decode(tmp[0], "utf8");
 				String value = URLDecoder.decode(tmp[1], "utf8");
