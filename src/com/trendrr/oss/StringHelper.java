@@ -14,6 +14,24 @@ import java.util.*;
 public class StringHelper {
 	
 	
+	/**
+	 * joins a list into a string.  similar to methods available IN ANY OTHER LANGUAGE
+	 * @param lst
+	 * @param delim
+	 * @return
+	 */
+	public static String join(List lst, String delim) {
+		StringBuilder builder = new StringBuilder();
+		for (Object obj : lst) {
+			if (obj != null)
+				builder.append(obj.toString());
+			builder.append(delim);
+		}
+		
+		builder.delete(builder.length()-delim.length(), builder.length());
+		return builder.toString();
+	}
+	
 	public static String underscoreSpaces(String input) {
 		if (input == null)
 			return null;
