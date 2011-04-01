@@ -54,7 +54,7 @@ class StrestSynchronousRequest implements StrestRequestCallback{
 	 * @see com.trendrr.oss.networking.strest.StrestCallback#messageRecieved(com.trendrr.oss.networking.strest.StrestResponse)
 	 */
 	@Override
-	public void messageRecieved(StrestResponse response) {
+	public void response(StrestResponse response) {
 		this.response = response;
 		//release the single semaphore.
 		lock.release(1);
@@ -64,7 +64,7 @@ class StrestSynchronousRequest implements StrestRequestCallback{
 	 * @see com.trendrr.oss.networking.strest.StrestCallback#txnComplete()
 	 */
 	@Override
-	public void txnComplete() {
+	public void txnComplete(String txnId) {
 		//do nothing.  txn should always be complete!
 	}
 

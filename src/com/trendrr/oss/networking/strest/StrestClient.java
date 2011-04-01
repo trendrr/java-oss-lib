@@ -52,21 +52,21 @@ public class StrestClient {
 	public static void main(String...strings) throws Exception{
 		StrestClient client = new StrestClient("localhost", 8000);
 		client.connect();
-//		StrestResponse response = client.send(new RequestBuilder().uri("/hello/world").method("GET").getRequest());
-//		System.out.println("GOT RESPONSE!");
-//		System.out.println(response.getContent());
+		StrestResponse response = client.sendRequest(new RequestBuilder().uri("/hello/world").method("GET").getRequest());
+		System.out.println("GOT RESPONSE!");
+		System.out.println(response.getContent());
+//		
 		
-		
-		client.send(new RequestBuilder().uri("/firehose").method("GET").getRequest(), new StrestRequestCallback() {
+		client.sendRequest(new RequestBuilder().uri("/firehose").method("GET").getRequest(), new StrestRequestCallback() {
 			
 			@Override
-			public void txnComplete() {
+			public void txnComplete(String txnId) {
 				// TODO Auto-generated method stub
-				System.out.println("TRANSACTION COMPLETE!");
+				System.out.println("TRANSACTION " + txnId + " COMPLETE!");
 			}
 			
 			@Override
-			public void messageRecieved(StrestResponse response) {
+			public void response(StrestResponse response) {
 				System.out.println("***********************************");
 				System.out.println(new String(response.getContent()));
 				System.out.println("***********************************");
@@ -80,6 +80,11 @@ public class StrestClient {
 		});
 		
 		Sleep.seconds(30);
+		
+//		response = client.send(new RequestBuilder().uri("/hello/jerk").method("GET").getRequest());
+//		System.out.println("GOT RESPONSE!");
+//		System.out.println(new String(response.getContent()));
+		Sleep.seconds(2);
 	}
 	
 	
@@ -122,7 +127,7 @@ public class StrestClient {
 	 * @param callback
 	 * @throws Exception
 	 */
-	public synchronized void send(StrestRequest request, StrestRequestCallback callback){
+	public synchronized void sendRequest(StrestRequest request, StrestRequestCallback callback){
 		try {
 			request.setHeaderIfAbsent(StrestHeaders.Names.STREST_TXN_ACCEPT, StrestHeaders.Values.MULTI);
 			ByteBuffer buf = request.getBytesAsBuffer();
@@ -141,11 +146,11 @@ public class StrestClient {
 	 * @param request
 	 * @return
 	 */
-	public StrestResponse send(StrestRequest request) throws TrendrrException {
+	public StrestResponse sendRequest(StrestRequest request) throws TrendrrException {
 		try {
 			request.setHeader(StrestHeaders.Names.STREST_TXN_ACCEPT, StrestHeaders.Values.SINGLE);
 			StrestSynchronousRequest sr = new StrestSynchronousRequest();
-			this.send(request, sr);
+			this.sendRequest(request, sr);
 			return sr.awaitResponse();
 		} catch (TrendrrException x) {
 			throw x;
@@ -167,14 +172,14 @@ public class StrestClient {
 			return;
 		}
 		try {
-			cb.messageRecieved(response);
+			cb.response(response);
 		} catch (Exception x) {
 			log.error("Caught", x);
 		}
 		
 		if (!StrestHeaders.Values.CONTINUE.equalsIgnoreCase(txnStatus)) {
 			this.callbacks.remove(txnId);
-			cb.txnComplete();
+			cb.txnComplete(txnId);
 		}
 	}
 	

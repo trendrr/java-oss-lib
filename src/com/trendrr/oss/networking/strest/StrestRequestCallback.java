@@ -9,9 +9,9 @@ package com.trendrr.oss.networking.strest;
  */
 public interface StrestRequestCallback {
 	
-	public void messageRecieved(StrestResponse response);
+	public void response(StrestResponse response);
 	
-	public void txnComplete();
+	public void txnComplete(String txnId);
 	
 	public void error(Throwable x);
 	
