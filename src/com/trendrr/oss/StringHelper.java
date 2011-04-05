@@ -3,6 +3,7 @@
  */
 package com.trendrr.oss;
 
+import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.*;
 
@@ -451,4 +452,117 @@ public class StringHelper {
 		}
 		return list;
 	}
+    
+    /**
+     * Just strips any non allowed characters.
+     * 
+     * currently allow letters, digits and 
+     * 
+     * $ - _ . + ! * ' ( ) , { } | \ ^ ~ [ ] ` " > < # % ; / ? & =
+     * 
+     * @param url
+     * @return
+     */
+    public static String sanitizeUrl(String url) {
+    	StringBuilder str = new StringBuilder();
+    	CharacterIterator ci = new StringCharacterIterator(url);
+
+		for (char ch = ci.first(); ch != CharacterIterator.DONE; ch = ci.next()) {
+			if (Character.isLetterOrDigit(ch)) {
+				str.append(ch);
+				continue;
+			}
+			//we could do this with a regex, but would be unreadable, and I believe this
+			//is faster.
+			switch (ch) {
+				case '$' :
+					str.append(ch);
+					continue;
+				case '-' :
+					str.append(ch);
+					continue;
+				case '_' :
+					str.append(ch);
+					continue;
+				case '.' :
+					str.append(ch);
+					continue;
+				case '+' :
+					str.append(ch);
+					continue;
+				case '!' :
+					str.append(ch);
+					continue;
+				case '*' :
+					str.append(ch);
+					continue;
+				case '\'' :
+					str.append(ch);
+					continue;
+				case '(' :
+					str.append(ch);
+					continue;
+				case ')' :
+					str.append(ch);
+					continue;
+				case ',' :
+					str.append(ch);
+					continue;
+				case '{' :
+					str.append(ch);
+					continue;
+				case '}' :
+					str.append(ch);
+					continue;
+				case '|' :
+					str.append(ch);
+					continue;
+				case '\\' :
+					str.append(ch);
+					continue;
+				case '^' :
+					str.append(ch);
+					continue;
+				case '~' :
+					str.append(ch);
+					continue;
+					
+				case '[' :
+					str.append(ch);
+					continue;
+					
+				case ']' :
+					str.append(ch);
+					continue;
+				case '`' :
+					str.append(ch);
+					continue;
+				case '\"' :
+					str.append(ch);
+					continue;
+				case '<' :
+					str.append(ch);
+					continue;
+				case '>' :
+					str.append(ch);
+					continue;
+				case '#' :
+					str.append(ch);
+					continue;
+				case '%' :
+					str.append(ch);
+					continue;
+				case ';' :
+					str.append(ch);
+					continue;
+				case '/' :
+					str.append(ch);
+					continue;
+				case '?' :
+					str.append(ch);
+					continue;						
+			}
+		}
+		return str.toString();
+    }
 }
