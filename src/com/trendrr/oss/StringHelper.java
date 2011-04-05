@@ -3,9 +3,14 @@
  */
 package com.trendrr.oss;
 
+import java.nio.ByteBuffer;
+import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.*;
+
+import com.trendrr.oss.concurrent.LazyInit;
 
 
 /**
@@ -14,6 +19,10 @@ import java.util.*;
  */
 public class StringHelper {
 	
+	
+	public static void main(String...strings) {
+		
+	}
 	
 	/**
 	 * joins a list into a string.  similar to methods available IN ANY OTHER LANGUAGE
@@ -564,5 +573,62 @@ public class StringHelper {
 			}
 		}
 		return str.toString();
+    }
+    
+    /**
+     * returns a 20 byte sha1 hash 
+     * @param bytes
+     * @return
+     */
+    public static byte[] sha1(byte[] bytes) {
+    	try {
+	    	MessageDigest sha = MessageDigest.getInstance("SHA-1");
+	    	byte[] result =  sha.digest( bytes );
+	    	return result;
+    	} catch (Exception x) {
+    		x.printStackTrace();
+    	}
+    	return null;
+    }
+    
+    
+    private static LazyInit lock = new LazyInit();
+    private static SecureRandom prng = null;
+    /**
+     * Generates a cryptographically secure ID.
+     * 
+     * Should reasonably be unique, though that is not guarenteed.
+     * 
+     * result is 20 bytes long.
+     * 
+     * 
+     */
+    public static byte[] secureId() {
+    	try {
+	    	if (lock.start()) {
+		    	try {
+		    		//initialize the secure random only once
+		    		//as it is a lengthy op.
+		    		prng = SecureRandom.getInstance("SHA1PRNG");
+		    	} finally {
+		    		lock.end();
+		    	}
+	    	} 
+	    	int numBytes = 64;
+	    	
+	    	//upper 8 bytes is the timestamp, to attempt uniqueness
+	    	Long millis = new Date().getTime();
+	    	
+	    	byte[] randBytes = new byte[numBytes - 8];
+	    	prng.nextBytes(randBytes);
+	    	ByteBuffer buf = ByteBuffer.allocate(numBytes);
+	    	buf.putLong(millis);
+	    	buf.put(randBytes);
+	    	 //get its digest
+	    	return sha1(buf.array());
+    	} catch (Exception x) {
+    		x.printStackTrace();
+    	}
+    	return null;
     }
 }
