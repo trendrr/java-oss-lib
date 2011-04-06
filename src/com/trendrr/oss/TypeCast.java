@@ -78,7 +78,7 @@ public class TypeCast {
 	 * @param delimiters
 	 * @return
 	 */
-	public static <T> List<T> getTypedList(Class<T> cls, Object obj, String ... delimiters) {
+	public static <T> List<T> toTypedList(Class<T> cls, Object obj, String ... delimiters) {
 		List lst = toList(obj, delimiters);
 		if (lst == null)
 			return null;

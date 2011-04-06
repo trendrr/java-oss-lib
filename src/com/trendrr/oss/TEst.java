@@ -17,6 +17,9 @@ import com.trendrr.json.simple.JSONValue;
  */
 public class TEst {
 	public static void main(String ...strings) {
+		System.out.println(new Date().getTime());
+		System.out.println(new Date(Integer.MAX_VALUE + 1302024740483l));
+		
 		/*
 		 * to create the patch:
 		 * diff -crB Desktop/json_simple-1.1-all/src/org/ /media/work/java-workspace/TrendrrOSS/src/org/ > simplejson.patch

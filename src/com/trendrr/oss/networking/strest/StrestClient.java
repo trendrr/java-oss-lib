@@ -3,6 +3,7 @@
  */
 package com.trendrr.oss.networking.strest;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -88,20 +89,15 @@ public class StrestClient {
 	}
 	
 	
-	public synchronized void connect() {
+	public synchronized void connect() throws IOException {
 		SocketChannel channel;
-		try {
-			channel = SocketChannel.open();
-//			channel.configureBlocking(true); //set to blocking so we wait on connection.
-			boolean connected = channel.connect(new InetSocketAddress(this.host, this.port));
-			log.info("CONNECTED: " + connected);
-			socket = new SocketChannelWrapper(channel);
-			reader = new StrestMessageReader();
-			reader.start(this, socket);
-			this.connected.set(true);
-		} catch (Exception x) {
-			x.printStackTrace();
-		}
+		channel = SocketChannel.open();
+		boolean connected = channel.connect(new InetSocketAddress(this.host, this.port));
+		log.info("CONNECTED: " + connected);
+		socket = new SocketChannelWrapper(channel);
+		reader = new StrestMessageReader();
+		reader.start(this, socket);
+		this.connected.set(true);
 	}
 	
 	/**

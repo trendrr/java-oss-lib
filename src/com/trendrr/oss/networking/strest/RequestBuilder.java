@@ -3,6 +3,7 @@
  */
 package com.trendrr.oss.networking.strest;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -23,22 +24,26 @@ public class RequestBuilder {
 	StrestRequest request;
 	
 	public static void main(String...strings) {
-		RequestBuilder b = new RequestBuilder();
-		try {
-			b.url("http://www.trendrr.com/api/blah.json?poop=none");
-			b.url("www.trendrr.com");
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+	}
+	
+	public static RequestBuilder instance() {
+		return new RequestBuilder();
+	}
+	public static RequestBuilder instance(StrestRequest request) {
+		return new RequestBuilder(request);
 	}
 	
 	public RequestBuilder() {
-		request = new StrestRequest();
+		this(null);
 	}
 	
 	public RequestBuilder(StrestRequest request) {
-		this.request = request;
+		if (request == null) {
+			this.request = new StrestRequest();
+		} else {
+			this.request = request;
+		}
 	}
 	
 	/**
@@ -72,11 +77,11 @@ public class RequestBuilder {
 	
 	
 	/**
-	 * adds params to the uri.
+	 * adds params to the uri. 
 	 * @param params
 	 * @return
 	 */
-	public RequestBuilder params(DynMap params) {
+	public RequestBuilder paramsGET(DynMap params) {
 		String encodedParams = params.toURLString();
 		if (encodedParams == null || encodedParams.isEmpty()) {
 			return this;
@@ -88,6 +93,36 @@ public class RequestBuilder {
 			uri = uri + "&";
 		}
 		request.setUri(uri + encodedParams);
+		return this;
+	}
+	
+	/**
+	 * adds params to the content section and sets the Content-Type to
+	 * 
+	 * @param params
+	 * @return
+	 */
+	public RequestBuilder paramsPOST(DynMap params) {
+		String encodedParams = params.toURLString();
+		log.info(encodedParams);
+		if (encodedParams == null || encodedParams.isEmpty()) {
+			return this;
+		}
+		return this.contentUTF8("application/x-www-form-urlencoded", encodedParams);
+	}
+	
+	/**
+	 * encodes the text as utf8 and swallows and logs a warning for any character encoding exceptions
+	 * @param mimeType
+	 * @param content
+	 * @return
+	 */
+	public RequestBuilder contentUTF8(String mimeType, String content) {
+		try {
+			this.content(mimeType, content.getBytes("utf8"));
+		} catch (UnsupportedEncodingException e) {
+			log.warn("Swallowed", e);
+		}
 		return this;
 	}
 	

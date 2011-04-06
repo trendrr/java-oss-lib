@@ -37,6 +37,7 @@ public class DynMapCaster extends TypeCaster<DynMap> {
 					return toDynMap((Map)obj);
 				}
 			} catch (Exception x) {
+				x.printStackTrace();
 			}
 			return null;
 		}

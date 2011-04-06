@@ -58,22 +58,16 @@ public class DynMapFactory {
 		return null;
 	}
 	
+	
 	/**
-	 * parses any of the query params into a DynMap.  returns an empty map if
-	 * there are no params to parse.
+	 * parses a urlencoded string
 	 * 
-	 * @param url
+	 * @param urlencoded
 	 * @return
 	 */
-	public static DynMap instanceFromURL(String url) {
-		if (!url.contains("?")) {
-//			log.info("DynMap.instanceFromUrl : no params on the url, returning empty");
-			return new DynMap();
-		}
-		
+	public static DynMap instanceFromURLEncoded(String urlencoded) {
 		DynMap params = new DynMap();
-		String q = url.split("\\?")[1];
-		for (String param : q.split("\\&")) {
+		for (String param : urlencoded.split("\\&")) {
 			String[] tmp = param.split("\\=");
 			if (tmp == null || tmp.length != 2)
 				continue;
@@ -93,5 +87,22 @@ public class DynMapFactory {
 			}
 		}
 		return params;
+	}
+	
+	/**
+	 * parses any of the query params into a DynMap.  returns an empty map if
+	 * there are no params to parse.
+	 * 
+	 * @param url
+	 * @return
+	 */
+	public static DynMap instanceFromURL(String url) {
+		if (!url.contains("?")) {
+//			log.info("DynMap.instanceFromUrl : no params on the url, returning empty");
+			return new DynMap();
+		}
+		String q = url.split("\\?")[1];
+		
+		return instanceFromURLEncoded(q);
 	}
 }

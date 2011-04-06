@@ -44,11 +44,23 @@ import com.trendrr.json.simple.JSONValue;
  */
 public class DynMap extends HashMap<String,Object>{
 	
+	private static final long serialVersionUID = 6342683643643465570L;
+
 	Logger log = Logger.getLogger(DynMap.class.getCanonicalName());
 	
 	ConcurrentHashMap<String, Object> cache = new ConcurrentHashMap<String, Object>();
 	boolean cacheEnabled = false;
 	
+	/**
+	 * Creates a new dynMap based on the passed in object.  This is just a wrapper
+	 * around DynMapFactory.instance()
+	 * 
+	 * @param object
+	 * @return
+	 */
+	public static DynMap instance(Object object) {
+		return DynMapFactory.instance(object);
+	}
 	
 	/*
 	 * Register Date and DynMap with the json formatter so we get properly encoded strings.
@@ -194,6 +206,26 @@ public class DynMap extends HashMap<String,Object>{
 		return this.get(Integer.class, key, defaultValue);
 	}
 	
+	public Double getDouble(String key) {
+		return this.get(Double.class, key);
+	}
+	
+	public Double getDouble(String key, Double defaultValue) {
+		return this.get(Double.class, key, defaultValue);
+	}
+	
+	public Long getLong(String key) {
+		return this.get(Long.class, key);
+	}
+	
+	public Long getLong(String key, Long defaultValue) {
+		return this.get(Long.class, key, defaultValue);
+	}
+	
+	public DynMap getMap(String key) {
+		return this.get(DynMap.class, key);
+	}
+	
 	/**
 	 * Returns a typed list.  See TypeCast.getTypedList
 	 * 
@@ -212,12 +244,12 @@ public class DynMap extends HashMap<String,Object>{
 				//null is an acceptable cache result.
 				return (List<T>)this.cache.get(cacheKey);
 			} else {
-				List<T> val = TypeCast.getTypedList(cls, this.get(key), delimiters);
+				List<T> val = TypeCast.toTypedList(cls, this.get(key), delimiters);
 				this.cache.put(cacheKey, val);
 				return val;
 			}
 		} 
-		return TypeCast.getTypedList(cls, this.get(key), delimiters);
+		return TypeCast.toTypedList(cls, this.get(key), delimiters);
 	}
 	
 	/**
@@ -243,7 +275,64 @@ public class DynMap extends HashMap<String,Object>{
 		}
 		return this;
 	}
+	/**
+	 * returns true if the passed in object map is equivelent 
+	 * to this map.  will check members of lists, String, maps, numbers.
+	 * 
+	 * 
+	 * does not check order
+	 * 
+	 * @param map
+	 * @return
+	 */
+	public boolean equivalent(Object map) {
+		DynMap other = DynMap.instance(map);
+		if (!ListHelper.equivalent(other.keySet(), this.keySet())) {
+			return false;
+		}
+		for (String key : this.keySet()) {
+			Object mine = this.get(key);
+			Object yours = other.get(key);
+//			log.info("mine: " + mine + " VS yours: " + yours);
+			if (mine == null && yours == null)
+				continue;
+			if (mine == null || yours == null) {
+//				log.info("key : " + key + " is null ");
+				return false;
+			}
+			
+			 if (ListHelper.isCollection(mine)) {
+				if (!ListHelper.isCollection(yours)) {
+//					log.info("key : " + key + " is not a collection ");
+					return false;
+				}
+				if (!ListHelper.equivalent(mine, yours)) {
+//					log.info("key : " + key + " collection not equiv ");
+					return false;
+				}
+			} else if (isMap(mine)) {
+				if (!DynMap.instance(mine).equivalent(yours)) {
+//					log.info("key : " + key + " map not equiv ");
+					return false;
+				}
+			} else {
+				//default to string compare.
+				if (!this.getString(key).equals(other.getString(key))) {
+//					log.info("key : " + key + " " + this.getString(key) + " VS " + other.getString(key));
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 	
+	public static boolean isMap(Object obj) {
+		if (obj instanceof Map) 
+			return true;
+		if (Reflection.hasMethod(obj, "toMap"))
+			return true;
+		return false;
+	}
 	
 	public String toJSONString() {
 		return JSONObject.toJSONString(this);
