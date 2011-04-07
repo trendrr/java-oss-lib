@@ -69,7 +69,7 @@ public class DynMap extends HashMap<String,Object>{
 		JSONValue.registerFormatter(Date.class, new JSONFormatter() {
 			@Override
 			public String toJSONString(Object value) {
-				return IsoDateUtil.getIsoDate((Date)value);
+				return "\"" + IsoDateUtil.getIsoDate((Date)value) + "\"";
 			}
 		});
 		
