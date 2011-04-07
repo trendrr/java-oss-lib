@@ -81,6 +81,10 @@ public class ExpirationLock {
 		return false;
 	}
 	
+	/**
+	 * Sets the time that the lock will next be available.
+	 * @param date
+	 */
 	public void lockUntil(Date date) {
 		this.until.set(date.getTime());
 	}

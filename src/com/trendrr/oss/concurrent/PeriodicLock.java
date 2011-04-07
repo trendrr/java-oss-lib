@@ -80,6 +80,19 @@ public class PeriodicLock {
 		lock.unlock();
 	}
 	
+	/**
+	 * forces the next time the lock will unlock.
+	 * @param date
+	 */
+	public void lockUntil(Date date) {
+		lock.lockOrWait();
+		try {
+			this.timedlock.lockUntil(date);
+		} finally {
+			lock.unlock();
+		}
+	}
+	
 	public Date getNextUnlock() {
 		return timedlock.getLockUntil();
 	}

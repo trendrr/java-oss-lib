@@ -3,6 +3,7 @@
  */
 package com.trendrr.oss.concurrent;
 
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.logging.Log;
@@ -39,5 +40,27 @@ public abstract class ReinitObject<T> {
 			}
 		}
 		return ref.get();
+	}
+	
+	/**
+	 * passively looks to see if this object needs to be re-initialized
+	 * @return
+	 */
+	public boolean isExpired() {
+		return lock.getNextUnlock().getTime() < new Date().getTime();
+	}
+	
+	/**
+	 * clears the initialized object if it is expired.
+	 */
+	public void clearIfExpired() {
+		if (lock.lockOrWait()) {
+			try {
+				ref.set(null);	
+			} finally {
+				lock.unlock();
+			}
+		}
+		lock.lockUntil(new Date());
 	}
 }
