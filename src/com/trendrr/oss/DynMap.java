@@ -156,12 +156,16 @@ public class DynMap extends HashMap<String,Object>{
 			//try to reach into the object..
 			String[] items = key.split("\\.");
 			DynMap cur = this.get(DynMap.class, items[0]);
+			if (cur == null) {
+				return null;
+			}
 			for (int i= 1; i < items.length-1; i++) {				
 				cur = cur.get(DynMap.class, items[i]);
 				
 				if (cur == null)
 					return null;
 			}
+			
 			return cur.get(items[items.length-1]);
 		}
 		return null;
