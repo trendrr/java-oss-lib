@@ -35,13 +35,8 @@ public class ListHelper {
 			
 			if (l1 == null || l2 == null)
 				return false;
-			
-			
 			List list1 = TypeCast.toList(l1);
 			List list2 = TypeCast.toList(l2);
-			System.out.println("LIST1 : " + list1);
-			System.out.println("LIST2 :" + list2);
-			System.out.println("END");
 			return list1.containsAll(list2);
 		} catch (Exception x) {
 		} 
