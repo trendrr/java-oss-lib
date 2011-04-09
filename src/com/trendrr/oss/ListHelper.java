@@ -30,14 +30,18 @@ public class ListHelper {
 	 */
 	public static boolean equivalent(Object l1, Object l2) {
 		try {
-			List list1 = TypeCast.toList(l1);
-			List list2 = TypeCast.toList(l2);
-			
-			if (list1 == list2) //both null
+			if (l1 == l2)
 				return true;
+			
 			if (l1 == null || l2 == null)
 				return false;
 			
+			
+			List list1 = TypeCast.toList(l1);
+			List list2 = TypeCast.toList(l2);
+			System.out.println("LIST1 : " + list1);
+			System.out.println("LIST2 :" + list2);
+			System.out.println("END");
 			return list1.containsAll(list2);
 		} catch (Exception x) {
 		} 

@@ -3,6 +3,7 @@
  */
 package com.trendrr.oss.tests;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -60,6 +61,9 @@ public class TypeCasterTests {
 		Assert.assertTrue(listTest(TypeCast.toList("one,two", ","), 2));
 		Assert.assertTrue(listTest(TypeCast.toList("[\"one\",\"two\"]"), 2));
 		Assert.assertTrue(listTest(TypeCast.toList("100"), 1));
+		
+		Assert.assertNull(TypeCast.toList(new ArrayList()));
+		
 	}
 	
 	private static boolean listTest(List list, int expectedSize) {

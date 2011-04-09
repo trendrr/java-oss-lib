@@ -101,10 +101,10 @@ public class TypeCast {
 	 * Collection
 	 * Enumeration
 	 * Object[]
-	 * String (will split based on delimiters).
+	 * String (will split based on the passed in delimiters).
 	 * 
 	 * in all other cases:
-	 * Will return null on null value.
+	 * Will return null on null value or empty lists
 	 * otherwise will return a list of length 1, with the value
 	 * 
 	 * 
@@ -117,7 +117,6 @@ public class TypeCast {
 		if (val == null)
 			return null;
 		List list = new ArrayList();
-		
 		
 		if (val instanceof List) {
 			list = (List)val;
@@ -160,13 +159,15 @@ public class TypeCast {
 			}
 			if (delimiters != null && delimiters.length > 0)
 				list.addAll(StringHelper.split(str, delimiters));
+			if (list.isEmpty())
+				list.add(str); //add self as a string.
+			
 		} else if (obj instanceof Enumeration) {
 			Enumeration e = (Enumeration)obj;
 			while (e.hasMoreElements()) {
 				list.add(e.nextElement());
 			}
-		}
-		if (list != null && list.isEmpty()) {
+		} else {
 			list.add(obj);
 		}
 		
