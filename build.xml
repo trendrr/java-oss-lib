@@ -64,4 +64,15 @@
 			<include name="**/*"/>
 		</jar>
 	</target>
+	
+	<target name="javadoc" description="Create Javadocs for the Trendrr oss library">
+        <mkdir dir="/html/java-oss-lib/javadoc/"/>
+        <javadoc 
+            destdir="/html/java-oss-lib/javadoc/"
+        	classpathref="build.classpath"
+        	access="public"
+        	>
+            <fileset dir="src" includes="**/*.java" />
+        </javadoc>
+    </target>
 </project>
