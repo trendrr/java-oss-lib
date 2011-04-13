@@ -1,21 +1,26 @@
-
 Extremely useful classes for java development.  
 
+### DynMap
 
-DynMap -> see intro docs in https://github.com/trendrr/java-oss-lib/wiki/Introducing-DynMap
+see intro docs in https://github.com/trendrr/java-oss-lib/wiki/Introducing-DynMap
 
 
-Strest:
+### STREST
 
 A complete STREST protocol driver
 
+For an example, run 
+<pre>
+com.trendrr.oss.networking.strest.ExampleMain
+</pre>
 
-Concurrency:
+
+### Concurrency
 
 Contains useful locking and lazy initialization classes
 
 
 
-Networking:
+### Networking
 
 An asynch buffer implementation to make dealing with asynch sockets a breeze (and fast)
