@@ -93,6 +93,18 @@ public class DynMap extends HashMap<String,Object>{
 		}
 	}
 	
+	/**
+	 * like the regular putAll but only copies the 
+	 * passed in keys
+	 * @param mp
+	 * @param keys
+	 */
+	public void putAll(Map mp, String ...keys) {
+		for (String k : keys) {
+			this.put(k, mp.get(k));
+		}
+	}
+	
 	@Override
 	public Object put(String key, Object val) {
 		this.ejectFromCache(key);
