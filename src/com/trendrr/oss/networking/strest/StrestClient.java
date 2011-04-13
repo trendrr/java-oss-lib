@@ -50,43 +50,7 @@ public class StrestClient {
 		this.port = port;
 	}
 	
-	public static void main(String...strings) throws Exception{
-		StrestClient client = new StrestClient("localhost", 8000);
-		client.connect();
-		StrestResponse response = client.sendRequest(new RequestBuilder().uri("/hello/world").method("GET").getRequest());
-		System.out.println("GOT RESPONSE!");
-		System.out.println(response.getContent());
-//		
-		
-		client.sendRequest(new RequestBuilder().uri("/firehose").method("GET").getRequest(), new StrestRequestCallback() {
-			
-			@Override
-			public void txnComplete(String txnId) {
-				// TODO Auto-generated method stub
-				System.out.println("TRANSACTION " + txnId + " COMPLETE!");
-			}
-			
-			@Override
-			public void response(StrestResponse response) {
-				System.out.println("***********************************");
-				System.out.println(new String(response.getContent()));
-				System.out.println("***********************************");
-			}
-			
-			@Override
-			public void error(Throwable x) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-		
-		Sleep.seconds(30);
-		
-//		response = client.send(new RequestBuilder().uri("/hello/jerk").method("GET").getRequest());
-//		System.out.println("GOT RESPONSE!");
-//		System.out.println(new String(response.getContent()));
-		Sleep.seconds(2);
-	}
+
 	
 	
 	public synchronized void connect() throws IOException {
