@@ -9,9 +9,10 @@ see intro docs in https://github.com/trendrr/java-oss-lib/wiki/Introducing-DynMa
 
 A complete STREST protocol driver
 
-For an example, run 
-<pre>
+For an example (with Strest-Server running on port 8000) see
 com.trendrr.oss.networking.strest.ExampleMain
+<pre>
+java -jar trendrr-oss.jar
 </pre>
 
 
