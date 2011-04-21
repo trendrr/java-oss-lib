@@ -13,7 +13,7 @@ package com.trendrr.json.simple;
  *	JSONValue.registerFormatter(Date.class, new JSONFormatter() {
  *		@Override
  *		public String toJSONString(Object value) {
- *			return ((Date)value).toGMTString();
+ *			return "\"" + ((Date)value).toGMTString() + "\"";
  *		}
  *	});
  * 

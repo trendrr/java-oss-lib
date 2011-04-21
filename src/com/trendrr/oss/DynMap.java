@@ -18,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.trendrr.json.simple.JSONAware;
 import com.trendrr.json.simple.JSONFormatter;
 import com.trendrr.json.simple.JSONObject;
 import com.trendrr.json.simple.JSONValue;
@@ -42,7 +43,7 @@ import com.trendrr.json.simple.JSONValue;
  * @created Dec 29, 2010
  * 
  */
-public class DynMap extends HashMap<String,Object>{
+public class DynMap extends HashMap<String,Object> implements JSONAware{
 	
 	private static final long serialVersionUID = 6342683643643465570L;
 
@@ -63,20 +64,13 @@ public class DynMap extends HashMap<String,Object>{
 	}
 	
 	/*
-	 * Register Date and DynMap with the json formatter so we get properly encoded strings.
+	 * Register Date and with the json formatter so we get properly encoded strings.
 	 */
 	static {
 		JSONValue.registerFormatter(Date.class, new JSONFormatter() {
 			@Override
 			public String toJSONString(Object value) {
 				return "\"" + IsoDateUtil.getIsoDate((Date)value) + "\"";
-			}
-		});
-		
-		JSONValue.registerFormatter(DynMap.class, new JSONFormatter() {
-			@Override
-			public String toJSONString(Object value) {
-				return ((DynMap)value).toJSONString();
 			}
 		});
 	}

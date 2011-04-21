@@ -18,12 +18,32 @@ import java.util.logging.Logger;
 public class DynMapFactory {
 	protected static Logger log = Logger.getLogger(DynMapFactory.class.getCanonicalName());
 	
+	/**
+	 * Creates a new DynMap instance from the passed in object. 
+	 * 
+	 * This differs from instance ONLY when obj is a DynMap instance.
+	 * @param obj
+	 * @return
+	 */
+	public static DynMap clone(Object obj) {
+		DynMap val = instance(obj);
+		if (val == null)
+			return val;
+		if (val != obj) {
+			return val;
+		}
+		DynMap tmp = new DynMap();
+		tmp.putAll(val);
+		return tmp;
+	}
 	
 	/**
 	 * creates a DynMap instance.
 	 * 
 	 * Will convert a regular map, or any object that has a toMap method
 	 * a string is assumed to be json.
+	 * 
+	 * if obj is an instance of DynMap then that DynMap instance is returned.
 	 * 
 	 * @param obj
 	 * @return

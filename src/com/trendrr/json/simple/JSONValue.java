@@ -168,7 +168,7 @@ public class JSONValue {
             return;
 		}
 		
-		out.write(value.toString());
+		writeJSONString(value.toString(), out);
 	}
 
 	/**
@@ -227,7 +227,7 @@ public class JSONValue {
 		if(value instanceof List)
 			return JSONArray.toJSONString((List)value);
 		
-		return value.toString();
+		return toJSONString(value.toString());
 	}
 
 	/**
