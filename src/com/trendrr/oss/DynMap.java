@@ -373,6 +373,10 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 			try {
 				String k = URLEncoder.encode(key, "utf-8");
 				List<String> vals = this.getList(String.class, key);
+				if (vals == null) {
+					continue;
+				}
+				
 				for (String v : vals) {
 					v = URLEncoder.encode(v, "utf-8");
 					if (v != null) {
