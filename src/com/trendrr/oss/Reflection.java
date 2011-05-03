@@ -202,6 +202,10 @@ public class Reflection {
 		List<Class> classes = findClasses(packageName, recur);
 		List<T> instances = new ArrayList<T>();
 		for (Class c : classes) {
+			if (c.isInterface() || Modifier.isAbstract( c.getModifiers() )) {
+				//skipping
+				continue;
+			}
 			if (cls.isAssignableFrom(c)) {
 				instances.add((T)defaultInstance(c));
 			}
