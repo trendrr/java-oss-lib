@@ -200,6 +200,14 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		return val;
 	}
 	
+	public Boolean getBoolean(String key) {
+		return this.get(Boolean.class, key);
+	}
+	
+	public Boolean getBoolean(String key, Boolean defaultValue) {
+		return this.get(Boolean.class, key, defaultValue);
+	}
+	
 	public String getString(String key) {
 		return this.get(String.class, key);
 	}
