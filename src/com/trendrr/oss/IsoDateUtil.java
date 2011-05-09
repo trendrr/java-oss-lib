@@ -51,26 +51,28 @@ import java.util.TimeZone;
 public class IsoDateUtil {
 
 	public static void main(String args[]) {
-		test("1997-07-16T19:20:30.45-02:00");
-		test("1997-07-16T19:20:30.678Z");
-		test("2006-07-16T21:20:30.450+00:00");
-		//test("2006-07-16T21:20:30.450+0000"); invalid
-
-		test("1997-07-16 19:20:30.45-02:00");
-		test("1997-07-16 19:20:30.678Z");
-		test("2006-07-16 21:20:30.450+00:00");
-
-		test("1997-07-16T19:20:30+01:00");
-		test("1997-07-16T19:20:30+01:00");
-		test("1997-07-16T12:20:30-06:00");
-		test("1997-07-16T12:20:30-0600");
+//		test("1997-07-16T19:20:30.45-02:00");
+//		test("1997-07-16T19:20:30.678Z");
+//		test("2006-07-16T21:20:30.450+00:00");
+//		//test("2006-07-16T21:20:30.450+0000"); invalid
+//
+//		test("1997-07-16 19:20:30.45-02:00");
+//		test("1997-07-16 19:20:30.678Z");
+//		test("2006-07-16 21:20:30.450+00:00");
+//
+//		test("1997-07-16T19:20:30+01:00");
+//		test("1997-07-16T19:20:30+01:00");
+//		test("1997-07-16T12:20:30-06:00");
+//		test("1997-07-16T12:20:30-0600");
+//		
+//		
+//		test("1997-07-16T19:20");
+//		test("1997-07-16");
+//		test("1997-07");
+//		test("1997");
+//		test(new Date());
 		
-		
-		test("1997-07-16T19:20");
-		test("1997-07-16");
-		test("1997-07");
-		test("1997");
-		test(new Date());
+		test("2011-05-06T00:00:00-0400");
 		System.out.println(getCurrentUTCTimestamp());
 
 	}
@@ -142,7 +144,7 @@ public class IsoDateUtil {
 		int index = isodate.indexOf(' ');
 		if (index > 0)
 			isodate = isodate.substring(0, index) + "T" + isodate.substring(index+1);
-		StringTokenizer st = new StringTokenizer(isodate, "-T:.+Z", true);
+		
 
 //		fix for timezones in the form +0700 
 		String timezoneFix = Regex.matchFirst(isodate, "[\\+\\-]{1}[0-9]{3,4}$", false);
@@ -151,7 +153,7 @@ public class IsoDateUtil {
 			isodate = isodate.substring(0,insertColonHere) + ":" + isodate.substring(insertColonHere);
 		}
 		
-		
+		StringTokenizer st = new StringTokenizer(isodate, "-T:.+Z", true);
 		Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
 		calendar.clear();
 		try {
