@@ -3,6 +3,8 @@
  */
 package com.trendrr.oss.tests;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -45,6 +47,21 @@ public class DynMapTests {
 	}
 	
 	
-	
+	@Test
+	public void outputTest() {
+		DynMap mp = new DynMap();
+		
+		HashSet<String> test = new HashSet<String>();
+		List<String> test2 = new ArrayList<String>();
+		
+		for (int i=0; i < 3; i++){
+			test.add("str" + i);
+			test2.add("2str" + i);
+		}
+		
+		mp.put("list", test2);
+		mp.put("set", test);
+		Assert.assertEquals("{\"set\":[\"str2\",\"str1\",\"str0\"],\"list\":[\"2str0\",\"2str1\",\"2str2\"]}", mp.toJSONString());
+	}
 	
 }

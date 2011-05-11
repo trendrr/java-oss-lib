@@ -7,6 +7,7 @@ package com.trendrr.json.simple;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class JSONArray extends ArrayList implements List, JSONAware, JSONStreamA
      * @param list
      * @param out
      */
-	public static void writeJSONString(List list, Writer out) throws IOException{
+	public static void writeJSONString(Collection list, Writer out) throws IOException{
 		if(list == null){
 			out.write("null");
 			return;
@@ -68,7 +69,7 @@ public class JSONArray extends ArrayList implements List, JSONAware, JSONStreamA
 	 * @param list
 	 * @return JSON text, or "null" if list is null.
 	 */
-	public static String toJSONString(List list){
+	public static String toJSONString(Collection list){
 		if(list == null)
 			return "null";
 		
