@@ -26,12 +26,16 @@ public class TEst {
 		 * 
 		 */
 		
-		JSONValue.registerFormatter(Date.class, new JSONFormatter() {
-			@Override
-			public String toJSONString(Object value) {
-				return ((Date)value).toGMTString();
-			}
-		});
+//		JSONValue.registerFormatter(Date.class, new JSONFormatter() {
+//			@Override
+//			public String toJSONString(Object value) {
+//				return ((Date)value).toGMTString();
+//			}
+//		});
+		
+		DynMap mp = new DynMap();
+		mp.put("date", new Date());
+		System.out.println(mp.getString("date"));
 		
 		System.out.println(JSONValue.toJSONString(new Date()));
 		System.out.println(JSONValue.toJSONString("BLAH"));

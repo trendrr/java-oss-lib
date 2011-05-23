@@ -73,6 +73,8 @@ public class IsoDateUtil {
 //		test(new Date());
 		
 		test("2011-05-06T00:00:00-0400");
+		test("2011-05-16T23:10:44.420000+00:00");
+		test("2011-05-18T18:43:30.834000 00:00");
 		System.out.println(getCurrentUTCTimestamp());
 
 	}
@@ -152,6 +154,9 @@ public class IsoDateUtil {
 			int insertColonHere = isodate.length()-2;
 			isodate = isodate.substring(0,insertColonHere) + ":" + isodate.substring(insertColonHere);
 		}
+		
+		//fix for timezone with space (as url + is treated as space)
+		isodate = isodate.replaceFirst("[T\\s]([0-9\\:]+)$", "+$1");
 		
 		StringTokenizer st = new StringTokenizer(isodate, "-T:.+Z", true);
 		Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
