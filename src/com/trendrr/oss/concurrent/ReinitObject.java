@@ -32,12 +32,25 @@ public abstract class ReinitObject<T> {
 	public abstract T init();
 	
 	public T get() {
-		if (lock.lockOrWait()) {
-			try {
-				ref.set(this.init());	
-			} finally {
-				lock.unlock();
+		if (ref.get() == null) {
+			//we block if the object is unitialized.  otherwise we skip while initia
+			if (lock.lockOrWait()) {
+				try {
+					ref.set(this.init());	
+				} finally {
+					lock.unlock();
+				}
 			}
+		} else {
+			// else we return the old results while the new ones are being initialized
+			if (lock.lockOrSkip()) {
+				try {
+					ref.set(this.init());	
+				} finally {
+					lock.unlock();
+				}
+			}
+			
 		}
 		return ref.get();
 	}
