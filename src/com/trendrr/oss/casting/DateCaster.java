@@ -29,7 +29,13 @@ public class DateCaster extends TypeCaster<Date> {
 			return ((Calendar)obj).getTime();
 		
 		if (obj instanceof Long) {
-			return new Date((Long)obj);
+			long val = (Long)obj;
+			if (val < 200000000000l) {
+				//date is before 1976 so we just assume
+				//assume this is seconds since epoch
+				val *= 1000;
+			}
+			return new Date(val);
 		}
 		
 		//convert joda DateTimezx

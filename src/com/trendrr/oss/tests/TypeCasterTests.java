@@ -46,6 +46,10 @@ public class TypeCasterTests {
 		
 		Assert.assertNotNull(TypeCast.cast(Date.class, "1997-07-16T19:20:30.45+01:00"));
 		Assert.assertNotNull(TypeCast.cast(Date.class, "2011-05-18T18:43:30.834000 00:00"));
+		Assert.assertNotNull(TypeCast.cast(Date.class, "2011-06-02T17:17:02Z"));
+		
+		Assert.assertNotNull(TypeCast.cast(Date.class, new Date().getTime()));
+		Assert.assertNotNull(TypeCast.cast(Date.class, new Date().getTime()/1000));
 	}
 	
 	@Test
