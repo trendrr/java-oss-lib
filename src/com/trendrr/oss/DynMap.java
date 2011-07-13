@@ -63,6 +63,21 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		return DynMapFactory.instance(object);
 	}
 	
+	/**
+	 * Creates a new dynMap based on the passed in object.  This is just a wrapper
+	 * around DynMapFactory.instance()
+	 * 
+	 * @param object
+	 * @param 
+	 * @return
+	 */
+	public static DynMap instance(Object object, DynMap defaultMap) {
+		DynMap obj = DynMapFactory.instance(object);
+		if (obj == null)
+			return defaultMap;
+		return obj;
+	}
+	
 	/*
 	 * Register Date and with the json formatter so we get properly encoded strings.
 	 */
@@ -304,7 +319,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	 * @return
 	 */
 	public boolean equivalent(Object map) {
-		DynMap other = DynMap.instance(map);
+		DynMap other = DynMap.instance(map, new DynMap());
 		if (!ListHelper.equivalent(other.keySet(), this.keySet())) {
 			return false;
 		}
@@ -329,7 +344,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 					return false;
 				}
 			} else if (isMap(mine)) {
-				if (!DynMap.instance(mine).equivalent(yours)) {
+				if (!DynMap.instance(mine, new DynMap()).equivalent(yours)) {
 //					log.info("key : " + key + " map not equiv ");
 					return false;
 				}
