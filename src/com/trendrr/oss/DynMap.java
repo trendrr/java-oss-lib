@@ -54,7 +54,9 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	
 	/**
 	 * Creates a new dynMap based on the passed in object.  This is just a wrapper
-	 * around DynMapFactory.instance()
+	 * around DynMapFactory.instance().
+	 * 
+	 * if object is already a DynMap then that dynmap is returned.
 	 * 
 	 * @param object
 	 * @return
@@ -130,6 +132,11 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	public Object remove(Object k) {
 		this.ejectFromCache((String)k);
 		return super.remove(k);
+	}
+	
+	@Override
+	public DynMap clone() {
+		return DynMapFactory.clone(this);
 	}
 	
 	private void ejectFromCache(String key) {
