@@ -53,8 +53,7 @@ class SynchronousReadCallback implements ByteReadCallback, StringReadCallback{
 	@Override
 	public void onError(TrendrrException ex) {
 		this.exception = ex;
-		this.lock.release();
-		
+		this.lock.release();		
 	}
 
 	/* (non-Javadoc)

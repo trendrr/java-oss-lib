@@ -131,10 +131,9 @@ public class SelectorThread implements Runnable{
 					}
 				}
 			} catch (TrendrrDisconnectedException x) {
-				x.printStackTrace();
 				this.channels.get((SocketChannel)key.channel()).close();
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error("Caught", e);
 			}
 		}
 		

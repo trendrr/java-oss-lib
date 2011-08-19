@@ -83,9 +83,9 @@ public class StrestClient {
 			x.printStackTrace();
 		}
 		reader = null;
-		
-		//TODO: issue disconnects to all waiting callbacks.
+		log.info("Announcing broken connection to callbacks: " + this.callbacks);
 		for (StrestRequestCallback cb : this.callbacks.values()) {
+			log.info("CONNECTION BROKEN! : " + cb);
 			cb.error(new TrendrrDisconnectedException("Connection Broken"));
 		}
 		this.callbacks.clear();
@@ -124,6 +124,9 @@ public class StrestClient {
 	 */
 	public StrestResponse sendRequest(StrestRequest request) throws TrendrrException {
 		try {
+			if (!this.connected.get()) {
+				throw new TrendrrDisconnectedException("Strest Client is not connected!");
+			}
 			request.setHeader(StrestHeaders.Names.STREST_TXN_ACCEPT, StrestHeaders.Values.SINGLE);
 			StrestSynchronousRequest sr = new StrestSynchronousRequest();
 			this.sendRequest(request, sr);
@@ -164,7 +167,7 @@ public class StrestClient {
 	 */
 	void error(TrendrrException e) {
 		//UMM, what should we do here I wonder?
-		log.warn("Error from reader Caught", e);
+//		log.warn("Error from reader Caught", e);
 		
 		if (e instanceof TrendrrDisconnectedException) {
 			log.warn("Closing connection!");

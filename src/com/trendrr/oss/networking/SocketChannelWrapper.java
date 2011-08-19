@@ -151,10 +151,18 @@ public class SocketChannelWrapper {
 			return;
 		}
 
-		try { this.buffer.process(); } catch (Exception x) {log.error("Caught", x);}
-		try { this.channel.close();} catch (Exception x) {log.error("Caught", x);}
-		try { this.buffer.close();} catch (Exception x) {log.error("Caught", x);}
-		this.thread.unregister(this);
+		try { this.buffer.process(); } catch (Exception x) {
+			log.debug("Caught", x);
+		}
+		try { this.channel.close();} catch (Exception x) {
+			log.debug("Caught", x);
+		}
+		try { this.buffer.close();} catch (Exception x) {
+			log.debug("Caught", x);
+		}
+		if (this.thread != null) {
+			this.thread.unregister(this);
+		}
 		this.buffer = null;
 		this.thread = null;
 		this.closed = true;

@@ -3,6 +3,7 @@
  */
 package com.trendrr.oss.networking;
 
+import java.io.IOException;
 import java.net.SocketException;
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
@@ -358,6 +359,9 @@ public class AsynchBuffer {
 		}
 		if (x instanceof TrendrrException) {
 			throw (TrendrrException)x;
+		}
+		if (x instanceof IOException) {
+			throw new TrendrrDisconnectedException(x);
 		}
 		throw new TrendrrException(x);
 	}

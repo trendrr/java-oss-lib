@@ -74,5 +74,7 @@ class StrestSynchronousRequest implements StrestRequestCallback{
 	@Override
 	public void error(Throwable x) {
 		this.error = x;
+		//release the single semaphore.
+		lock.release(1);
 	}
 }
