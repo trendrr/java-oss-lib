@@ -15,6 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.concurrent.Sleep;
+import com.trendrr.oss.exceptions.TrendrrDisconnectedException;
 import com.trendrr.oss.exceptions.TrendrrException;
 import com.trendrr.oss.networking.SocketChannelWrapper;
 
@@ -38,7 +39,7 @@ import com.trendrr.oss.networking.SocketChannelWrapper;
 public class StrestClient {
 
 	protected Log log = LogFactory.getLog(StrestClient.class);
-	protected SocketChannelWrapper socket;
+	protected SocketChannelWrapper socket = null;
 	protected StrestMessageReader reader;
 	protected String host = null;
 	protected int port = 8008;
@@ -71,11 +72,23 @@ public class StrestClient {
 	 * 
 	 */
 	public synchronized void close() {
-		socket.close();
-		reader.stop();
+		try {
+			socket.close();
+		} catch (Exception x) {
+			x.printStackTrace();
+		}
+		try {
+			reader.stop();
+		} catch (Exception x) {
+			x.printStackTrace();
+		}
 		reader = null;
 		
 		//TODO: issue disconnects to all waiting callbacks.
+		for (StrestRequestCallback cb : this.callbacks.values()) {
+			cb.error(new TrendrrDisconnectedException("Connection Broken"));
+		}
+		this.callbacks.clear();
 	}
 	
 	/**
@@ -89,6 +102,9 @@ public class StrestClient {
 	 */
 	public synchronized void sendRequest(StrestRequest request, StrestRequestCallback callback){
 		try {
+			if (this.socket == null || this.socket.isClosed()) {
+				throw new IOException("Not connected");
+			}
 			request.setHeaderIfAbsent(StrestHeaders.Names.STREST_TXN_ACCEPT, StrestHeaders.Values.MULTI);
 			ByteBuffer buf = request.getBytesAsBuffer();
 			if (callback != null)
@@ -148,6 +164,11 @@ public class StrestClient {
 	 */
 	void error(TrendrrException e) {
 		//UMM, what should we do here I wonder?
-		log.warn("Caught", e);
+		log.warn("Error from reader Caught", e);
+		
+		if (e instanceof TrendrrDisconnectedException) {
+			log.warn("Closing connection!");
+			this.close();
+		}
 	}
 }
