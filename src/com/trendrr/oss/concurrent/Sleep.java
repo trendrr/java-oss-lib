@@ -31,6 +31,11 @@ public class Sleep {
 		millis(seconds * 1000);
 	}
 	public static void millis(long millis) {
+		if (millis < 1) {
+			log.info("Sleep time is negative or 0, skipping");
+			return;
+		}
+		
 		try {
 			Thread.sleep(millis);
 		} catch (Exception x) {
