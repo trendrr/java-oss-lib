@@ -115,6 +115,8 @@ public class SocketChannelWrapper {
 	 * @return
 	 */
 	public boolean hasReads() {
+		if (this.buffer == null)
+			return false;
 		return this.buffer.hasCallbacksWaiting();
 	}
 
