@@ -4,6 +4,7 @@
 package com.trendrr.oss.casting;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -20,6 +21,9 @@ import com.trendrr.oss.TypeCast;
  */
 public class DateCaster extends TypeCaster<Date> {
 
+	public static final DateFormat RSS_DATE_FORMAT =
+		new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
+	
 	/* (non-Javadoc)
 	 * @see com.trendrr.oss.casting.TypeCaster#cast(java.lang.Class, java.lang.Object)
 	 */
@@ -48,6 +52,13 @@ public class DateCaster extends TypeCaster<Date> {
 			return IsoDateUtil.parse(str);
 		} catch (Exception x) {
 			//swallow
+		}
+		
+		try {
+			//try RSS 2.0 standard
+			return RSS_DATE_FORMAT.parse(str);
+		} catch (Exception x) {
+			
 		}
 		
 		try {
