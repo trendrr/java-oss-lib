@@ -55,7 +55,7 @@ public class SelectorThread implements Runnable{
 	
 	private ConcurrentLinkedQueue<SocketChannelWrapper> changeQueue = new ConcurrentLinkedQueue<SocketChannelWrapper>();
 
-	
+	private ConcurrentLinkedQueue<SocketChannelWrapper> registerQueue = new ConcurrentLinkedQueue<SocketChannelWrapper>();
 	public SelectorThread() throws IOException {
 		this.selector = SelectorProvider.provider().openSelector();
 	}
@@ -63,8 +63,8 @@ public class SelectorThread implements Runnable{
 	public void register(SocketChannelWrapper wrapper) throws IOException {
 		this.channels.put(wrapper.getChannel(), wrapper);
 		wrapper.getChannel().configureBlocking(false); //set to non-blocking
-//		log.info("REGISTER OP READ!");
-		wrapper.getChannel().register(this.selector, SelectionKey.OP_READ); //set our interest to reads
+		registerQueue.add(wrapper);
+		this.selector.wakeup();
 	}
 	
 	/**
@@ -85,6 +85,13 @@ public class SelectorThread implements Runnable{
 		while (true) {
 			SelectionKey key = null;
 			try {
+				
+				//register any sockets that need it.
+				while(!this.registerQueue.isEmpty()) {
+					SocketChannelWrapper wrapper = registerQueue.poll();
+					//keep key on case of disconnect.
+					key = wrapper.getChannel().register(this.selector, SelectionKey.OP_READ); //set our interest to reads
+				}
 				
 				//Process any op changes.
 				while(!this.changeQueue.isEmpty()) {
