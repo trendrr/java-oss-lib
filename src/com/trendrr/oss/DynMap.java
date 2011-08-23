@@ -122,6 +122,19 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		return super.put(key, val);
 	}
 	
+	/**
+	 * Puts the value if and only if the key and val are not null.
+	 * 
+	 * @param key
+	 * @param val
+	 * @return
+	 */
+	public void putIfNotNull(String key, Object val) {
+		if (key == null || val == null)
+			return;
+		put(key, val);
+	}
+	
 	public void removeAll(String...keys) {
 		for (String k : keys) {
 			this.remove(k);
