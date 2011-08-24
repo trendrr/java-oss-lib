@@ -112,6 +112,20 @@ public class RequestBuilder {
 	}
 	
 	/**
+	 * Adds params to content section as json string, with mime type set to json
+	 * @param params
+	 * @return
+	 */
+	public RequestBuilder paramsJSONPOST(DynMap params){
+		String json = params.toJSONString();
+		log.info(json);
+		if(json == null || json.isEmpty()){
+			return this;
+		}
+		return this.contentUTF8("applciation/json", json);
+	}
+	
+	/**
 	 * encodes the text as utf8 and swallows and logs a warning for any character encoding exceptions
 	 * @param mimeType
 	 * @param content
