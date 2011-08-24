@@ -105,6 +105,18 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	}
 	
 	/**
+	 * just like putAll from map, will return if passed in map is null instead of throwing NPE
+	 */
+	@Override
+	public void putAll(Map mp) {
+		if (mp == null)
+			return;
+		for (Object k : mp.keySet()) {
+			this.put(k.toString(), mp.get(k));
+		}
+	}
+	
+	/**
 	 * like the regular putAll but only copies the 
 	 * passed in keys
 	 * @param mp
