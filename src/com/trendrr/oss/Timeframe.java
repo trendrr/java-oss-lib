@@ -23,7 +23,7 @@ import com.trendrr.oss.concurrent.LazyInit;
  * @author dustin
  *
  */
-public enum TimeFrame {
+public enum Timeframe {
 	
 	
 	MILLISECONDS("milliseconds"),
@@ -35,9 +35,9 @@ public enum TimeFrame {
 	MONTHS("months"),
 	YEARS("years");
 	
-	protected static Log log = LogFactory.getLog(TimeFrame.class);
+	protected static Log log = LogFactory.getLog(Timeframe.class);
 	
-	TimeFrame(String str) {
+	Timeframe(String str) {
 		
 	}
 	
@@ -298,87 +298,87 @@ public enum TimeFrame {
 	 * @param end
 	 * @return
 	 */
-	public static TimeFrame instance(Date start, Date end) {
+	public static Timeframe instance(Date start, Date end) {
 		long millis = Math.abs(end.getTime() - start.getTime());
 		
 		long amount = 1000;
 		if (millis < amount) {
-			return TimeFrame.MILLISECONDS;
+			return Timeframe.MILLISECONDS;
 		}
 		amount *= 60;
 		if (millis < amount) {
-			return TimeFrame.SECONDS;
+			return Timeframe.SECONDS;
 		}
 		
 		amount *= 60;
 		if (millis < amount) {
-			return TimeFrame.MINUTES;
+			return Timeframe.MINUTES;
 		}
 		
 		amount *= 24;
 		if (millis < amount) {
-			return TimeFrame.HOURS;
+			return Timeframe.HOURS;
 		}
 		
 		amount *= 7;
 		if (millis < amount) {
-			return TimeFrame.DAYS;
+			return Timeframe.DAYS;
 		}
 		
 		amount *= 4;
 		if (millis < amount) {
-			return TimeFrame.WEEKS;
+			return Timeframe.WEEKS;
 		}
 		
 		amount *= 12;
 		if (millis < amount) {
-			return TimeFrame.MONTHS;
+			return Timeframe.MONTHS;
 		}
-		return TimeFrame.YEARS;
+		return Timeframe.YEARS;
 		
 		
 	}
 	
-	public static TimeFrame instance(String str) {
+	public static Timeframe instance(String str) {
 		String s = str.toLowerCase().trim();
 		if (s.startsWith("mil")) {
-			return TimeFrame.MILLISECONDS;
+			return Timeframe.MILLISECONDS;
 		}
 		if (s.startsWith("sec")) {
-			return TimeFrame.SECONDS;
+			return Timeframe.SECONDS;
 		}
 		if (s.startsWith("min")) {
-			return TimeFrame.MINUTES;
+			return Timeframe.MINUTES;
 		}
 		if (s.startsWith("h") || s.startsWith("hr")) {
-			return TimeFrame.HOURS;
+			return Timeframe.HOURS;
 		}
 		if (s.startsWith("da")) {
-			return TimeFrame.DAYS;
+			return Timeframe.DAYS;
 		}
 		if (s.startsWith("w")) {
-			return TimeFrame.WEEKS;
+			return Timeframe.WEEKS;
 		}
 		if (s.startsWith("month")) {
-			return TimeFrame.MONTHS;
+			return Timeframe.MONTHS;
 		}
 		if (s.startsWith("y")) {
-			return TimeFrame.YEARS;
+			return Timeframe.YEARS;
 		}
 		return null;
 	}
 
-	public int compare(TimeFrame frame) {
+	public int compare(Timeframe frame) {
 		Date tmp = new Date();
 		Date d1 = this.add(tmp, 1);
 		Date d2 = frame.add(tmp, 1);				
 		return d1.compareTo(d2);
 	}
 	
-	public static void sort(List<TimeFrame> timeframes) {
-		Collections.sort(timeframes, new Comparator<TimeFrame>() {
+	public static void sort(List<Timeframe> timeframes) {
+		Collections.sort(timeframes, new Comparator<Timeframe>() {
 			@Override
-			public int compare(TimeFrame o1, TimeFrame o2) {
+			public int compare(Timeframe o1, Timeframe o2) {
 				Date tmp = new Date();
 				Date d1 = o1.add(tmp, 1);
 				Date d2 = o2.add(tmp, 1);				
