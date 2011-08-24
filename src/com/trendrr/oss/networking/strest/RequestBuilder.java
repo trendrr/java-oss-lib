@@ -122,7 +122,7 @@ public class RequestBuilder {
 		if(json == null || json.isEmpty()){
 			return this;
 		}
-		return this.contentUTF8("applciation/json", json);
+		return this.contentUTF8("application/json", json);
 	}
 	
 	/**
