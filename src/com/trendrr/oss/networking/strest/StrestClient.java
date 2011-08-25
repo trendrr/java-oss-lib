@@ -55,6 +55,11 @@ public class StrestClient {
 	
 	
 	public synchronized void connect() throws IOException {
+		if (this.connected.get()) {
+			log.warn("Connect called, but already connected");
+			return;
+		}
+		
 		SocketChannel channel;
 		channel = SocketChannel.open();
 		boolean connected = channel.connect(new InetSocketAddress(this.host, this.port));
@@ -65,6 +70,10 @@ public class StrestClient {
 		this.connected.set(true);
 	}
 	
+	public boolean isConnected() {
+		return this.connected.get();
+	}
+	
 	/**
 	 * closes the connection and cleans up any resources.  
 	 * 
@@ -72,15 +81,18 @@ public class StrestClient {
 	 * 
 	 */
 	public synchronized void close() {
+		this.connected.set(false);
 		try {
 			socket.close();
 		} catch (Exception x) {
-			x.printStackTrace();
+			log.info("Caught", x);
 		}
-		try {
-			reader.stop();
-		} catch (Exception x) {
-			x.printStackTrace();
+		if (reader != null) {
+			try {
+				reader.stop();
+			} catch (Exception x) {
+				log.info("Caught", x);
+			}
 		}
 		reader = null;
 		log.info("Announcing broken connection to callbacks: " + this.callbacks);
@@ -89,6 +101,7 @@ public class StrestClient {
 			cb.error(new TrendrrDisconnectedException("Connection Broken"));
 		}
 		this.callbacks.clear();
+		
 	}
 	
 	/**
