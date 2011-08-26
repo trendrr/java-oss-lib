@@ -353,6 +353,9 @@ public class StringHelper {
      * @return
      */
     public static String trim(String input, String trim) {
+    	if (input == null || trim == null || trim.isEmpty())
+    		return input;
+    	
     	String tmp = input;
     	while(tmp.startsWith(trim)) {
     		tmp = tmp.substring(trim.length());
