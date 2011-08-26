@@ -21,8 +21,9 @@ import com.trendrr.oss.TypeCast;
  */
 public class DateCaster extends TypeCaster<Date> {
 
-	public static final DateFormat RSS_DATE_FORMAT =
-		new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
+	//Note that date formatters are not threadsafe, thus we just keep the format.
+	public static final String RSS_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
+		
 	
 	/* (non-Javadoc)
 	 * @see com.trendrr.oss.casting.TypeCaster#cast(java.lang.Class, java.lang.Object)
@@ -56,7 +57,7 @@ public class DateCaster extends TypeCaster<Date> {
 		
 		try {
 			//try RSS 2.0 standard
-			return RSS_DATE_FORMAT.parse(str);
+			return new SimpleDateFormat(RSS_DATE_FORMAT).parse(str);
 		} catch (Exception x) {
 			
 		}
