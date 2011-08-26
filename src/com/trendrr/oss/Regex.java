@@ -106,6 +106,13 @@ public class Regex {
 		return (m.length() == input.length());
 	}
 	
+	
+	public static String matchLast(String input, String regex, boolean ignoreCase) {
+		List<String> tmp = matchAll(input, regex, ignoreCase);
+		if (tmp == null || tmp.isEmpty())
+			return null;
+		return tmp.get(tmp.size()-1);
+	}
 	public static List<String> matchAll(String input, String regex, boolean ignoreCase) {
 		if (input == null || regex == null)
 			return null;
