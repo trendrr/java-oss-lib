@@ -291,6 +291,10 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		return this.get(DynMap.class, key);
 	}
 	
+	public DynMap getMap(String key, DynMap defaultValue) {
+		return this.get(DynMap.class, key, defaultValue);
+	}
+	
 	/**
 	 * Returns a typed list.  See TypeCast.getTypedList
 	 * 
