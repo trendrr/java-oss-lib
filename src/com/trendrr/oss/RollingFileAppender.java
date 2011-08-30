@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.trendrr.oss.concurrent.LazyInit;
 import com.trendrr.oss.concurrent.Sleep;
 
 
@@ -38,6 +39,7 @@ public class RollingFileAppender {
 	File current = null;
 	Long currentTE = null;
 	FileWriter writer = null;
+	LazyInit init = new LazyInit();
 	
 	public static void main(String ...str) throws Exception {
 		RollingFileAppender appender = new RollingFileAppender(Timeframe.SECONDS, 10, 10, "/home/dustin/Desktop/appenderFiles/testing.log");
@@ -81,37 +83,46 @@ public class RollingFileAppender {
 		 return ((long)((this.currentTE - (this.maxFiles*this.timeframeAmount))/this.timeframeAmount)) * this.timeframeAmount;
 	}
 	
-	protected void init() {
-		//cleans up any old files, and creates the new one.
-		String directory = filename.substring(0, filename.lastIndexOf(File.separator));
-		try {
-			this.newFile();
-			
-			System.out.println(directory);
-			for (File f : FileHelper.listDirectory(new File(directory),false)) {
+	/**
+	 * initializes the appender.  This will be called automatically on the first invocation of append. 
+	 * 
+	 * Subsequent calls to init are simply ignored.
+	 */
+	public void init() {
+		if (this.init.start()) {
+			try {
+				//cleans up any old files, and creates the new one.
+				String directory = filename.substring(0, filename.lastIndexOf(File.separator));
+				this.newFile();
 				
-				String fn = f.getAbsolutePath();
-				if (!fn.endsWith(this.fileExtension) || !fn.startsWith(this.filename)) {
-					continue;
+				System.out.println(directory);
+				for (File f : FileHelper.listDirectory(new File(directory),false)) {
+					
+					String fn = f.getAbsolutePath();
+					if (!fn.endsWith(this.fileExtension) || !fn.startsWith(this.filename)) {
+						continue;
+					}
+					
+					String tmp = fn; 
+					
+					tmp = StringHelper.trim(tmp, this.fileExtension);
+					tmp = tmp.replace(this.filename + "__", ""); 
+					
+					long te = TypeCast.cast(Long.class, tmp);
+					if (te < this.minTE()) {
+						System.out.println("Current TE: " + this.currentTE + " min:  " + this.minTE());
+						System.out.println("DELETE: " + fn);
+						f.delete();
+					}
+					
+					
+					
 				}
-				
-				String tmp = fn; 
-				
-				tmp = StringHelper.trim(tmp, this.fileExtension);
-				tmp = tmp.replace(this.filename + "__", ""); 
-				
-				long te = TypeCast.cast(Long.class, tmp);
-				if (te < this.minTE()) {
-					System.out.println("Current TE: " + this.currentTE + " min:  " + this.minTE());
-					System.out.println("DELETE: " + fn);
-					f.delete();
-				}
-				
-				
-				
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				init.end();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 	
@@ -122,6 +133,7 @@ public class RollingFileAppender {
 	 * @throws Exception 
 	 */
 	public synchronized File getFile() throws Exception {
+		this.init();
 		if (this.toTE(new Date()) != this.currentTE) {
 			this.newFile();
 		} 
