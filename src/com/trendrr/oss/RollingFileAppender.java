@@ -41,6 +41,8 @@ public class RollingFileAppender {
 	FileWriter writer = null;
 	LazyInit init = new LazyInit();
 	
+	static boolean LINUX = System.getProperty("os.name").toLowerCase().contains("linux");
+	
 	public static void main(String ...str) throws Exception {
 		RollingFileAppender appender = new RollingFileAppender(Timeframe.SECONDS, 10, 10, "/home/dustin/Desktop/appenderFiles/testing.log");
 		appender.init();
@@ -142,13 +144,32 @@ public class RollingFileAppender {
 	
 	private void newFile() throws Exception {
 		this.currentTE = this.toTE(new Date());
-		this.current = FileHelper.createNewFile(this.toFilename(this.currentTE));
+		
+		String cur = this.toFilename(this.currentTE);
+		this.current = FileHelper.createNewFile(cur);
 		if (this.writer != null) {
 			this.writer.close();
 		}
 		this.writer = new FileWriter(this.current);
-		
 		new File(this.toFilename(this.minTE())).delete();
+		
+		if (LINUX) {
+			//add link to most recent file.
+			try {
+				new File(this.filename + this.fileExtension).delete();
+			} catch (Exception x) {
+				log.error("Caught", x);
+			}
+			try {
+				Runtime rt=Runtime.getRuntime();
+				Process result=null;
+				String exe=new String("ln"+" "+cur+" "+this.filename + this.fileExtension);
+				result=rt.exec(exe);
+			} catch (Exception x) {
+				log.error("Caught", x);
+			}
+		}
+		
 	}
 	
 	public synchronized void append(String str) throws Exception {
