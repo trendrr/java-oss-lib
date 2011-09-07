@@ -147,6 +147,43 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		put(key, val);
 	}
 	
+	/**
+	 * does a put but will honor the dot operator.  ex:
+	 * 
+	 * put("this.that.val", 0);
+	 * 
+	 * will do:
+	 * 
+	 * {
+	 *   this : {
+	 *   	that : {
+	 *   		val : 0
+	 *   	}
+	 *   }
+	 * }
+	 * @param key
+	 * @param val
+	 */
+	public void putWithDot(String key, Object val) {
+		if (key == null || key.isEmpty())
+			return;
+		
+		String[] keys = key.split("\\.");
+		if (keys.length == 1) {
+			this.put(key, val);
+			return;
+		}
+		DynMap mp = this;
+		for (int i=0; i < keys.length-1; i++) {
+			String k = keys[i];
+			mp.putIfAbsent(k, new DynMap());
+			DynMap tmp = mp.getMap(k);
+			mp.put(k, tmp); //we readd it in case the map needed to be typecasted.
+			mp = tmp;
+		}
+		mp.put(keys[keys.length-1], val);
+	}
+	
 	public void removeAll(String...keys) {
 		for (String k : keys) {
 			this.remove(k);
