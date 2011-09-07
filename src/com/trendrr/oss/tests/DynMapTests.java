@@ -41,11 +41,24 @@ public class DynMapTests {
 				"\"list\" : [ 1,2,3]" +
 			" }");
 		
+		
+		
+		
+		
 		Assert.assertEquals(mp.get(String.class, "map1.key2"), "today");
 		mp.remove("map1");
 		Assert.assertEquals("key=90&list=1&list=2&list=3", mp.toURLString());
 	}
 	
+	@Test
+	public void putDotTest() {
+		DynMap mp = new DynMap();
+		mp.putWithDot("map1.map2.map3.val", 0);
+		
+		mp.putWithDot("map1.map2.val", 10);
+		
+		Assert.assertNotNull(mp.getMap("map1"));
+	}
 	
 	@Test
 	public void outputTest() {
