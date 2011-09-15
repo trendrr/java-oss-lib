@@ -45,4 +45,11 @@ public abstract class LazyInitObject<T> {
 		}
 		return object;
 	}
+	
+	/**
+	 * will reset this object to initialize again (on the next get() method call)
+	 */
+	public void reset() {
+		lock.reset();
+	}
 }
