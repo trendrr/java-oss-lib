@@ -32,7 +32,7 @@ public abstract class LazyInitObject<T> {
 
 	protected Log log = LogFactory.getLog(LazyInitObject.class);
 	
-	AtomicReference<T> object;
+	AtomicReference<T> object = new AtomicReference<T>();
 	LazyInit lock = new LazyInit();
 	
 	public abstract T init();
