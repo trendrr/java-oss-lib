@@ -3,6 +3,8 @@
  */
 package com.trendrr.oss.concurrent;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -30,7 +32,7 @@ public abstract class LazyInitObject<T> {
 
 	protected Log log = LogFactory.getLog(LazyInitObject.class);
 	
-	T object;
+	AtomicReference<T> object;
 	LazyInit lock = new LazyInit();
 	
 	public abstract T init();
@@ -38,12 +40,12 @@ public abstract class LazyInitObject<T> {
 	public T get() {
 		if (lock.start()) {
 			try {
-				this.object = this.init();
+				this.object.set(this.init());
 			} finally {
 				lock.end();
 			}
 		}
-		return object;
+		return object.get();
 	}
 	
 	/**
@@ -51,5 +53,18 @@ public abstract class LazyInitObject<T> {
 	 */
 	public void reset() {
 		lock.reset();
+	}
+	
+	/**
+	 * atomically sets the reference and sets the init to not run.
+	 * @param object
+	 */
+	public void set(T object) {
+		lock.start();
+		try {
+			this.object.set(object);
+		} finally {
+			lock.end();
+		}
 	}
 }
