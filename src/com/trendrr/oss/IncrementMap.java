@@ -5,28 +5,29 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A threadsafe map for maintaining counts of string keys.
  * 
- * Uses AtomicInteger internally, with no synchronization so is a fast as could be.
+ * Uses AtomicLong internally, with no synchronization so is a fast as could be.
  * 
  * @author dan frank
  *
  */
 public class IncrementMap {	
-	ConcurrentHashMap<String, AtomicInteger> inc = new ConcurrentHashMap<String, AtomicInteger>();
+	ConcurrentHashMap<String, AtomicLong> inc = new ConcurrentHashMap<String, AtomicLong>();
 	
 	/**
 	 * Will increment key by amount - adds key to the map if not present
 	 * @param key
 	 * @param amount
 	 */
-	public void inc(String key, int amount) {
+	public void inc(String key, long amount) {
 		if (amount == 0) {
 			return;
 		}
-		this.inc.putIfAbsent(key, new AtomicInteger(0));
+		this.inc.putIfAbsent(key, new AtomicLong(0));
 		this.inc.get(key).addAndGet(amount);
 	}
 	
@@ -34,12 +35,12 @@ public class IncrementMap {
 		this.inc.clear();
 	}
 	
-	public void set(String key, int amount){
-		this.inc.put(key, new AtomicInteger(amount));
+	public void set(String key, long amount){
+		this.inc.put(key, new AtomicLong(amount));
 	}
 	
-	public int get(String key){
-		AtomicInteger gotten = null;
+	public long get(String key){
+		AtomicLong gotten = null;
 		try{
 			gotten = this.inc.get(key);
 		}catch (Exception e){}
@@ -50,8 +51,8 @@ public class IncrementMap {
 		}
 	}
 	
-	public int remove(String key){
-		AtomicInteger was = this.inc.remove(key);
+	public long remove(String key){
+		AtomicLong was = this.inc.remove(key);
 		return (was != null) ? was.get() : 0;
 	}
 	
