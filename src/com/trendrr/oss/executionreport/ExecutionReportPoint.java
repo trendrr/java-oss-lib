@@ -20,17 +20,16 @@ import com.trendrr.oss.Timeframe;
 public class ExecutionReportPoint {
 
 	protected Log log = LogFactory.getLog(ExecutionReportPoint.class);
-	String fullname = null;
+	ExecutionReportPointId id = new ExecutionReportPointId();
+
 	long millis = 0l;
 	long val = 0l;
-	Date timestamp;
 	
-	
-	public String getFullname() {
-		return fullname;
+	public ExecutionReportPointId getId() {
+		return id;
 	}
-	public void setFullname(String fullname) {
-		this.fullname = fullname;
+	public void setId(ExecutionReportPointId id) {
+		this.id = id;
 	}
 	public long getMillis() {
 		return millis;
@@ -44,14 +43,23 @@ public class ExecutionReportPoint {
 	public void setVal(long val) {
 		this.val = val;
 	}
+	
+	public String getFullname() {
+		return this.id.getFullname();
+	}
+	
+	public void setFullname(String fullname) {
+		this.id.setFullname(fullname);
+	}
+	
 	public Date getTimestamp() {
-		return timestamp;
+		return this.id.getTimestamp();
 	}
 	public void setTimestamp(Date timestamp) {
-		this.timestamp = timestamp;
+		this.id.setTimestamp(timestamp);
 	}
 	@Override
 	public String toString() {
-		return fullname + " | val:" + val + " | millis:" + millis + " | ts:" + IsoDateUtil.getIsoDate(timestamp);
+		return this.id.getFullname() + " | val:" + val + " | millis:" + millis + " | ts:" + IsoDateUtil.getIsoDate(this.id.getTimestamp());
 	}
 }

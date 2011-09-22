@@ -52,8 +52,10 @@ public abstract class AbstractExecutionReportDBConnector implements
 			}
 			for (Timeframe f : this.timeframes) {
 				try {
-					byte[] id = this.toId(f, t, p.getFullname());
-					this.inc(id, f, t, p.getVal(), p.getMillis());
+					ExecutionReportPointId id = ExecutionReportPointId.instance(
+							p.getFullname(), p.getTimestamp(), f);
+					
+					this.inc(id, p.getVal(), p.getMillis());
 				} catch (Exception x) {
 					log.error("Caught", x);
 				}
@@ -63,16 +65,6 @@ public abstract class AbstractExecutionReportDBConnector implements
 		}
 		System.out.println("**** DONE SAVING: " + report.getName());
 	}
-
-	protected byte[] toId(Timeframe frame, Date timestamp, String key) throws Exception {
-		StringBuilder id = new StringBuilder();
-		id.append(frame.toTrendrrEpoch(timestamp));
-		id.append("::");
-		id.append(frame);
-		id.append("::");
-		id.append(key);
-		return StringHelper.sha1(id.toString().getBytes("utf8"));
-	}
 	
 	/**
 	 * saves, database implementations should just override this method and can be satisfied.
@@ -80,14 +72,14 @@ public abstract class AbstractExecutionReportDBConnector implements
 	 * @param val
 	 * @param millis
 	 */
-	protected abstract void inc(byte[] id, Timeframe frame, Date timestamp, long val, long millis);
+	protected abstract void inc(ExecutionReportPointId id, long val, long millis);
 	
 	/**
 	 * load points based on id.  any db implimentation should implement this method.
 	 * @param ids
 	 * @return
 	 */
-	protected abstract List<ExecutionReportPoint> load(List<byte[]> ids);
+	protected abstract List<ExecutionReportPoint> load(List<ExecutionReportPointId> ids);
 	
 	protected int maxItems = 500; 
 	protected ConcurrentHashMap<String, Collection<String>> childrenCache = new ConcurrentHashMap<String,Collection<String>>();
@@ -131,11 +123,11 @@ public abstract class AbstractExecutionReportDBConnector implements
 			Date end, Timeframe timeframe) {
 		int startTE = timeframe.toTrendrrEpoch(start).intValue();
 		int endTE = timeframe.toTrendrrEpoch(end).intValue();
-		List<byte[]> ids = new ArrayList<byte[]> ();
+		List<ExecutionReportPointId> ids = new ArrayList<ExecutionReportPointId> ();
 		for (int te = startTE; te <= endTE; te++) {
 			Date timestamp = timeframe.fromTrendrrEpoch(te);
 			try {
-				byte[] id = this.toId(timeframe, timestamp, fullname);
+				ExecutionReportPointId id = ExecutionReportPointId.instance(fullname, timestamp, timeframe);
 				ids.add(id);
 			} catch (Exception x) {
 				log.error("Caught", x);
