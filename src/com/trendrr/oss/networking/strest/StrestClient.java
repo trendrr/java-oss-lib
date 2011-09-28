@@ -140,7 +140,7 @@ public class StrestClient {
 			if (!this.connected.get()) {
 				throw new TrendrrDisconnectedException("Strest Client is not connected!");
 			}
-			request.setHeader(StrestHeaders.Names.STREST_TXN_ACCEPT, StrestHeaders.Values.SINGLE);
+			request.setHeaderIfAbsent(StrestHeaders.Names.STREST_TXN_ACCEPT, StrestHeaders.Values.SINGLE);
 			StrestSynchronousRequest sr = new StrestSynchronousRequest();
 			this.sendRequest(request, sr);
 			return sr.awaitResponse();
