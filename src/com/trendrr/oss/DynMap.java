@@ -363,7 +363,10 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	 * 
 	 * each successive map will override any properties in the one before it. 
 	 * 
+	 * this works recursively, so properties in embedded maps are extended instead of overwritten.
+	 * 
 	 * Last map in the params is considered the most important one.
+	 * 
 	 * 
 	 * 
 	 * @param map1
@@ -375,12 +378,48 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 			return this;
 		
 		DynMap mp1 = DynMapFactory.instance(map1);
-		this.putAll(mp1);
+		
+		if (mp1 == null)
+			return this;
+		
+		extend(this, mp1);
 		for (Object m : maps) {
-			this.putAll(DynMapFactory.instance(m));
+			extend(this, DynMapFactory.instance(m));
 		}
 		return this;
 	}
+	
+	/**
+	 * updates the mp1 map inline, recursively extends the map
+	 * @param mp1
+	 * @param mp2
+	 * @return
+	 */
+	private static DynMap extend(DynMap mp1, DynMap mp2) {
+		if (mp2 == null)
+			return mp1;
+		
+		for (String key : mp2.keySet()) {
+			if (mp1.containsKey(key)) {
+				//need to check if this is a map.
+				DynMap mpA = mp1.getMap(key);
+				if (mpA != null && !mpA.isEmpty()) {
+					DynMap mpB = mp2.getMap(key);
+					if (mpB != null) {
+						mp1.put(key, extend(mpA, mpB));
+						continue;
+					} else {
+						mp1.put(key, mp2.get(key));
+						continue;
+					}
+				}
+			}
+			mp1.put(key, mp2.get(key));
+		}
+		return mp1;
+		
+	}
+	
 	/**
 	 * returns true if the passed in object map is equivelent 
 	 * to this map.  will check members of lists, String, maps, numbers.
