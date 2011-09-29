@@ -77,4 +77,28 @@ public class DynMapTests {
 		Assert.assertEquals("{\"set\":[\"str2\",\"str1\",\"str0\"],\"list\":[\"2str0\",\"2str1\",\"2str2\"]}", mp.toJSONString());
 	}
 	
+	@Test
+	public void extendTest() {
+		DynMap mp1 = new DynMap();
+		
+		mp1.putWithDot("map1.map2.map3.val", 0);
+		mp1.putWithDot("map1.map2.map3.keep", 66);
+		mp1.putWithDot("map1.mapz.sub.devil", 666);
+		
+		
+		DynMap mp2 = new DynMap();
+		mp2.putWithDot("map1.map2.map3.val", 10);
+		mp1.putWithDot("map1.mapz", 777);
+		
+		mp1.extend(mp2);
+		System.out.println(mp1.toJSONString());
+		
+		Assert.assertEquals((int)mp1.getInteger("map1.map2.map3.val"), 10);
+		Assert.assertEquals((int)mp1.getInteger("map1.mapz"), 777);
+		Assert.assertEquals((int)mp1.getInteger("map1.map2.map3.keep"), 66);
+		Assert.assertNull(mp1.get("map1.mapz.sub.devil"));
+		
+		
+	}
+	
 }
