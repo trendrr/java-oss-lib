@@ -93,6 +93,9 @@ public class DynMapTests {
 		mp1.extend(mp2);
 		System.out.println(mp1.toJSONString());
 		
+		//no exception!
+		mp1.extend(null);
+		
 		Assert.assertEquals((int)mp1.getInteger("map1.map2.map3.val"), 10);
 		Assert.assertEquals((int)mp1.getInteger("map1.mapz"), 777);
 		Assert.assertEquals((int)mp1.getInteger("map1.map2.map3.keep"), 66);
