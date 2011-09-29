@@ -382,9 +382,9 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		if (mp1 == null)
 			return this;
 		
-		extend(this, mp1);
+		_extend(this, mp1);
 		for (Object m : maps) {
-			extend(this, DynMapFactory.instance(m));
+			_extend(this, DynMapFactory.instance(m));
 		}
 		return this;
 	}
@@ -395,7 +395,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	 * @param mp2
 	 * @return
 	 */
-	private static DynMap extend(DynMap mp1, DynMap mp2) {
+	private static DynMap _extend(DynMap mp1, DynMap mp2) {
 		if (mp2 == null)
 			return mp1;
 		
@@ -406,7 +406,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 				if (mpA != null && !mpA.isEmpty()) {
 					DynMap mpB = mp2.getMap(key);
 					if (mpB != null) {
-						mp1.put(key, extend(mpA, mpB));
+						mp1.put(key, _extend(mpA, mpB));
 						continue;
 					} else {
 						mp1.put(key, mp2.get(key));
