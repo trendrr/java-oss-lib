@@ -172,6 +172,39 @@ public class StringHelper {
 		}
 		return new String (str);
 	}
+	
+	public static String toHex(byte[] bytes) {
+		StringBuffer hexString = new StringBuffer();
+		for (int i=0;i<bytes.length;i++) {
+			String hex = Integer.toHexString(0xFF & bytes[i]);
+			if (hex.length() == 1) {
+			    // could use a for loop, but we're only dealing with a single byte
+			    hexString.append('0');
+			}
+			hexString.append(hex);
+		}
+		return hexString.toString();
+	}
+	
+	/**
+	 * randomizes a string ordering.  probably could be faster
+	 * @param str
+	 * @return
+	 */
+	public static String shuffle(String str) {
+	    if (str.length()<=1)
+	        return str;
+	 
+	    int split=str.length()/2;
+	 
+	    String temp1=shuffle(str.substring(0,split));
+	    String temp2=shuffle(str.substring(split));
+	 
+	    if (Math.random() > 0.5) 
+	        return temp1 + temp2;
+	    else
+	        return temp2 + temp1;
+    }
 	/**
 	 * Generates a random string of length length,
 	 * containing a-z, A-Z, 0-9
@@ -589,11 +622,14 @@ public class StringHelper {
 	    	byte[] result =  sha.digest( bytes );
 	    	return result;
     	} catch (Exception x) {
-    		x.printStackTrace();
+    		
     	}
     	return null;
     }
     
+    public static String sha1Hex(byte[] bytes) {
+    	return toHex(sha1(bytes));
+    }
     
     private static LazyInit lock = new LazyInit();
     private static SecureRandom prng = null;
