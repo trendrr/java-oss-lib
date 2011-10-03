@@ -56,15 +56,14 @@ public class RollingFileAppender {
 	protected static boolean LINUX = System.getProperty("os.name").toLowerCase().contains("linux");
 	
 	public static void main(String ...str) throws Exception {
-		RollingFileAppender appender = new RollingFileAppender(Timeframe.SECONDS, 10, 10, "/home/dustin/Desktop/appenderFiles/testing.log");
+		RollingFileAppender appender = new RollingFileAppender(Timeframe.SECONDS, 10, 10, "/home/dustin/Desktop/appenderFiles/testing.log", null, true);
 		appender.init();
 		
 		Date start = new Date();
 		for (int i=0; i < 1000000; i++) {
 			appender.append(i + " THIS IS SOMETHING!\n");
-			Sleep.seconds(1);
 		}
-		System.out.println("Wrote in " + (new Date().getTime() - start.getTime()));
+		System.out.println("Wrote 1 million in " + (new Date().getTime() - start.getTime()));
 	}
 	/**
 	 * creates a new appender with no callback and threaded.
@@ -116,7 +115,8 @@ public class RollingFileAppender {
 	}
 	
 	protected long minTE() {
-		 return ((long)((this.currentTE - (this.maxFiles*this.timeframeAmount))/this.timeframeAmount)) * this.timeframeAmount;
+		System.out.println(this.currentTE);
+		return ((long)((this.currentTE - (this.maxFiles*this.timeframeAmount))/this.timeframeAmount)) * this.timeframeAmount;
 	}
 	
 	/**
@@ -129,7 +129,7 @@ public class RollingFileAppender {
 			try {
 				//cleans up any old files, and creates the new one.
 				String directory = filename.substring(0, filename.lastIndexOf(File.separator));
-				System.out.println(directory);
+				this.currentTE = this.toTE(new Date());
 				for (File f : FileHelper.listDirectory(new File(directory),false)) {
 					
 					String fn = f.getAbsolutePath();
@@ -140,6 +140,10 @@ public class RollingFileAppender {
 					String tmp = fn; 
 					
 					tmp = StringHelper.trim(tmp, this.fileExtension);
+					if (!tmp.contains("__")) {
+						continue;
+					}
+					
 					tmp = tmp.replace(this.filename + "__", ""); 
 					
 					long te = TypeCast.cast(Long.class, tmp);
