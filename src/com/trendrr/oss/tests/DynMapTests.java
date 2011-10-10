@@ -91,7 +91,7 @@ public class DynMapTests {
 		mp1.putWithDot("map1.mapz", 777);
 		
 		mp1.extend(mp2);
-		System.out.println(mp1.toJSONString());
+//		System.out.println(mp1.toJSONString());
 		
 		//no exception!
 		mp1.extend(null);
@@ -100,8 +100,13 @@ public class DynMapTests {
 		Assert.assertEquals((int)mp1.getInteger("map1.mapz"), 777);
 		Assert.assertEquals((int)mp1.getInteger("map1.map2.map3.keep"), 66);
 		Assert.assertNull(mp1.get("map1.mapz.sub.devil"));
-		
-		
+	}
+	
+	@Test
+	public void nullTest() {
+		DynMap mp = new DynMap();
+		mp.put("null", null);
+		Assert.assertEquals("{\"null\":null}", mp.toJSONString());
 	}
 	
 }
