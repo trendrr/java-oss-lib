@@ -71,7 +71,7 @@ public class FileHelper {
 	 * @return
 	 */
 	public static String toWindowsFilename(String filename) {
-		return StringHelper.removeAll(filename, ':', '\"', '|', '<', '>', '?');
+		return StringHelper.removeAll(filename, ':', '\"', '|', '<', '>', '?', '*');
 	}
 	
 	public static String getAbsoluteFilename(File file) {
