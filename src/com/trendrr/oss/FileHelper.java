@@ -17,6 +17,11 @@ import java.util.Properties;
  */
 public class FileHelper {
 
+	public static boolean LINUX = System.getProperty("os.name").toLowerCase().contains("linux");
+	public static boolean WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
+	public static boolean MAC = System.getProperty("os.name").toLowerCase().contains("mac");
+	
+	
 	public static double bytesToGigs(long bytes) {
 		return bytes / 1073741824l;
 	}
@@ -45,6 +50,7 @@ public class FileHelper {
 	 * @return
 	 */
 	public static InputStream fileStream(String filename) throws Exception {
+		filename = toSystemDependantFilename(filename);
 		//try to load it from the jar.	
 		InputStream stream = ClassLoader.getSystemResourceAsStream(filename);
     	if (stream == null) {
@@ -57,6 +63,15 @@ public class FileHelper {
 	
 	public static String toSystemDependantFilename(String filename) {
 		return filename.replace('/', File.separatorChar);
+	}
+	
+	/**
+	 * cleans up any illegal characters for windows 
+	 * @param filename
+	 * @return
+	 */
+	public static String toWindowsFilename(String filename) {
+		return StringHelper.removeAll(filename, ':', '\"', '|', '<', '>', '?');
 	}
 	
 	public static String getAbsoluteFilename(File file) {
@@ -142,6 +157,7 @@ public class FileHelper {
 	}
 	
 	public static File createNewFile(String filename) throws Exception {
+		filename = toSystemDependantFilename(filename);
 		createDirectories(filename);
 		File file = new File(filename);
 		file.createNewFile();
