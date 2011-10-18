@@ -4,6 +4,7 @@
 package com.trendrr.oss;
 
 import java.net.URLDecoder;
+import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,6 +18,34 @@ import java.util.logging.Logger;
  */
 public class DynMapFactory {
 	protected static Logger log = Logger.getLogger(DynMapFactory.class.getCanonicalName());
+	
+	/**
+	 * returns a comparator that will compare based on the passed in key
+	 * @return
+	 */
+	public static Comparator<DynMap> comparator(Class cls, String key) {
+		final String k = key;
+		final Class c = cls;
+		return new Comparator<DynMap>() {
+
+			@Override
+			public int compare(DynMap o1, DynMap o2) {
+				Object v1 = o1.get(c, k);
+				Object v2 = o2.get(c, k);
+				if (v1 == null && v2 == null)
+					return 0;
+				if (v2 == null) {
+					return 1;
+				}
+				if (v1 == null) {
+					return -1;
+				}
+				return ((Comparable)v1).compareTo(v2);
+			}
+			
+		};
+	}
+	
 	
 	/**
 	 * Creates a new DynMap instance from the passed in object. 

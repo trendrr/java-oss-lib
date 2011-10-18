@@ -4,6 +4,7 @@
 package com.trendrr.oss.tests;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Logger;
@@ -107,6 +108,34 @@ public class DynMapTests {
 		DynMap mp = new DynMap();
 		mp.put("null", null);
 		Assert.assertEquals("{\"null\":null}", mp.toJSONString());
+	}
+	
+	@Test
+	public void comparableTest() {
+		List<DynMap> maps = new ArrayList<DynMap>();
+		DynMap mp1 = new DynMap();
+		mp1.put("int", 0);
+		mp1.put("string", "zebra");
+		maps.add(mp1);
+		
+		DynMap mp2 = new DynMap();
+		mp2.put("int", 1);
+		mp2.put("string", "yabba");
+		maps.add(mp2);
+		
+
+		DynMap mp3 = new DynMap();
+		mp3.put("int", 2);
+		mp3.put("string", "xylene");
+		maps.add(mp3);
+		
+		Collections.sort(maps, DynMapFactory.comparator(Integer.class, "int"));
+//		System.out.println(maps);
+		Assert.assertEquals(maps.get(0),mp1);
+	
+		Collections.sort(maps, DynMapFactory.comparator(String.class, "string"));
+//		System.out.println(maps);
+		Assert.assertEquals(maps.get(0),mp3);
 	}
 	
 }
