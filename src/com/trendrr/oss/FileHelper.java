@@ -3,6 +3,8 @@
  */
 package com.trendrr.oss;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -10,7 +12,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+import java.io.*;
+import java.util.zip.*;
 /**
  * @author dustin
  *
@@ -63,6 +68,39 @@ public class FileHelper {
 	
 	public static String toSystemDependantFilename(String filename) {
 		return filename.replace('/', File.separatorChar);
+	}
+	
+	/**
+	 * zips the file and save as filename +".zip"
+	 * @param filename
+	 */
+	public static void zip(String filename) throws Exception{
+		int BUFFER = 2048;
+		String fname = toSystemDependantFilename(filename);
+         BufferedInputStream origin = null;
+         FileOutputStream dest = new 
+           FileOutputStream(fname + ".zip");
+         ZipOutputStream out = new ZipOutputStream(new 
+           BufferedOutputStream(dest));
+         //out.setMethod(ZipOutputStream.DEFLATED);
+         byte data[] = new byte[BUFFER];
+         // get a list of files from current directory
+         File in = new File(fname);
+            FileInputStream fi = new 
+              FileInputStream(in);
+            origin = new 
+              BufferedInputStream(fi, BUFFER);
+            ZipEntry entry = new ZipEntry(in.getName());
+            out.putNextEntry(entry);
+            int count;
+            while((count = origin.read(data, 0, 
+              BUFFER)) != -1) {
+               out.write(data, 0, count);
+            }
+            origin.close();
+
+         out.close();
+		
 	}
 	
 	/**
