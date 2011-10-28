@@ -128,7 +128,14 @@ public class RollingFileAppender {
 		if (this.init.start()) {
 			try {
 				//cleans up any old files, and creates the new one.
-				String directory = filename.substring(0, filename.lastIndexOf(File.separator));
+				
+				String directory = System.getProperty("user.dir");
+				if (filename.contains(File.separator)) {
+					directory = filename.substring(0, filename.lastIndexOf(File.separator));
+					if (!directory.startsWith(File.separator)) {
+						directory = System.getProperty("user.dir") + File.separator + directory;
+					}
+				}
 				this.currentTE = this.toTE(new Date());
 				for (File f : FileHelper.listDirectory(new File(directory),false)) {
 					
