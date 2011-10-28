@@ -3,6 +3,7 @@
  */
 package com.trendrr.oss.casting;
 
+import com.trendrr.oss.StringHelper;
 import com.trendrr.oss.TypeCast;
 
 
@@ -24,8 +25,8 @@ public class NumberCaster extends TypeCaster<Number> {
 				Number num = (Number)obj;
 				return this.fromNumber(cls, num);
 			}
-			
-			String str = TypeCast.cast(String.class, obj);
+			//we remove characters that could resonably be associated with a number
+			String str = StringHelper.removeAll(TypeCast.cast(String.class, obj), ' ', ',', '$');
 			
 			if (cls.equals(Long.class)) {
 				return Long.parseLong(str);
