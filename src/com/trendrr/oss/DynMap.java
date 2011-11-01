@@ -105,6 +105,17 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	}
 	
 	/**
+	 * puts the value if the key is absent (or null).
+	 * @param key
+	 * @param val
+	 */
+	public void putIfAbsentWithDot(String key, Object val) {
+		if (this.get(key) == null) {
+			this.putWithDot(key, val);
+		}
+	}
+	
+	/**
 	 * just like putAll from map, will return if passed in map is null instead of throwing NPE
 	 */
 	@Override
@@ -145,6 +156,18 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		if (key == null || val == null)
 			return;
 		put(key, val);
+	}
+	/**
+	 * Puts the value if and only if the key and val are not null.
+	 * Will honor the dot operator of the key
+	 * @param key
+	 * @param val
+	 * @return
+	 */
+	public void putIfNotNullWithDot(String key, Object val) {
+		if (key == null || val == null)
+			return;
+		putWithDot(key, val);
 	}
 	
 	/**
