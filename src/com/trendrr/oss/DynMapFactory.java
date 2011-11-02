@@ -19,6 +19,34 @@ import java.util.logging.Logger;
 public class DynMapFactory {
 	protected static Logger log = Logger.getLogger(DynMapFactory.class.getCanonicalName());
 	
+
+	/**
+	 * returns a comparator that will compare based on the passed in key.
+	 * value is assumed to be a String and case insensitive.
+	 * 
+	 * @return
+	 */
+	public static Comparator<DynMap> comparatorString(String key) {
+		final String k = key;
+		return new Comparator<DynMap>() {
+			@Override
+			public int compare(DynMap o1, DynMap o2) {
+				String v1 = o1.getString(k);
+				String v2 = o2.getString(k);
+				if (v1 == null && v2 == null)
+					return 0;
+				if (v2 == null) {
+					return 1;
+				}
+				if (v1 == null) {
+					return -1;
+				}
+				return v1.toLowerCase().compareTo(v2.toLowerCase());
+			}
+		};
+	}
+	
+	
 	/**
 	 * returns a comparator that will compare based on the passed in key
 	 * @return
