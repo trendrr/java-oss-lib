@@ -382,6 +382,22 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	}
 	
 	/**
+	 * Same as getList only returns an empty typed list, never null.
+	 * @param <T>
+	 * @param cls
+	 * @param key
+	 * @param delimiters
+	 * @return
+	 */
+	public <T> List<T> getListOrEmpty(Class<T> cls, String key, String... delimiters) {
+		List<T> lst = this.getList(cls, key, delimiters);
+		if (lst == null) {
+			return new ArrayList<T>();
+		}
+		return lst;
+	}
+	
+	/**
 	 * same principle as jquery extend.
 	 * 
 	 * each successive map will override any properties in the one before it. 
