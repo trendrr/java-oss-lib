@@ -235,8 +235,11 @@ public class ExecutionReport extends TimerTask {
 			children.put("execution_reports", new TreeSet<String>());
 			children.get("execution_reports").add(this.name);
 			
-			for (String p : children.keySet()) {
-				this.getConfig().getSerializer().saveChildren(p, children.get(p));
+			for (String parent : children.keySet()) {
+				//need to get the date and timeframe of the parent.
+				for (Timeframe frame: this.getConfig().getTimeframes()) {
+					this.getConfig().getSerializer().saveChildren(parent, children.get(parent), end, frame);
+				}
 			}
 			this.getConfig().getSerializer().save(this, points);
 		} catch (Exception x) {

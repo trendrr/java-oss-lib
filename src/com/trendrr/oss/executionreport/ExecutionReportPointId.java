@@ -34,7 +34,7 @@ public class ExecutionReportPointId {
 		return id;
 	}
 	
-	public byte[] toByteArray() throws Exception {
+	public byte[] toIdBytes() throws Exception {
 		StringBuilder id = new StringBuilder();
 		id.append(frame.toTrendrrEpoch(timestamp));
 		id.append("::"); 
@@ -42,9 +42,11 @@ public class ExecutionReportPointId {
 		id.append("::");
 		id.append(this.fullname);
 		return StringHelper.sha1(id.toString().getBytes("utf8"));
-		
 	}
 	
+	public String toIdString() throws Exception {
+		return StringHelper.toHex(this.toIdBytes());
+	}
 	public String getFullname() {
 		return fullname;
 	}

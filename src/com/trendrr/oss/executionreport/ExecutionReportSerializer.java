@@ -22,14 +22,16 @@ public interface ExecutionReportSerializer {
 
 	public void save(ExecutionReport report, List<ExecutionReportPoint> points);
 	
-	public void saveChildren(String parentFullname, Collection<String> childrenFullnames);
+	public void saveChildren(String parentFullname, Collection<String> childrenFullnames, Date date, Timeframe timeframe);
 	/**
 	 * should return the fullnames of the next children
 	 * @param parentFullname
 	 * @return
 	 */
-	public List<String> findChildren(String parentFullname);
+	public List<String> findChildren(String parentFullname, Date date, Timeframe timeframe);
 	
 	public List<ExecutionReportPoint> load(String fullname, Date start, Date end, Timeframe timeframe);
+	
+	public List<ExecutionReportChildPoints> loadChildren(String fullname, Date start, Date end, Timeframe timeframe);
 	
 }

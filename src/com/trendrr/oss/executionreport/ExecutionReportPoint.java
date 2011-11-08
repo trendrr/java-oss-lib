@@ -58,6 +58,14 @@ public class ExecutionReportPoint {
 	public void setTimestamp(Date timestamp) {
 		this.id.setTimestamp(timestamp);
 	}
+	
+	public Timeframe getTimeframe() {
+		return this.id.getTimeframe();
+	}
+	
+	public void setTimeframe(Timeframe frame) {
+		this.id.setTimeframe(frame);
+	}
 	@Override
 	public String toString() {
 		return this.id.getFullname() + " | val:" + val + " | millis:" + millis + " | ts:" + IsoDateUtil.getIsoDate(this.id.getTimestamp());

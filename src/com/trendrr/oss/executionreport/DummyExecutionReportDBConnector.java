@@ -43,21 +43,11 @@ public class DummyExecutionReportDBConnector extends
 	 */
 	@Override
 	public void saveChildList(String parentFullname,
-			Collection<String> childrenFullnames) {
+			Collection<String> childrenFullnames, Date date, Timeframe frame) {
 		
 		System.out.println("SAVING CHILDREN: " + parentFullname + " : " + childrenFullnames);
 
 	}
-
-	/* (non-Javadoc)
-	 * @see com.trendrr.oss.executionreport.AbstractExecutionReportDBConnector#findChildren(java.lang.String)
-	 */
-	@Override
-	public List<String> findChildren(String parentFullname) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 
 	/* (non-Javadoc)
 	 * @see com.trendrr.oss.executionreport.AbstractExecutionReportDBConnector#inc(com.trendrr.oss.executionreport.ExecutionReportPointId, long, long)
@@ -74,6 +64,17 @@ public class DummyExecutionReportDBConnector extends
 	 */
 	@Override
 	protected List<ExecutionReportPoint> load(List<ExecutionReportPointId> ids) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.executionreport.AbstractExecutionReportDBConnector#findChildren(java.lang.String, java.util.Date, com.trendrr.oss.Timeframe)
+	 */
+	@Override
+	public List<String> findChildren(String parentFullname, Date date,
+			Timeframe timeframe) {
 		// TODO Auto-generated method stub
 		return null;
 	}
