@@ -49,7 +49,8 @@ public class DynMapCaster extends TypeCaster<DynMap> {
 			log.info("found toMap method");
 			Map mp = (Map)toMap.invoke(object);
 			return toDynMap((Map)mp);
-			
+		} catch (NoSuchMethodError x) { 
+			//do nothing.
 		} catch (Exception x) {
 			log.info("toMap method didn't work for " + object + " into a DynMap (" + x.getMessage() + ")");
 		}
@@ -57,6 +58,10 @@ public class DynMapCaster extends TypeCaster<DynMap> {
 	}
 	
 	private DynMap toDynMap(Map map) {
+		if (map instanceof DynMap) {
+			return (DynMap)map;
+		}
+		
 		DynMap mp = new DynMap();
 		for (Object key : map.keySet()) {
 			mp.put(key.toString(), map.get(key));
