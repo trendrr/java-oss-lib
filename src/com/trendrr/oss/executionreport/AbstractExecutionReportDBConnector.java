@@ -47,6 +47,9 @@ public abstract class AbstractExecutionReportDBConnector implements
 	 */
 	@Override
 	public void save(ExecutionReport report, List<ExecutionReportPoint> points) {
+		if (points == null || points.isEmpty()) {
+			return;
+		}
 		System.out.println("**** SAVING: " + report.getName());
 		Date ts = new Date();
 		for (ExecutionReportPoint p : points) {

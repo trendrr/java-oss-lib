@@ -44,6 +44,15 @@ public class ExecutionReportPointId {
 		return StringHelper.sha1(id.toString().getBytes("utf8"));
 	}
 	
+	/**
+	 * gets the name (non-qualified)
+	 * @return
+	 */
+	public String getName() {
+		String[] nm = this.getFullname().split("\\.");
+		return nm[nm.length-1];
+	}
+	
 	public String toIdString() throws Exception {
 		return StringHelper.toHex(this.toIdBytes());
 	}

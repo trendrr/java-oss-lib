@@ -4,10 +4,12 @@
 package com.trendrr.oss.executionreport;
 
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.trendrr.oss.DynMap;
 import com.trendrr.oss.IsoDateUtil;
 import com.trendrr.oss.Timeframe;
 
@@ -17,7 +19,7 @@ import com.trendrr.oss.Timeframe;
  * @created Sep 20, 2011
  * 
  */
-public class ExecutionReportPoint {
+public class ExecutionReportPoint implements Comparable<ExecutionReportPoint> {
 
 	protected Log log = LogFactory.getLog(ExecutionReportPoint.class);
 	ExecutionReportPointId id = new ExecutionReportPointId();
@@ -31,6 +33,13 @@ public class ExecutionReportPoint {
 	public void setId(ExecutionReportPointId id) {
 		this.id = id;
 	}
+	
+	public double getAverageMillis() {
+		if (val == 0)
+			return 0d;
+		return (double)millis / (double)val;
+	}
+	
 	public long getMillis() {
 		return millis;
 	}
@@ -46,6 +55,10 @@ public class ExecutionReportPoint {
 	
 	public String getFullname() {
 		return this.id.getFullname();
+	}
+	
+	public String getName() {
+		return this.id.getName();
 	}
 	
 	public void setFullname(String fullname) {
@@ -69,5 +82,35 @@ public class ExecutionReportPoint {
 	@Override
 	public String toString() {
 		return this.id.getFullname() + " | val:" + val + " | millis:" + millis + " | ts:" + IsoDateUtil.getIsoDate(this.id.getTimestamp());
+	}
+	
+	/**
+	 * converts to a map.  useful so we can cast to a dynmap if needed
+	 * @return
+	 */
+	public Map<String, Object> toMap() {
+		DynMap mp = new DynMap();
+		mp.put("name", this.getName());
+		mp.put("fullname", this.getFullname());
+		mp.put("val", this.getVal());
+		mp.put("millis", this.getMillis());
+		mp.put("ave_millis", this.getAverageMillis());
+		mp.put("ts", this.getTimestamp());
+		return mp;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(ExecutionReportPoint o) {
+		int val = this.getTimestamp().compareTo(o.getTimestamp());
+		if (val == 0) {
+			try {
+				return this.getId().toIdString().compareTo(o.getId().toIdString());
+			} catch (Exception e) {
+				log.warn("Caught", e);
+			}
+		}
+		return val;
 	}
 }

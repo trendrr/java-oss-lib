@@ -3,13 +3,17 @@
  */
 package com.trendrr.oss.executionreport;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.trendrr.oss.DynMap;
 import com.trendrr.oss.StringHelper;
 
 
@@ -69,5 +73,20 @@ public class ExecutionReportChildPoints extends ExecutionReportPoint{
 		}
 		return str.toString();
 		
+	}
+	
+	/**
+	 * converts to a map.  useful so we can cast to a dynmap if needed
+	 * @return
+	 */
+	@Override
+	public Map<String, Object> toMap() {
+		Map<String,Object> mp = super.toMap();
+		List<Map<String,Object>> children = new ArrayList<Map<String,Object>>();
+		for (ExecutionReportPoint p : this.points.values()) {
+			children.add(p.toMap());
+		}
+		mp.put("children", children);
+		return mp;
 	}
 }
