@@ -48,7 +48,7 @@ public class RollingFileAppender {
 	protected LazyInit init = new LazyInit();
 	
 	protected AtomicReference<RollingFileCallback> callback = new AtomicReference<RollingFileCallback>();
-	
+	protected AtomicReference<Date> date = new AtomicReference<Date>();
 	
 
 	protected RollingFileThread thread = null;
@@ -136,7 +136,7 @@ public class RollingFileAppender {
 						directory = System.getProperty("user.dir") + File.separator + directory;
 					}
 				}
-				this.currentTE = this.toTE(new Date());
+				this.currentTE = this.toTE(getDate());
 				for (File f : FileHelper.listDirectory(new File(directory),false)) {
 					
 					String fn = f.getAbsolutePath();
@@ -184,7 +184,7 @@ public class RollingFileAppender {
 	 */
 	public synchronized File getFile() throws Exception {
 		this.init();
-		if (this.toTE(new Date()) != this.currentTE) {
+		if (this.toTE(getDate()) != this.currentTE) {
 			this.newFile();
 		} 
 		return current;
@@ -194,7 +194,7 @@ public class RollingFileAppender {
 		
 		String oldFilename = this.currentFilename;
 		
-		this.currentTE = this.toTE(new Date());
+		this.currentTE = this.toTE(getDate());
 		
 		this.currentFilename = this.toFilename(this.currentTE);
 		this.current = FileHelper.createNewFile(this.currentFilename);
@@ -229,16 +229,21 @@ public class RollingFileAppender {
 	}
 	
 	public synchronized void append(String str) throws Exception {
+		this.append(new Date(), str);
+	}
+	
+	public synchronized void append(Date date, String str) throws Exception {
 		if (str == null)
 			return;
 		if (this.thread != null) {
-			this.thread.append(str);
+			this.thread.append(date, str);
 		} else {
-			this.doAppend(str);
+			this.doAppend(date, str);
 		}
 	}
 	
-	void doAppend(String str) throws Exception {
+	void doAppend(Date date, String str) throws Exception {
+		this.date.set(date);
 		this.getFile();
 		this.writer.append(str);
 		this.writer.flush();
@@ -249,5 +254,16 @@ public class RollingFileAppender {
 	}
 	public void setCallback(RollingFileCallback callback) {
 		this.callback.set(callback);
+	}
+	
+	/**
+	 * gets the date of the most recent append, or NOW
+	 * @return
+	 */
+	protected Date getDate() {
+		Date d = this.date.get();
+		if (d == null)
+			return new Date();
+		return d;
 	}
 }

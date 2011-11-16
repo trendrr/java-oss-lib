@@ -3,6 +3,7 @@
  */
 package com.trendrr.oss.appender;
 
+import java.util.Date;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -25,14 +26,23 @@ class RollingFileThread implements Runnable{
 	
 	public RollingFileThread(RollingFileAppender cacheAppender){
 		this.appender = cacheAppender;
-		this.queue = new LinkedBlockingQueue<String>();
+		this.queue = new LinkedBlockingQueue<AppendItem>();
 	}
 	
 	private RollingFileAppender appender;
-	private LinkedBlockingQueue<String> queue;
+	private class AppendItem {
+		Date d;
+		String c;
+		public AppendItem(Date d, String c) {
+			this.d = d;
+			this.c = c;
+		}
+	}
+	
+	private LinkedBlockingQueue<AppendItem> queue;
 	
 	private int maxQueueSize = 200;
-	private String eofSignal = "rollingfilethreadEOF"; //we use a special queue item to let us know we are done. (Maybe slightly hacky, but it works)
+	private AppendItem eofSignal = new AppendItem(null, "eof"); //we use a special queue item to let us know we are done. (Maybe slightly hacky, but it works)
 	
 	private LazyInit lazyInit = new LazyInit();
 	
@@ -56,7 +66,7 @@ class RollingFileThread implements Runnable{
 				return;
 			}
 			
-			String next = null;
+			AppendItem next = null;
 			try {
 				next = this.queue.take();
 			} catch (InterruptedException e) {
@@ -70,7 +80,7 @@ class RollingFileThread implements Runnable{
 			}
 			
 			try {
-				this.appender.doAppend(next);
+				this.appender.doAppend(next.d, next.c);
 			} catch (Exception e) {
 				this.exception(e);
 			}
@@ -90,7 +100,7 @@ class RollingFileThread implements Runnable{
 		}
 	}
 	
-	public void append(String s){
+	public void append(Date d, String s){
 		if (this.stopped.get()) {
 			Exception e = new TrendrrIOException("This file appendar is no longer active.  Dropping this task: \n\n" + s);
 			this.exception(e);
@@ -105,7 +115,9 @@ class RollingFileThread implements Runnable{
 		
 		this.startThreadIfNeeded();
 		try {
-			this.queue.put(s);
+			if (d == null)
+				d = new Date();
+			this.queue.put(new AppendItem(d, s));
 		} catch (InterruptedException e) {
 			this.exception(e);
 		}
