@@ -56,7 +56,7 @@ public class RollingFileAppender {
 	protected static boolean LINUX = System.getProperty("os.name").toLowerCase().contains("linux");
 	
 	public static void main(String ...str) throws Exception {
-		RollingFileAppender appender = new RollingFileAppender(Timeframe.SECONDS, 10, 10, "/home/dustin/Desktop/appenderFiles/testing.log", null, true);
+		RollingFileAppender appender = new RollingFileAppender(Timeframe.MINUTES, 10, 10, "/home/dustin/Desktop/appenderFiles/testing.log", null, true);
 		appender.init();
 		
 		Date start = new Date();
@@ -115,7 +115,7 @@ public class RollingFileAppender {
 	}
 	
 	protected long minTE() {
-		System.out.println(this.currentTE);
+//		System.out.println(this.currentTE);
 		return ((long)((this.currentTE - (this.maxFiles*this.timeframeAmount))/this.timeframeAmount)) * this.timeframeAmount;
 	}
 	
@@ -155,8 +155,8 @@ public class RollingFileAppender {
 					
 					long te = TypeCast.cast(Long.class, tmp);
 					if (te < this.minTE()) {
-						System.out.println("Current TE: " + this.currentTE + " min:  " + this.minTE());
-						System.out.println("DELETE: " + fn);
+//						System.out.println("Current TE: " + this.currentTE + " min:  " + this.minTE());
+//						System.out.println("DELETE: " + fn);
 						this.delete(f);
 					}
 				}
@@ -201,7 +201,7 @@ public class RollingFileAppender {
 		if (this.writer != null) {
 			this.writer.close();
 		}
-		this.writer = new FileWriter(this.current);
+		this.writer = new FileWriter(this.current, true);
 		this.delete(new File(this.toFilename(this.minTE())));
 		
 		if (LINUX) {
@@ -232,6 +232,17 @@ public class RollingFileAppender {
 		this.append(new Date(), str);
 	}
 	
+	/**
+	 * appends to the file with a trailing line break
+	 * @param str
+	 * @throws Exception
+	 */
+	public synchronized void appendLine(String str) throws Exception {
+		this.appendLine(new Date(), str);
+	}
+	
+	
+	
 	public synchronized void append(Date date, String str) throws Exception {
 		if (str == null)
 			return;
@@ -240,6 +251,10 @@ public class RollingFileAppender {
 		} else {
 			this.doAppend(date, str);
 		}
+	}
+	
+	public synchronized void appendLine(Date date, String str) throws Exception {
+		this.append(date, str + "\n");
 	}
 	
 	void doAppend(Date date, String str) throws Exception {
