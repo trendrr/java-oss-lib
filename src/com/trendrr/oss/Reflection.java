@@ -18,12 +18,17 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 /**
  * @author dustin
  *
  */
 public class Reflection {
+	
+	protected static Log log = LogFactory.getLog(Reflection.class);
 	
 	public static void setter(Object obj, String name, Object input) {
 		try {
@@ -280,7 +285,11 @@ public class Reflection {
                             && e.getName().endsWith(".class") && !e.getName().contains("$")){
                             String className = 
                                     e.getName().replace("/",".").substring(0,e.getName().length() - 6);
-                            classes.add(Class.forName(className));
+                            try {
+                            	classes.add(Class.forName(className));
+                            } catch (java.lang.NoClassDefFoundError ex) {
+                            	log.warn("Caught and swallowed: ", ex);
+                            }
                         }
                     }
                 }else
