@@ -103,15 +103,18 @@ public class Reflection {
 	 * @return
 	 */
 	public static Object getter(Object obj, String name) {
+		log.warn("Trying to get getter: " + name + " for " + obj);
 		try {
 			if (!name.startsWith("get")) {
 				name =  "get" + StringHelper.capitalize(name);
 			}
 			return obj.getClass().getMethod(name).invoke(obj);
-		} catch (NoSuchMethodException x) {
+		} catch (java.lang.NoClassDefFoundError ex) {
+        	log.warn("Caught and swallowed (likely an unresolved dependancy) while trying to use getter: " + name, ex);
+        } catch (NoSuchMethodException x) {
 //			x.printStackTrace();
-		} catch (Exception x) {
-//			log.info("Caught", x);
+		} catch (Throwable x) {
+			log.info("Caught and swalled (trying to use getter: " + name + ")", x);
 		}
 		return null;
 	}
@@ -145,7 +148,7 @@ public class Reflection {
 			Constructor<T> cstr = cls.getConstructor(paramTypes);
 			T instance = (T)cstr.newInstance(params);
 			return instance;
-		} catch (Exception x) {
+		} catch (Throwable x) {
 //			log.info("Caught Pie", x);
 //			x.printStackTrace();
 		}
@@ -171,8 +174,8 @@ public class Reflection {
 			}
 //			log.info("returning instances: " + instances);
 			return instances;
-		} catch (Exception x) {
-//			log.info("Caught Poop", x);
+		} catch (Throwable x) {
+//			log.info("Caught", x);
 		}
 		return null;
 	}
@@ -188,10 +191,16 @@ public class Reflection {
 	 * @throws Exception
 	 */
 	public static <T> T defaultInstance(Class<T> cls, String className) throws Exception {
+		try {
 		Class newcls = Class.forName(className);
 		Constructor<T> cstr = newcls.getConstructor();
 		T instance = (T)cstr.newInstance();
 		return instance;
+		} catch (Exception x) {
+			throw x;
+		} catch (Throwable x) {
+			throw new Exception(x);
+		}
 	}
 	
 	/**
@@ -204,30 +213,48 @@ public class Reflection {
 	 * @throws Exception
 	 */
 	public static <T> List<T> defaultInstances(Class<T> cls, String packageName, boolean recur) throws Exception {
-		List<Class> classes = findClasses(packageName, recur);
-		List<T> instances = new ArrayList<T>();
-		for (Class c : classes) {
-			if (c.isInterface() || Modifier.isAbstract( c.getModifiers() )) {
-				//skipping
-				continue;
+		try {
+			List<Class> classes = findClasses(packageName, recur);
+			List<T> instances = new ArrayList<T>();
+			for (Class c : classes) {
+				if (c.isInterface() || Modifier.isAbstract( c.getModifiers() )) {
+					//skipping
+					continue;
+				}
+				if (cls.isAssignableFrom(c)) {
+					instances.add((T)defaultInstance(c));
+				}
 			}
-			if (cls.isAssignableFrom(c)) {
-				instances.add((T)defaultInstance(c));
-			}
+			return instances;
+		} catch (Exception x) {
+			throw x;
+		} catch (Throwable x) {
+			throw new Exception(x);
 		}
-		return instances;
 	}
 	
 	public static <T> T defaultInstance(Class<T> cls) throws Exception {
-		Constructor<T> cstr = cls.getConstructor();
-		T instance = (T)cstr.newInstance();
-		return instance;
+		try {
+			Constructor<T> cstr = cls.getConstructor();
+			T instance = (T)cstr.newInstance();
+			return instance;
+		} catch (Exception x) {
+			throw x;
+		} catch (Throwable x) {
+			throw new Exception(x);
+		}
 	}
 	
 	public static Object defaultInstance(String className) throws Exception {
-		Class newcls = Class.forName(className);
-		Constructor cstr = newcls.getConstructor();
-		return cstr.newInstance();
+		try {
+			Class newcls = Class.forName(className);
+			Constructor cstr = newcls.getConstructor();
+			return cstr.newInstance();
+		} catch (Exception x) {
+			throw x;
+		} catch (Throwable x) {
+			throw new Exception(x);
+		}
 	}
 	
 	/**
@@ -288,7 +315,7 @@ public class Reflection {
                             try {
                             	classes.add(Class.forName(className));
                             } catch (java.lang.NoClassDefFoundError ex) {
-                            	log.warn("Caught and swallowed: ", ex);
+                            	log.warn("Caught and swallowed (likely an unresolved dependancy) while trying to add: " + className, ex);
                             }
                         }
                     }
