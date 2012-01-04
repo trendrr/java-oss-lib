@@ -18,7 +18,7 @@ import org.apache.commons.logging.LogFactory;
  * @created Dec 6, 2010
  * 
  */
-public abstract class ReinitObject<T> {
+public abstract class ReinitObject<T> implements Initializer<T>{
 
 	protected Log log = LogFactory.getLog(ReinitObject.class);
 	
@@ -28,8 +28,6 @@ public abstract class ReinitObject<T> {
 	public ReinitObject(long millisBetweenInit) {
 		lock = new PeriodicLock(0, millisBetweenInit);
 	}
-	
-	public abstract T init();
 	
 	public T get() {
 		if (ref.get() == null) {
