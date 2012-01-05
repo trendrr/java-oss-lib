@@ -24,10 +24,23 @@ public class TrendrrCacheStore {
 
 	protected Log log = LogFactory.getLog(TrendrrCacheStore.class);
 	
-	ConcurrentHashMap<String, TrendrrCache> caches = new ConcurrentHashMap<String, TrendrrCache>();
-	ConcurrentHashMap<String, LazyInit> cacheLocks = new ConcurrentHashMap<String, LazyInit>();
+	protected ConcurrentHashMap<String, TrendrrCache> caches = new ConcurrentHashMap<String, TrendrrCache>();
+	protected ConcurrentHashMap<String, LazyInit> cacheLocks = new ConcurrentHashMap<String, LazyInit>();
 	
+	protected static TrendrrCacheStore instance = new TrendrrCacheStore();
+	/**
+	 * Singleton instance.  Yeah, thats right, an f'in singleton. 
+	 * @return
+	 */
+	public static TrendrrCacheStore instance() {
+		return instance;
+	}
 	
+	/**
+	 * adds a cache to the store.
+	 * @param key
+	 * @param cache
+	 */
 	public void addCache(String key, TrendrrCache cache) {
 		this.caches.put(key, cache);
 	}
@@ -53,7 +66,8 @@ public class TrendrrCacheStore {
 		if (lock.start()) {
 			try {
 				c = initializer.init();
-				caches.put(key, c);
+				if (c != null)
+					caches.put(key, c);
 			} finally {
 				lock.end();
 			}

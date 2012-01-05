@@ -133,6 +133,11 @@ public abstract class TrendrrCache {
 		return this._get(key);
 	}
 	
+	public Collection<Object> getMulti(Collection<String> keys) {
+		this.init();
+		return this._getMulti(keys);
+	}
+	
 	public void delete(String key) {
 		this.init();
 		this._del(key);
