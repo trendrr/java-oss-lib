@@ -6,6 +6,7 @@ package com.trendrr.oss.cache;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -60,7 +61,7 @@ public abstract class TrendrrCache {
 	 * @param keys
 	 * @return
 	 */
-	protected abstract Collection<Object> _getMulti(Collection<String> keys);
+	protected abstract Map<String, Object> _getMulti(Collection<String> keys);
 	
 	/**
 	 * increment a key.
@@ -133,7 +134,7 @@ public abstract class TrendrrCache {
 		return this._get(key);
 	}
 	
-	public Collection<Object> getMulti(Collection<String> keys) {
+	public Map<String, Object> getMulti(Collection<String> keys) {
 		this.init();
 		return this._getMulti(keys);
 	}
