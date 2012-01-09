@@ -33,6 +33,9 @@ public class TrendrrCacheItem {
 	}
 	
 	private byte[] bytes = new byte[0];
+	
+	private DynMap metadata = null;
+	
 	public byte[] getBytes() {
 		return bytes;
 	}
@@ -49,13 +52,17 @@ public class TrendrrCacheItem {
 		this.metadata = metadata;
 	}
 
-	DynMap metadata = new DynMap();
+	
 	
 	
 	public byte[] serialize() {
 		try {
-			byte[] meta = metadata.toJSONString().getBytes("utf8");
-			int length = meta.length;
+			int length = 0;
+			byte[] meta = new byte[0];
+			if (metadata != null && metadata.size() > 0) {
+				meta = metadata.toJSONString().getBytes("utf8");
+				length = meta.length;
+			}
 			byte[] len = intToByteArray(length);
 			
 			return this.concatAll(len, meta, this.bytes);

@@ -41,4 +41,14 @@ public class TrendrrCacheItemTests {
 		
 		
 	}
+	
+	@Test
+	public void test2() throws UnsupportedEncodingException, TrendrrParseException {
+		TrendrrCacheItem item = TrendrrCacheItem.instance(null, "this is the message".getBytes("utf8"));
+		
+		byte[] bytes = item.serialize();
+		
+		TrendrrCacheItem item2 = TrendrrCacheItem.deserialize(bytes);
+		Assert.assertArrayEquals(bytes, item2.serialize());
+	}
 }
