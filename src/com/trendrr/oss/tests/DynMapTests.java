@@ -110,6 +110,21 @@ public class DynMapTests {
 		Assert.assertEquals("{\"null\":null}", mp.toJSONString());
 	}
 	
+	@Test 
+	public void removeTest() {
+		DynMap mp1 = new DynMap();
+		
+		mp1.putWithDot("map1.map2.map3.val", 0);
+		mp1.putWithDot("map1.map2.map3.keep", 66);
+		mp1.putWithDot("map1.mapz.sub.devil", 666);
+		
+		Assert.assertTrue((Integer)mp1.remove("map1.mapz.sub.devil") == 666);
+		System.out.println(mp1.toJSONString());
+		mp1.remove("map1");
+		Assert.assertTrue(mp1.size() == 0);
+		
+	}
+	
 	@Test
 	public void comparableTest() {
 		List<DynMap> maps = new ArrayList<DynMap>();

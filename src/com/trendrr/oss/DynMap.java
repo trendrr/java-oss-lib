@@ -212,13 +212,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 			this.remove(k);
 		}
 	}
-	
-	@Override
-	public Object remove(Object k) {
-		this.ejectFromCache((String)k);
-		return super.remove(k);
-	}
-	
+		
 	@Override
 	public DynMap clone() {
 		return DynMapFactory.clone(this);
@@ -300,6 +294,34 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		return TypeCast.cast(cls, this.get(key));
 	}
 
+	/**
+	 * Removes key from the mapping.  works with dot operator.
+	 */
+	@Override
+	public Object remove(Object k)
+	{
+		this.ejectFromCache((String)k);
+		String key = (String)k;
+		Object val = super.remove(key);
+		
+		if (val == null && key.contains(".")) {
+			//try to reach into the object..
+			String[] items = key.split("\\.");
+			DynMap cur = this.get(DynMap.class, items[0]);
+			if (cur == null) {
+				return null;
+			}
+			for (int i= 1; i < items.length-1; i++) {				
+				cur = cur.get(DynMap.class, items[i]);
+				
+				if (cur == null)
+					return null;
+			}
+			return cur.remove(items[items.length-1]);
+		}
+		return val;
+	}
+	
 	public <T> T get(Class<T> cls, String key, T defaultValue) {
 		T val = this.get(cls, key);
 		if (val == null )
