@@ -22,11 +22,22 @@ public abstract class ReinitObject<T> implements Initializer<T>{
 
 	protected Log log = LogFactory.getLog(ReinitObject.class);
 	
-	PeriodicLock lock = null;
-	AtomicReference<T> ref = new AtomicReference<T>();
+	private PeriodicLock lock = null;
+	private AtomicReference<T> ref = new AtomicReference<T>();
+	private boolean usePreviousIfNull = false;
 	
 	public ReinitObject(long millisBetweenInit) {
 		lock = new PeriodicLock(0, millisBetweenInit);
+	}
+	
+	/**
+	 * 
+	 * @param millisBetweenInit
+	 * @param usePreviousIfNull if init returns null should we use the old result?
+	 */
+	public ReinitObject(long millisBetweenInit, boolean usePreviousIfNull) {
+		lock = new PeriodicLock(0, millisBetweenInit);
+		this.usePreviousIfNull = usePreviousIfNull;
 	}
 	
 	public T get() {
@@ -43,7 +54,12 @@ public abstract class ReinitObject<T> implements Initializer<T>{
 			// else we return the old results while the new ones are being initialized
 			if (lock.lockOrSkip()) {
 				try {
-					ref.set(this.init());	
+					T val = this.init();
+					if (val != null || !this.usePreviousIfNull) {
+						ref.set(val);	
+					} else {
+//						log.info("Skipping cause this init is null");
+					}
 				} finally {
 					lock.unlock();
 				}
