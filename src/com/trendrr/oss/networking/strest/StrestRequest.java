@@ -170,6 +170,12 @@ public class StrestRequest {
 	@Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
+        
+        try {
+			buf.append(new String(this.encodeHeaders(), "utf8"));
+		} catch (Exception x) {
+			log.warn("Caught", x);
+		}
         return buf.toString();
     }
 }
