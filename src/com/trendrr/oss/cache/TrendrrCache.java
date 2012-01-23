@@ -134,7 +134,7 @@ public abstract class TrendrrCache {
 	 */
 	public void set(String namespace, String key, Object obj, Date expires) {
 		this.init();
-		this._set(this.getKey(key, namespace), obj, expires);
+		this._set(this.getKey(namespace, key), obj, expires);
 		
 	}
 	
@@ -150,6 +150,7 @@ public abstract class TrendrrCache {
 	}
 	
 	protected String getKey(String namespace, String key){
+//		log.info("Getting key from: " + namespace + " " + key );
 		if (namespace != null) {
 			key = namespace + key;
 		}
@@ -160,6 +161,7 @@ public abstract class TrendrrCache {
 				log.warn("Invalid key: " + key, e);
 			}
 		} 
+//		log.info("key: " + key);
 		return key;
 	}
 	
