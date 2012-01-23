@@ -3,8 +3,11 @@
  */
 package com.trendrr.oss.cache;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,7 +16,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.DynMap;
+import com.trendrr.oss.StringHelper;
 import com.trendrr.oss.concurrent.LazyInit;
+import com.trendrr.oss.exceptions.TrendrrInvalidKeyException;
+import com.trendrr.oss.exceptions.TrendrrParseException;
 
 
 /**
@@ -61,7 +67,7 @@ public abstract class TrendrrCache {
 	 * @param keys
 	 * @return
 	 */
-	protected abstract Map<String, Object> _getMulti(Collection<String> keys);
+	protected abstract Map<String, Object> _getMulti(Set<String> keys);
 	
 	/**
 	 * increment a key.
@@ -119,33 +125,157 @@ public abstract class TrendrrCache {
 	}
 	
 	
+	/**
+	 * sets a key given the requested namespace.
+	 * @param namespace
+	 * @param key
+	 * @param obj
+	 * @param expires
+	 */
+	public void set(String namespace, String key, Object obj, Date expires) {
+		this.init();
+		this._set(this.getKey(key, namespace), obj, expires);
+		
+	}
+	
+	/**
+	 * sets the key with the default namespace
+	 * @param namespace
+	 * @param key
+	 * @param obj
+	 * @param expires
+	 */
 	public void set(String key, Object obj, Date expires) {
-		this.init();
-		this._set(key, obj, expires);
+		this.set(null, key, obj, expires);
 	}
 	
+	protected String getKey(String namespace, String key){
+		if (namespace != null) {
+			key = namespace + key;
+		}
+		if (key.length() > 24) {
+			try {
+				key = StringHelper.sha1Hex(key.getBytes("utf8"));
+			} catch (UnsupportedEncodingException e) {
+				log.warn("Invalid key: " + key, e);
+			}
+		} 
+		return key;
+	}
+	
+	/**
+	 * sets the key if and only if the key does not already exist
+	 * @param namespace
+	 * @param key
+	 * @param value
+	 * @param expires
+	 * @return
+	 */
+	public boolean setIfAbsent(String namespace, String key, Object value, Date expires) {
+		this.init();
+		return this._setIfAbsent(this.getKey(namespace, key), value, expires);
+	}
+	
+	/**
+	 * uses the default namespace
+	 * @param key
+	 * @param value
+	 * @param expires
+	 * @return
+	 */
 	public boolean setIfAbsent(String key, Object value, Date expires) {
-		this.init();
-		return this._setIfAbsent(key, value, expires);
+		return this.setIfAbsent(null, key, value, expires);
 	}
 	
-	public Object get(String key) {
+	/**
+	 * Gets the value at the specified namespace and key.
+	 * @param namespace
+	 * @param key
+	 * @return
+	 */
+	public Object get(String namespace, String key) {
 		this.init();
-		return this._get(key);
+		return this._get(this.getKey(namespace, key));
+	}
+	
+	/**
+	 * gets the value from the default namespace.
+	 * @param key
+	 * @return
+	 */
+	public Object get(String key) {
+		return this.get(null, key);
+	}
+	
+	/**
+	 * returns a map of 
+	 * @param namespace
+	 * @param keys
+	 * @return
+	 */
+	public Map<String, Object> getMulti(String namespace, Collection<String> keys) {
+		this.init();
+		
+		/*
+		 * does some copying around here in order to keep with our namespaced keys.
+		 */
+		HashSet<String> k = new HashSet<String>();
+		
+		HashMap<String, String> newKeys = new HashMap<String,String>();
+		
+		for (String key : keys) {
+			String newKey = this.getKey(namespace, key);
+			newKeys.put(newKey, key);
+			k.add(newKey);
+		}
+		Map<String, Object> results =  this._getMulti(k);
+		HashMap<String, Object> newResults = new HashMap<String,Object>();
+		for (String key : results.keySet()) {
+			newResults.put(newKeys.get(key), results.get(key));
+		}
+		return newResults;
 	}
 	
 	public Map<String, Object> getMulti(Collection<String> keys) {
-		this.init();
-		return this._getMulti(keys);
+		return this.getMulti(null, keys);
 	}
 	
+	/**
+	 * deletes the specified key
+	 * @param namespace
+	 * @param key
+	 */
+	public void delete(String namespace, String key) {
+		this.init();
+		this._del(this.getKey(namespace, key));
+	}
+	
+	/**
+	 * 
+	 * @param key
+	 */
 	public void delete(String key) {
-		this.init();
-		this._del(key);
+		this.delete(null, key);
 	}
 	
-	public void inc(String key, Number value) {
+	/**
+	 * increments the specified key
+	 * @param namespace 
+	 * @param key
+	 * @param value
+	 */
+	public void inc(String namespace, String key, Number value) {
 		this.init();
-		this._inc(key, value);
+		this._inc(this.getKey(namespace, key), value);
+	}
+	
+	/**
+	 * 
+	 * @param namespace
+	 * @param key
+	 * @param value
+	 */
+	public void inc(String key, Number value) {
+		this.inc(null, key, value);
 	}
 }
