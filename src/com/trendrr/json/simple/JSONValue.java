@@ -89,6 +89,22 @@ public class JSONValue {
 		return parser.parse(s);
 	}
 	
+	/**
+	 * searches for a registered formatter.
+	 * @param cls
+	 * @return
+	 */
+	private static JSONFormatter findFormatter(Class cls) {
+		while(cls != Object.class) {
+			JSONFormatter formatter = formatters.get(cls);
+			if (formatter != null) {
+				return formatter;
+			}
+			cls = cls.getSuperclass();
+		}
+		return null;
+	}
+	
     /**
      * Encode an object into JSON text and write it to out.
      * <p>
@@ -110,7 +126,7 @@ public class JSONValue {
 		}
 		
 		// check if there is a registered formatter here.
-		JSONFormatter formatter = formatters.get(value.getClass());
+		JSONFormatter formatter = findFormatter(value.getClass());
 		if (formatter != null) {
 			out.write(formatter.toJSONString(value));
 			return;
@@ -191,7 +207,7 @@ public class JSONValue {
 			return "null";
 		
 		// check if there is a registered formatter here.
-		JSONFormatter formatter = formatters.get(value.getClass());
+		JSONFormatter formatter = findFormatter(value.getClass());
 		if (formatter != null) {
 			return formatter.toJSONString(value);
 		}
