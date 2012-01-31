@@ -138,6 +138,32 @@ public class Reflection {
 		}
 		return false;
 	}
+	
+	/**
+	 * gets an instance of the specified class.  cls is assumed to be the base class.  
+	 * @param cls
+	 * @param className
+	 * @param params
+	 * @return
+	 */
+	public static <T> T instance(Class<T> cls, String className, Object ... params ) {
+		try {
+			Class[] paramTypes = new Class[params.length];
+			for (int i=0; i < params.length; i++) {
+				paramTypes[i] = params[i].getClass();
+			}
+			Class newcls = Class.forName(className);
+			Constructor<T> cstr = newcls.getConstructor(paramTypes);
+			T instance = (T)cstr.newInstance(params);
+			return instance;
+		} catch (Throwable x) {
+//			log.info("Caught Pie", x);
+//			x.printStackTrace();
+		}
+		return null;
+		
+	}
+	
 	public static <T> T instance(Class<T> cls, Object ... params ) {
 		try {
 			Class[] paramTypes = new Class[params.length];
