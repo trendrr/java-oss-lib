@@ -34,7 +34,7 @@ public class TrendrrCacheItem {
 	
 	private byte[] bytes = new byte[0];
 	
-	private DynMap metadata = null;
+	private DynMap metadata = new DynMap();
 	
 	public byte[] getBytes() {
 		return bytes;
