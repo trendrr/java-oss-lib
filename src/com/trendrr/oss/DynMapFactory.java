@@ -4,6 +4,8 @@
 package com.trendrr.oss;
 
 import java.net.URLDecoder;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
@@ -20,6 +22,9 @@ public class DynMapFactory {
 	protected static Logger log = Logger.getLogger(DynMapFactory.class.getCanonicalName());
 	
 
+	public static void sort(List<DynMap> maps, Class cls, String key) {
+		Collections.sort(maps, comparator(cls,key));
+	}
 	/**
 	 * returns a comparator that will compare based on the passed in key.
 	 * value is assumed to be a String and case insensitive.
