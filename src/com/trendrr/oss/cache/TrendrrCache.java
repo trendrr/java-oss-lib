@@ -18,7 +18,6 @@ import org.apache.commons.logging.LogFactory;
 import com.trendrr.oss.DynMap;
 import com.trendrr.oss.StringHelper;
 import com.trendrr.oss.concurrent.LazyInit;
-import com.trendrr.oss.exceptions.TrendrrInvalidKeyException;
 import com.trendrr.oss.exceptions.TrendrrParseException;
 
 
