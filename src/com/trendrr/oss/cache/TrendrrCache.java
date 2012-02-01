@@ -82,7 +82,14 @@ public abstract class TrendrrCache {
 	 * @param str
 	 * @return
 	 */
-	protected abstract Set<String> _addToSet(String key, Collection<String> str);
+	protected abstract Set<String> _addToSet(String key, Collection<String> str, Date expire);
+	
+	/**
+	 * loads a previous created set.
+	 * @param key
+	 * @return
+	 */
+	protected abstract Set<String> _getSet(String key);
 	
 	/**
 	 * Remove from a set
@@ -138,6 +145,37 @@ public abstract class TrendrrCache {
 		this._set(this.getKey(namespace, key), obj, expires);
 		
 	}
+	
+	/**
+	 * atomically adds the values to a Set (a collection with no duplicates).
+	 * 
+	 * This is meant for record keeping, for small collections.  definitly do not use for 
+	 * queues, or any set with many items.
+	 * 
+	 * @param namespace
+	 * @param key
+	 * @param values
+	 * @param expires
+	 */
+	public void addToSet(String namespace, String key, Collection<String> values, Date expire) {
+		this.init();
+		this._addToSet(this.getKey(namespace, key), values, expire);
+	}
+	 
+	/**
+	 * loads a Set 
+	 * @param namespace
+	 * @param key
+	 * @return
+	 */
+	public Set<String> getSet(String namespace, String key) {
+		this.init();
+		return this._getSet(this.getKey(namespace, key));
+	}
+	public Set<String> getSet(String key) {
+		return this.getSet(null, key);
+	}
+	
 	
 	/**
 	 * sets the key with the default namespace
