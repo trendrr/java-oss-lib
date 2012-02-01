@@ -75,7 +75,7 @@ public abstract class TrendrrCache {
 	 * @param value
 	 * @param expire when this key should expire.  null for forever (if available)
 	 */
-	protected abstract void _inc(String key, Number value, Date expire);
+	protected abstract long _inc(String key, int value, Date expire);
 	
 	/**
 	 * Add these items into a set add the given key.
@@ -267,9 +267,9 @@ public abstract class TrendrrCache {
 	 * @param key
 	 * @param value
 	 */
-	public void inc(String namespace, String key, Number value, Date expire) {
+	public long inc(String namespace, String key, int value, Date expire) {
 		this.init();
-		this._inc(this.getKey(namespace, key), value, expire);
+		return this._inc(this.getKey(namespace, key), value, expire);
 	}
 	
 	/**
@@ -278,7 +278,7 @@ public abstract class TrendrrCache {
 	 * @param key
 	 * @param value
 	 */
-	public void inc(String key, Number value, Date expire) {
-		this.inc(null, key, value, expire);
+	public long inc(String key, int value, Date expire) {
+		return this.inc(null, key, value, expire);
 	}
 }
