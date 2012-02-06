@@ -131,6 +131,13 @@ public abstract class TrendrrCache {
 		}
 	}
 	
+	/**
+	 * reinitializes.
+	 */
+	protected void reinit() {
+		this.initLock.reset();
+		this.init();
+	}
 	
 	/**
 	 * sets a key given the requested namespace.
