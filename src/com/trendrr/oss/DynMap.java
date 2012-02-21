@@ -419,6 +419,36 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		return lst;
 	}
 	
+	
+	/**
+	 * adds the following elements to a list at the requested key.  
+	 * if the item at the key is not currently a list, then it is converted to a list.  
+	 * 
+	 * @param key
+	 * @param elements
+	 */
+	public void addToList(String key, Object ...elements) {
+		List lst = this.getListOrEmpty(Object.class, key);
+		for (Object obj : elements) {
+			lst.add(obj);
+		}
+		this.put(key,lst);
+	}
+	
+	/**
+	 * same as addToList, but will honor the dot operator.
+	 * @param key
+	 * @param elements
+	 */
+	public void addToListWithDot(String key, Object ...elements) {
+		List lst = this.getListOrEmpty(Object.class, key);
+		for (Object obj : elements) {
+			lst.add(obj);
+		}
+		this.putWithDot(key,lst);
+	}
+	
+	
 	/**
 	 * same principle as jquery extend.
 	 * 
