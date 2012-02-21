@@ -203,6 +203,7 @@ public class RollingFileAppender {
 		}
 		this.writer = new FileWriter(this.current, true);
 		this.delete(new File(this.toFilename(this.minTE())));
+		this.delete(new File(this.toFilename(this.minTE()+2)));
 		
 		if (LINUX) {
 			//add link to most recent file.
