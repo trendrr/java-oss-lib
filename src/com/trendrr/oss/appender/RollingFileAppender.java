@@ -123,7 +123,7 @@ public class RollingFileAppender {
 	 * initializes the appender.  This will be called automatically on the first invocation of append. 
 	 * 
 	 * Subsequent calls to init are simply ignored.
-	 */
+	 */ 
 	public void init() {
 		if (this.init.start()) {
 			try {
@@ -203,7 +203,6 @@ public class RollingFileAppender {
 		}
 		this.writer = new FileWriter(this.current, true);
 		this.delete(new File(this.toFilename(this.minTE())));
-		this.delete(new File(this.toFilename(this.minTE()+2)));
 		
 		if (LINUX) {
 			//add link to most recent file.
