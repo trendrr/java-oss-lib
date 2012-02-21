@@ -45,6 +45,11 @@ public class TrendrrCacheStore {
 		this.caches.put(key, cache);
 	}
 	
+	/**
+	 * gets the cache if it already exists.
+	 * @param key
+	 * @return
+	 */
 	public TrendrrCache getCache(String key) {
 		return this.caches.get(key);
 	}
