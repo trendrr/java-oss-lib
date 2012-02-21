@@ -27,7 +27,7 @@ public class TrendrrCacheItem {
 	
 	public static TrendrrCacheItem instance(DynMap metadata, byte[] bytes) {
 		TrendrrCacheItem item = new TrendrrCacheItem();
-		item.setBytes(bytes);
+		item.setContentBytes(bytes);
 		item.setMetadata(metadata);
 		return item;
 	}
@@ -36,11 +36,11 @@ public class TrendrrCacheItem {
 	
 	private DynMap metadata = new DynMap();
 	
-	public byte[] getBytes() {
+	public byte[] getContentBytes() {
 		return bytes;
 	}
 
-	public void setBytes(byte[] bytes) {
+	public void setContentBytes(byte[] bytes) {
 		this.bytes = bytes;
 	}
 
@@ -89,7 +89,7 @@ public class TrendrrCacheItem {
 		byte[] b = Arrays.copyOfRange(bytes, 4+length, bytes.length);
 		
 		TrendrrCacheItem item = new TrendrrCacheItem();
-		item.setBytes(b);
+		item.setContentBytes(b);
 		item.setMetadata(metadata);
 		return item;
 	}
