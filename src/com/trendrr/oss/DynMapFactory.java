@@ -179,12 +179,10 @@ public class DynMapFactory {
 	 * @return
 	 */
 	public static DynMap instanceFromURL(String url) {
-		if (!url.contains("?")) {
-//			log.info("DynMap.instanceFromUrl : no params on the url, returning empty");
-			return new DynMap();
+		String[] tmp = url.split("\\?");
+		if (tmp.length < 2) {
+			return new DynMap(); //no params on the url
 		}
-		String q = url.split("\\?")[1];
-		
-		return instanceFromURLEncoded(q);
+		return instanceFromURLEncoded(tmp[1]);
 	}
 }
