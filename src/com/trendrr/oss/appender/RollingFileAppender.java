@@ -123,7 +123,7 @@ public class RollingFileAppender {
 	 * initializes the appender.  This will be called automatically on the first invocation of append. 
 	 * 
 	 * Subsequent calls to init are simply ignored.
-	 */
+	 */ 
 	public void init() {
 		if (this.init.start()) {
 			try {
