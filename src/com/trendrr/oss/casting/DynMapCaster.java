@@ -18,7 +18,7 @@ import com.trendrr.oss.DynMap;
  * 
  */
 public class DynMapCaster extends TypeCaster<DynMap> {
-	Logger log = Logger.getLogger(DynMapCaster.class.getCanonicalName());
+	private static Logger log = Logger.getLogger(DynMapCaster.class.getCanonicalName());
 	/* (non-Javadoc)
 	 * @see com.trendrr.oss.casting.TypeCaster#doCast(java.lang.Class, java.lang.Object)
 	 */
