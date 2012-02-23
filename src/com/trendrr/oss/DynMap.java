@@ -47,10 +47,10 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	
 	private static final long serialVersionUID = 6342683643643465570L;
 
-	Logger log = Logger.getLogger(DynMap.class.getCanonicalName());
+	private static Logger log = Logger.getLogger(DynMap.class.getCanonicalName());
 	
-	ConcurrentHashMap<String, Object> cache = new ConcurrentHashMap<String, Object>();
-	boolean cacheEnabled = false;
+	private ConcurrentHashMap<String, Object> cache = new ConcurrentHashMap<String, Object>();
+	private boolean cacheEnabled = false;
 	
 	/**
 	 * Creates a new dynMap based on the passed in object.  This is just a wrapper
