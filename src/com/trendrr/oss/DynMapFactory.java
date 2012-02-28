@@ -21,7 +21,23 @@ import java.util.logging.Logger;
 public class DynMapFactory {
 	protected static Logger log = Logger.getLogger(DynMapFactory.class.getCanonicalName());
 	
-
+	/**
+	 * sorts the list in reverse order based on the given key.  Class should be the requested class for the key
+	 * @param maps
+	 * @param cls
+	 * @param key
+	 */
+	public static void sortReverse(List<DynMap> maps, Class cls, String key) {
+		sort(maps, cls, key);
+		Collections.reverse(maps);//more efficient to have the comparator do the reverse, but whatever, todo..
+	}
+	
+	/**
+	 * sorts the list based on the given key.  Class should be the requested class for the key
+	 * @param maps
+	 * @param cls
+	 * @param key
+	 */
 	public static void sort(List<DynMap> maps, Class cls, String key) {
 		Collections.sort(maps, comparator(cls,key));
 	}
