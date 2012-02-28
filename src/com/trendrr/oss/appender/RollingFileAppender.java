@@ -143,7 +143,7 @@ public class RollingFileAppender {
 					if (!fn.endsWith(this.fileExtension) || !fn.startsWith(this.filename)) {
 						continue;
 					}
-					
+		
 					String tmp = fn; 
 					
 					tmp = StringHelper.trim(tmp, this.fileExtension);
@@ -151,9 +151,11 @@ public class RollingFileAppender {
 						continue;
 					}
 					
-					tmp = tmp.replace(this.filename + "__", ""); 
+					tmp = tmp.replace(this.filename + "__", "");
+					Long te = TypeCast.cast(Long.class, tmp);
+					if (te == null)
+						continue;
 					
-					long te = TypeCast.cast(Long.class, tmp);
 					if (te < this.minTE()) {
 //						System.out.println("Current TE: " + this.currentTE + " min:  " + this.minTE());
 //						System.out.println("DELETE: " + fn);
