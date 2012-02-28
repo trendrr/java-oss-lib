@@ -23,7 +23,7 @@ import com.trendrr.oss.exceptions.TrendrrParseException;
  */
 public class TrendrrCacheItem {
 
-	protected Log log = LogFactory.getLog(TrendrrCacheItem.class);
+	protected static Log log = LogFactory.getLog(TrendrrCacheItem.class);
 	
 	public static TrendrrCacheItem instance(DynMap metadata, byte[] bytes) {
 		TrendrrCacheItem item = new TrendrrCacheItem();
