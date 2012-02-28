@@ -164,7 +164,7 @@ public class RollingFileAppender {
 				}
 				this.newFile();
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error("Caught",e);
 			} finally {
 				init.end();
 			}
