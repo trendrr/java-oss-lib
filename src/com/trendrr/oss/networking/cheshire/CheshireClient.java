@@ -185,9 +185,7 @@ public class CheshireClient implements CheshireApiCaller{
 			this.attemptReconnect();
 		}
 		StrestRequest request = this.createRequest(endPoint, method, params);
-		log.info("BEFORE: " + request);
 		strest.sendRequest(request, new CallbackWrapper(callback));
-		log.info("AFTER: " + request);
 	}
 	
 	/**
@@ -279,19 +277,19 @@ public class CheshireClient implements CheshireApiCaller{
 	protected StrestResponse sendWithReconnect(StrestRequest req) throws TrendrrDisconnectedException{
 		StrestResponse response = null;
 		try {
-			log.info("Sending request ");
-			log.info(req);
-			log.info("**************************");
+//			log.info("Sending request ");
+//			log.info(req);
+//			log.info("**************************");
 			response = this.strest.sendRequest(req);
 		} catch (TrendrrException e) {
-			log.info("Caught", e);
+//			log.info("Caught", e);
 			//we are evidently not connected, so update that
 			if(this.attemptReconnect()){
 				//able to reconnect, so try one more time
 				try{
-					log.info("Sending reconnect request ");
-					log.info(req);
-					log.info("************************");
+//					log.info("Sending reconnect request ");
+//					log.info(req);
+//					log.info("************************");
 					response = this.strest.sendRequest(req);
 					
 				}catch (TrendrrException e1){
@@ -299,7 +297,7 @@ public class CheshireClient implements CheshireApiCaller{
 					throw new TrendrrDisconnectedException(e1);
 				}
 			}else{
-				throw new TrendrrDisconnectedException();
+				throw new TrendrrDisconnectedException(e);
 			}
 		}
 		return response;
