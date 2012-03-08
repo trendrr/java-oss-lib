@@ -44,6 +44,7 @@ public class CheshireClient implements CheshireApiCaller{
 	
 	protected DynMap paramsForEveryRequest = new DynMap();
 	private String host = "strest.trendrr.com";
+
 	private int port = 80;
 	protected StrestClient strest = null;
 	
@@ -301,5 +302,21 @@ public class CheshireClient implements CheshireApiCaller{
 			}
 		}
 		return response;
+	}
+	
+	public int getMaxReconnectAttempts() {
+		return maxReconnectAttempts;
+	}
+
+	public void setMaxReconnectAttempts(int maxReconnectAttempts) {
+		this.maxReconnectAttempts = maxReconnectAttempts;
+	}
+
+	public String getHost() {
+		return host;
+	}
+
+	public int getPort() {
+		return port;
 	}
 }

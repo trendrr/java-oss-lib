@@ -41,7 +41,7 @@ public class StrestUtil {
 	}
 	
 	
-	protected Log log = LogFactory.getLog(StrestUtil.class);
+	protected static Log log = LogFactory.getLog(StrestUtil.class);
 	
     /**
      * carriage return line feed

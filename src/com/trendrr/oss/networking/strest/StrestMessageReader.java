@@ -22,7 +22,7 @@ import com.trendrr.oss.networking.StringReadCallback;
 public class StrestMessageReader implements StringReadCallback,
 		ByteReadCallback {
 
-	protected Log log = LogFactory.getLog(StrestMessageReader.class);
+	protected static Log log = LogFactory.getLog(StrestMessageReader.class);
 	
 	StrestResponse current = null;
 	AtomicReference<SocketChannelWrapper> socket = new AtomicReference<SocketChannelWrapper>();

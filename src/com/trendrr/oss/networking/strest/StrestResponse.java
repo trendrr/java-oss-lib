@@ -14,7 +14,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class StrestResponse {
 
-	protected Log log = LogFactory.getLog(StrestResponse.class);
+	protected static Log log = LogFactory.getLog(StrestResponse.class);
 	
 	StrestHeaders headers = new StrestHeaders();
 	private byte[] content = new byte[0];
