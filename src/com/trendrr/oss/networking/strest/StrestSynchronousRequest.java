@@ -20,7 +20,7 @@ import org.apache.commons.logging.LogFactory;
  */
 class StrestSynchronousRequest implements StrestRequestCallback{
 
-	protected Log log = LogFactory.getLog(StrestSynchronousRequest.class);
+	protected static Log log = LogFactory.getLog(StrestSynchronousRequest.class);
 
 	Semaphore lock = new Semaphore(1, true);
 	StrestResponse response;

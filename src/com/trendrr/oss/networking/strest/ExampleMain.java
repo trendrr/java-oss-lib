@@ -3,6 +3,8 @@
  */
 package com.trendrr.oss.networking.strest;
 
+import java.util.Date;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -19,20 +21,30 @@ public class ExampleMain {
 	protected Log log = LogFactory.getLog(ExampleMain.class);
 
 	public static void main(String...strings) throws Exception{
-		StrestClient client = new StrestClient("localhost", 8010);
-		client.connect();
 		
+		StrestClient client = new StrestClient("localhost", 8010);
 		//EXAMPLE Blocking request.
 		while(true) {
 			try {
-			System.out.println("Sending request");
-			StrestResponse response = client.sendRequest(new RequestBuilder().uri("/ping").method("GET").getRequest());
-			System.out.println("***********************************");
-			System.out.println(new String(response.getContent()));
-			System.out.println("***********************************");
-			} catch (Exception x) {
-				x.printStackTrace();
-			}
+					System.out.println("Connecting ...");
+					Date start = new Date();
+					client.connect();
+					System.out.println("Connected in: " + (new Date().getTime() - start.getTime()));
+					
+					System.out.println("Sending request");
+					StrestResponse response = client.sendRequest(new RequestBuilder().uri("/ping").method("GET").getRequest());
+					System.out.println("***********************************");
+					System.out.println(new String(response.getContent()));
+					System.out.println("***********************************");
+					
+					System.out.println("Closing ...");
+					client.close();
+					System.out.println("sleeping ...");
+				
+				} catch (Exception x) {
+					x.printStackTrace();
+				}
+				
 			Sleep.seconds(1);
 		}
 //		System.out.println("NOW TEST THE FIREHOSE");

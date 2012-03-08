@@ -19,7 +19,7 @@ import com.trendrr.oss.DynMap;
  */
 public class RequestBuilder {
 
-	protected Log log = LogFactory.getLog(RequestBuilder.class);
+	protected static Log log = LogFactory.getLog(RequestBuilder.class);
 
 	StrestRequest request;
 	

@@ -45,7 +45,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class StrestHeaders {
 
-	protected Log log = LogFactory.getLog(StrestHeaders.class);
+	protected static Log log = LogFactory.getLog(StrestHeaders.class);
 	
     /**
      * Standard HTTP header names.
