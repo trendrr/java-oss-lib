@@ -219,6 +219,8 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	}
 	
 	private void ejectFromCache(String key) {
+		if (!this.isCacheEnabled())
+			return;
 		//TODO: this is a dreadful implementation.
 		Set<String> keys = new HashSet<String>();
 		for (String k : cache.keySet()) {
