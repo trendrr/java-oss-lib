@@ -240,6 +240,8 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 
 	void setCacheEnabled(boolean cacheEnabled) {
 		this.cacheEnabled = cacheEnabled;
+		if (!this.cacheEnabled)
+			this.cache.clear();
 	}
 
 	/**
