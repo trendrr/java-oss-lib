@@ -21,12 +21,12 @@ import com.trendrr.oss.exceptions.TrendrrException;
  */
 class SynchronousReadCallback implements ByteReadCallback, StringReadCallback{
 
-	protected Log log = LogFactory.getLog(SynchronousReadCallback.class);
+	protected static Log log = LogFactory.getLog(SynchronousReadCallback.class);
 
-	TrendrrException exception;
-	String stringResult;
-	byte[] byteResult;
-	Semaphore lock = new Semaphore(1, true);
+	protected TrendrrException exception;
+	protected String stringResult;
+	protected byte[] byteResult;
+	protected Semaphore lock = new Semaphore(1, true);
 	
 	public SynchronousReadCallback() {
 		try {

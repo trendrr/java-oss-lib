@@ -207,11 +207,8 @@ public class AsynchBuffer {
 	
 	private boolean process(ChannelCallback callback){
 		if (this.databuffers.isEmpty()) {
-//			log.info("Buffer is empty!");
 			return false;
 		}
-//		System.out.println("Processing callback: " + callback);
-//		System.out.println(this.callbacks);
 		try {
 			if (callback instanceof StringReadRequest) {
 				try {
@@ -220,7 +217,6 @@ public class AsynchBuffer {
 					throw new TrendrrException("Error trying to read string", e);
 				}
 			} else if (callback instanceof ByteReadRequest) {
-//				System.out.println("Reading bytes");
 				return this.readBytes((ByteReadRequest)callback);
 			} else {
 				throw new TrendrrException("UNknown callback type: " + callback);
