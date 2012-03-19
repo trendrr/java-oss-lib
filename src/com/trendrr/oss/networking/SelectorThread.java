@@ -139,6 +139,10 @@ public class SelectorThread implements Runnable{
 				}
 			} catch (TrendrrDisconnectedException x) {
 				this.channels.get((SocketChannel)key.channel()).close();
+			} catch (IOException e) {
+				if (e.getMessage().equals("Broken pipe")) {
+					this.channels.get((SocketChannel)key.channel()).close();
+				}
 			} catch (Exception e) {
 				log.error("Caught", e);
 			}
@@ -199,7 +203,7 @@ public class SelectorThread implements Runnable{
 				break; 
 			}
 			queue.poll(); //remove the head element
-			
+			wrapper.numQueued.decrementAndGet();
 		}
 		if (queue.isEmpty()) {
 			this.registerChange(wrapper);

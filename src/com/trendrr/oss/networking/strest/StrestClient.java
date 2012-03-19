@@ -17,6 +17,7 @@ import org.apache.commons.logging.LogFactory;
 import com.trendrr.oss.concurrent.Sleep;
 import com.trendrr.oss.exceptions.TrendrrDisconnectedException;
 import com.trendrr.oss.exceptions.TrendrrException;
+import com.trendrr.oss.exceptions.TrendrrOverflowException;
 import com.trendrr.oss.exceptions.TrendrrIOException;
 import com.trendrr.oss.networking.SocketChannelWrapper;
 
@@ -39,24 +40,25 @@ import com.trendrr.oss.networking.SocketChannelWrapper;
  */
 public class StrestClient {
 
-	protected Log log = LogFactory.getLog(StrestClient.class);
+	protected static Log log = LogFactory.getLog(StrestClient.class);
 	protected SocketChannelWrapper socket = null;
 	protected StrestMessageReader reader;
 	protected String host = null;
 	protected int port = 8008;
 	protected ConcurrentHashMap<String, StrestRequestCallback> callbacks = new ConcurrentHashMap<String,StrestRequestCallback>();
 	protected AtomicBoolean connected = new AtomicBoolean(false);
-	protected int maxWaitingForResponse = 1500; //the maximum number of waiting callbacks.
+
+	protected int maxWaitingForResponse = 0; //the maximum number of waiting callbacks.
+	protected int maxQueuedWrites = 200; //the maximum number of writes that have queued up.
+
 	
-	
+
+
 	public StrestClient(String host, int port) {
 		this.host = host;
 		this.port = port;
 	}
-	
-
-	
-	
+		
 	public synchronized void connect() throws IOException {
 		if (this.connected.get()) {
 			log.warn("Connect called, but already connected");
@@ -121,7 +123,9 @@ public class StrestClient {
 			if (this.socket == null || this.socket.isClosed()) {
 				throw new IOException("Not connected");
 			}
-			if (this.maxWaitingForResponse <= this.callbacks.size()) {
+
+			if (this.maxWaitingForResponse > 0 && this.maxWaitingForResponse <= this.callbacks.size()) {
+
 				throw new TrendrrIOException(this.maxWaitingForResponse + " waiting for response, me thinks theres a network problem, or you need to slow down!");
 			}
 			
@@ -129,7 +133,11 @@ public class StrestClient {
 			ByteBuffer buf = request.getBytesAsBuffer();
 			if (callback != null)
 				this.callbacks.put(request.getHeader(StrestHeaders.Names.STREST_TXN_ID), callback);
-			socket.write(buf);
+			if (this.maxQueuedWrites > 0) {
+				socket.write(buf, this.maxQueuedWrites);
+			} else {
+				socket.write(buf);
+			}
 		} catch (Exception e) {
 			if (callback != null) {
 				callback.error(e);
@@ -193,5 +201,30 @@ public class StrestClient {
 			log.warn("Closing connection!");
 			this.close();
 		}
+	}
+	
+	/**
+	 * The maximum allowed callbacks to be waiting for a response.  once this limit is reached
+	 * new requests will get an exception. Default is 0 which means unlimited
+	 * @return
+	 */
+	public int getMaxWaitingForResponse() {
+		return maxWaitingForResponse;
+	}
+
+	public void setMaxWaitingForResponse(int maxWaitingForResponse) {
+		this.maxWaitingForResponse = maxWaitingForResponse;
+	}
+
+	/**
+	 * Maximum number of queued writes.  once this limit is reached exceptions will be thrown on write.
+	 * @return
+	 */
+	public int getMaxQueuedWrites() {
+		return maxQueuedWrites;
+	}
+
+	public void setMaxQueuedWrites(int maxQueuedWrites) {
+		this.maxQueuedWrites = maxQueuedWrites;
 	}
 }

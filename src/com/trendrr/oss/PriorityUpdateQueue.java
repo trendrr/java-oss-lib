@@ -29,6 +29,14 @@ public class PriorityUpdateQueue <T>{
 
 	protected Log log = LogFactory.getLog(PriorityUpdateQueue.class);
 	private List<T> heap = new ArrayList<T>();
+
+	
+	/**
+	 * TODO: this implementation is broken for T is a Map since hashcode for that 
+	 * is apparently contingent on the mappings in the map..
+	 * investigate..
+	 */
+
 	private HashMap<T, Integer> indexes = new HashMap<T, Integer>();
 	
 	private Comparator<T> comparator;
@@ -205,44 +213,48 @@ public class PriorityUpdateQueue <T>{
     }
 
     public static void main(String[] args){
-//        PriorityUpdateQueue<QueueItem> h = new PriorityUpdateQueue<QueueItem>(new Comparator<QueueItem>() {
-//			@Override
-//			public int compare(QueueItem o1, QueueItem o2) {
-//				return o1.getValue().compareTo(o2.getValue());
-//			}
-//		});
-//        
-//        QueueItem item = new QueueItem();
-//        item.setName("testing");
-//        item.setValue(1000);
-//        h.push(item);
-//        Date start = new Date();
-//        
-//        for (int i = 0; i < 100000000; i++) {
-//        	
-//        	QueueItem it = new QueueItem();
-//        	int v = (int)(100 * Math.random());
-//        	it.setName("" + v);
-//        	it.setValue(v);
-//            h.push(it);
-//            if (i > 100000) {
-//            	h.pop();
-//            }
-//            if (i % 10000 == 0) {
-//            	System.out.println(i);
-//            }
-//        }
-//        System.out.println("Added 100 million in : " + (new java.util.Date().getTime()-start.getTime()));
-//        System.out.println("**************** DONE ADDING *************");
-//        
-//        item.setValue(50);
-//        h.update(item);
-//        start = new Date();
-//        while (h.size() > 0) {
-////            System.out.println(h.pop());
-//        	h.pop();
-//        }
-//        System.out.println("Removed 1 million in : " + (new java.util.Date().getTime()-start.getTime()));
+	
+    	PriorityUpdateQueue<DynMap> h = new PriorityUpdateQueue<DynMap>(new Comparator<DynMap>() {
+			@Override
+			public int compare(DynMap o1, DynMap o2) {
+				return o1.getInteger("val").compareTo(o2.getInteger("val"));
+			}
+		});
+        
+        DynMap item = new DynMap();
+        item.put("name","testing");
+        item.put("val",1000);
+        h.push(item);
+        item.put("val",50);
+        h.update(item);
+        Date start = new Date();
+        
+        for (int i = 0; i < 10; i++) {
+        	
+        	DynMap it = new DynMap();
+        	int v = (int)(100 * Math.random());
+        	it.put("name", "" + v);
+        	it.put("val", v);
+            h.push(it);
+            if (i > 100000) {
+            	h.pop();
+            }
+            if (i % 10000 == 0) {
+            	System.out.println(i);
+            }
+        }
+        System.out.println("Added 1 million in : " + (new java.util.Date().getTime()-start.getTime()));
+        System.out.println("**************** DONE ADDING *************");
+        
+        item.put("val",50);
+        h.update(item);
+        start = new Date();
+        while (h.size() > 0) {
+//            System.out.println(h.pop());
+        	h.pop();
+        }
+        System.out.println("Removed 1 million in : " + (new java.util.Date().getTime()-start.getTime()));
+
     }
 	
 }

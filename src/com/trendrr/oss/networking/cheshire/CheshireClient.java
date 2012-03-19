@@ -98,44 +98,7 @@ public class CheshireClient implements CheshireApiCaller{
 		
 		CheshireClient client = new CheshireClient("strest.trendrr.com", 80);
 		client.connect();
-		
-//		System.out.println(client.apiCall("/helper/whats_my_ip", HttpMethod.GET, null));
-		
-		DynMap params = new DynMap();
-		//start tracking
-//		
-//		params.put("project_id", "4cd057cd3e3b63fd8b10cf2e");
-//		params.put("datasource_id", "twitter_search");
-//		params.put("query", "sherlock");
-//		
-//		DynMap result = client.apiCall("/datasets/create", HttpMethod.POST, params);
-//		System.out.println(result.toJSONString());
-		
-		
-		
-		//datasource list.
-//		DynMap result = client.apiCall("/datasources/list", HttpMethod.GET, null);
-//		System.out.println(result.toJSONString());
-		
-//		params.put("query", "foursquare");
-//		DynMap result = client.apiCall("/datasources/find", HttpMethod.GET, params);
-//		System.out.println(Datasource.get(client, "twitter_search"));
-//		System.out.println(result.toJSONString());
-		
-//		 '/srm/datasource',
-//         'GET',
-//         {
-//           'project_id': project_id, 
-//           'datasource_id': 'twitter_user_stats',
-//           'update_stats' : True,
-//           'date' : date
-//          }
-		params.put("username", "tvcharts");
-		params.put("secret", "ve_vant_ze_money_lebowski");
-		params.put("project_id","4d22002cbb7463fd5d1fb459");
-		params.put("datasource_id", "twitter_user_stats");
-		DynMap result = client.apiCall("/srm/datasource", Verb.GET, params);
-		System.out.println(result.toJSONString());
+
 	}
 	
 	public CheshireClient(String host, int port) {
@@ -311,6 +274,16 @@ public class CheshireClient implements CheshireApiCaller{
 	public void setMaxReconnectAttempts(int maxReconnectAttempts) {
 		this.maxReconnectAttempts = maxReconnectAttempts;
 	}
+
+
+	public int getReconnectWaitSeconds() {
+		return reconnectWaitSeconds;
+	}
+
+	public void setReconnectWaitSeconds(int reconnectWaitSeconds) {
+		this.reconnectWaitSeconds = reconnectWaitSeconds;
+	}
+	
 
 	public String getHost() {
 		return host;

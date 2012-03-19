@@ -3,9 +3,6 @@
  */
 package com.trendrr.oss.networking;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 
 /**
  * @author Dustin Norlander

@@ -9,6 +9,7 @@ import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,6 +18,7 @@ import com.trendrr.oss.concurrent.TrendrrLock;
 import com.trendrr.oss.exceptions.TrendrrDisconnectedException;
 import com.trendrr.oss.exceptions.TrendrrException;
 import com.trendrr.oss.exceptions.TrendrrNoCallbackException;
+import com.trendrr.oss.exceptions.TrendrrOverflowException;
 
 
 /**
@@ -27,16 +29,17 @@ import com.trendrr.oss.exceptions.TrendrrNoCallbackException;
 public class SocketChannelWrapper {
 
 	protected Log log = LogFactory.getLog(SocketChannelWrapper.class);
-	SocketChannel channel = null;
-	AsynchBuffer buffer = null;
+	protected SocketChannel channel = null;
+	protected AsynchBuffer buffer = null;
 
-	SelectorThread thread = null;
-	TrendrrLock threadInit = new TrendrrLock();
+	protected SelectorThread thread = null;
+	protected TrendrrLock threadInit = new TrendrrLock();
 
-	ConcurrentLinkedQueue<ByteBuffer> writes = new ConcurrentLinkedQueue<ByteBuffer>();
+	protected ConcurrentLinkedQueue<ByteBuffer> writes = new ConcurrentLinkedQueue<ByteBuffer>();
 
-	boolean closed = false;
-
+	protected boolean closed = false;
+	AtomicInteger numQueued = new AtomicInteger(0);
+	
 	public SocketChannelWrapper(SocketChannel channel) {
 		this.channel = channel;
 		this.buffer = new AsynchBuffer();
@@ -47,7 +50,7 @@ public class SocketChannelWrapper {
 		this.buffer.process();//attempt to read directly from the already buffered bytes
 		this.notifyChange();
 	}
-
+	
 	/**
 	 * reads until the requested string is found.
 	 * @param delimiter
@@ -82,9 +85,33 @@ public class SocketChannelWrapper {
 		return callback.byteResult;
 	}
 
+	/**
+	 * writes to the socketchannel, throws an exception if there are > maxQueued writes waiting to be written.
+	 * @param buf
+	 * @param maxQueued
+	 * @throws TrendrrOverflowException
+	 */
+	public void write(ByteBuffer buf, int maxQueued) throws TrendrrOverflowException {
+		if (this.numQueued.get() > maxQueued) {
+			throw new TrendrrOverflowException("More then " + maxQueued + " messages waiting to be written");
+		}
+		this.write(buf);
+	}
+	
+	/**
+	 * writes to the socketchannel, throws an exception if there are > maxQueued writes waiting to be written.
+	 * @param buf
+	 * @param maxQueued
+	 * @throws TrendrrOverflowException
+	 */
+	public void write(byte[] bytes, int maxQueued) throws TrendrrOverflowException {
+		this.write(ByteBuffer.wrap(bytes), maxQueued);
+	}
+	
 	public void write(ByteBuffer buf) {
 		this.writes.add(buf);
 		this.notifyChange();
+		this.numQueued.incrementAndGet();
 	}
 
 	public void write(byte[] bytes) {
@@ -96,8 +123,7 @@ public class SocketChannelWrapper {
 		try {
 			this.startThreadIfNeeded();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Caught", e);
 		}
 		this.thread.registerChange(this);
 	}
@@ -124,9 +150,12 @@ public class SocketChannelWrapper {
 		return this.channel;
 	}
 
-	public Queue<ByteBuffer> getWrites() {
+	Queue<ByteBuffer> getWrites() {
 		return this.writes;
 	}
+	
+	
+	
 	/**
 	 * Attempts to read from the network, and process any callbacks.  
 	 * does nothing if no callbacks have been registered.

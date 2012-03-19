@@ -18,7 +18,7 @@ import com.trendrr.oss.exceptions.TrendrrException;
  */
 class StringReadRequest implements ChannelCallback{
 
-	protected Log log = LogFactory.getLog(StringReadRequest.class);
+	protected static Log log = LogFactory.getLog(StringReadRequest.class);
 
 	private String delimiter;
 	private Charset charset;
