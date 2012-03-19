@@ -49,8 +49,6 @@ public class CheshireClient implements CheshireApiCaller{
 	protected StrestClient strest = null;
 	
 	protected int maxReconnectAttempts = -1;
-	
-
 	protected int reconnectWaitSeconds = 5;
 	protected boolean keepalive = false;
 	
@@ -100,6 +98,7 @@ public class CheshireClient implements CheshireApiCaller{
 		
 		CheshireClient client = new CheshireClient("strest.trendrr.com", 80);
 		client.connect();
+
 	}
 	
 	public CheshireClient(String host, int port) {
@@ -276,6 +275,7 @@ public class CheshireClient implements CheshireApiCaller{
 		this.maxReconnectAttempts = maxReconnectAttempts;
 	}
 
+
 	public int getReconnectWaitSeconds() {
 		return reconnectWaitSeconds;
 	}
@@ -284,6 +284,7 @@ public class CheshireClient implements CheshireApiCaller{
 		this.reconnectWaitSeconds = reconnectWaitSeconds;
 	}
 	
+
 	public String getHost() {
 		return host;
 	}

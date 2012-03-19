@@ -17,6 +17,7 @@ import org.apache.commons.logging.LogFactory;
 import com.trendrr.oss.concurrent.Sleep;
 import com.trendrr.oss.exceptions.TrendrrDisconnectedException;
 import com.trendrr.oss.exceptions.TrendrrException;
+import com.trendrr.oss.exceptions.TrendrrOverflowException;
 import com.trendrr.oss.exceptions.TrendrrIOException;
 import com.trendrr.oss.networking.SocketChannelWrapper;
 
@@ -46,8 +47,10 @@ public class StrestClient {
 	protected int port = 8008;
 	protected ConcurrentHashMap<String, StrestRequestCallback> callbacks = new ConcurrentHashMap<String,StrestRequestCallback>();
 	protected AtomicBoolean connected = new AtomicBoolean(false);
+
 	protected int maxWaitingForResponse = 0; //the maximum number of waiting callbacks.
 	protected int maxQueuedWrites = 200; //the maximum number of writes that have queued up.
+
 	
 
 
@@ -120,7 +123,9 @@ public class StrestClient {
 			if (this.socket == null || this.socket.isClosed()) {
 				throw new IOException("Not connected");
 			}
+
 			if (this.maxWaitingForResponse > 0 && this.maxWaitingForResponse <= this.callbacks.size()) {
+
 				throw new TrendrrIOException(this.maxWaitingForResponse + " waiting for response, me thinks theres a network problem, or you need to slow down!");
 			}
 			

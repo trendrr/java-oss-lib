@@ -29,12 +29,14 @@ public class PriorityUpdateQueue <T>{
 
 	protected Log log = LogFactory.getLog(PriorityUpdateQueue.class);
 	private List<T> heap = new ArrayList<T>();
+
 	
 	/**
 	 * TODO: this implementation is broken for T is a Map since hashcode for that 
 	 * is apparently contingent on the mappings in the map..
 	 * investigate..
 	 */
+
 	private HashMap<T, Integer> indexes = new HashMap<T, Integer>();
 	
 	private Comparator<T> comparator;
@@ -211,8 +213,7 @@ public class PriorityUpdateQueue <T>{
     }
 
     public static void main(String[] args){
-        
-    	
+	
     	PriorityUpdateQueue<DynMap> h = new PriorityUpdateQueue<DynMap>(new Comparator<DynMap>() {
 			@Override
 			public int compare(DynMap o1, DynMap o2) {
@@ -253,6 +254,7 @@ public class PriorityUpdateQueue <T>{
         	h.pop();
         }
         System.out.println("Removed 1 million in : " + (new java.util.Date().getTime()-start.getTime()));
+
     }
 	
 }
