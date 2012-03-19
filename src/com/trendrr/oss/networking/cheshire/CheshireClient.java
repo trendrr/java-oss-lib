@@ -40,7 +40,7 @@ import com.trendrr.oss.networking.strest.StrestResponse;
  */
 public class CheshireClient implements CheshireApiCaller{
 
-	protected Log log = LogFactory.getLog(CheshireClient.class);
+	protected static Log log = LogFactory.getLog(CheshireClient.class);
 	
 	protected DynMap paramsForEveryRequest = new DynMap();
 	private String host = "strest.trendrr.com";
@@ -94,6 +94,18 @@ public class CheshireClient implements CheshireApiCaller{
 		}
 	}
 
+	/**
+	 * Maximum number of queued writes.  once this limit is reached exceptions will be thrown on write.
+	 * @return
+	 */
+	public int getMaxQueuedWrites() {
+		return this.strest.getMaxQueuedWrites();
+	}
+
+	public void setMaxQueuedWrites(int maxQueuedWrites) {
+		this.strest.setMaxQueuedWrites(maxQueuedWrites);
+	}
+	
 	public static void main(String ...strings) throws Exception {
 		
 		CheshireClient client = new CheshireClient("strest.trendrr.com", 80);
