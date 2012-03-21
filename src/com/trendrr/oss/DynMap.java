@@ -381,6 +381,15 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		return this.get(DynMap.class, key, defaultValue);
 	}
 	
+	public Date getDate(String key) {
+		return this.get(Date.class, key);
+	}
+	
+	public Date getDate(String key, Date defaultValue) {
+		return this.get(Date.class, key, defaultValue);
+	}
+	
+	
 	/**
 	 * Returns a typed list.  See TypeCast.getTypedList
 	 * 
