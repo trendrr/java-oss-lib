@@ -121,6 +121,21 @@ public class PriorityUpdateQueue <T>{
     	}
     }
     
+    /**
+     * inserts the item if it does not already exist, else updates it if it does.
+     * @param obj
+     * @returns true if the item was pushed, false if it was updated.
+     */
+    public synchronized boolean pushOrUpdate(T obj) {
+    	if (this.indexes.containsKey(obj)) {
+    		this.update(obj);
+    		return false;
+    	} else {
+    		this.push(obj);
+    		return true;
+    	}
+    }
+    
     protected Object get(int index) {
         return heap.get(index);
     }
