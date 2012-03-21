@@ -37,7 +37,7 @@ import com.trendrr.oss.exceptions.TrendrrException;
  */
 public class AsynchBuffer {
 
-	protected Log log = LogFactory.getLog(AsynchBuffer.class);
+	protected static Log log = LogFactory.getLog(AsynchBuffer.class);
 	
 
 	AtomicInteger bytesPerRead = new AtomicInteger(8192);

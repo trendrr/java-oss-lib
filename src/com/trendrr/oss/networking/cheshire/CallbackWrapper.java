@@ -20,7 +20,7 @@ import com.trendrr.oss.networking.strest.StrestResponse;
  */
 class CallbackWrapper implements StrestRequestCallback{
 
-	protected Log log = LogFactory.getLog(CallbackWrapper.class);
+	protected static Log log = LogFactory.getLog(CallbackWrapper.class);
 	CheshireApiCallback cb = null;
 	CallbackWrapper(CheshireApiCallback cb) {
 		this.cb = cb;
