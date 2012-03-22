@@ -615,7 +615,9 @@ public class StringHelper {
      * returns a 20 byte sha1 hash 
      * @param bytes
      * @return
+     * @deprecated moved to HashFunctions
      */
+    @Deprecated
     public static byte[] sha1(byte[] bytes) {
     	try {
 	    	MessageDigest sha = MessageDigest.getInstance("SHA-1");
@@ -626,7 +628,10 @@ public class StringHelper {
     	}
     	return null;
     }
-    
+    /**
+    * @deprecated moved to HashFunctions
+    */
+   @Deprecated
     public static String sha1Hex(byte[] bytes) {
     	return toHex(sha1(bytes));
     }
@@ -641,7 +646,9 @@ public class StringHelper {
      * result is 20 bytes long.
      * 
      * 
-     */
+    * @deprecated moved to HashFunctions
+    */
+   @Deprecated
     public static byte[] secureId() {
     	try {
 	    	if (lock.start()) {
