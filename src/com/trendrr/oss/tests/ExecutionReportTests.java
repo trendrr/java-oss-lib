@@ -21,7 +21,7 @@ import com.trendrr.oss.executionreport.ExecutionReport;
  */
 public class ExecutionReportTests {
 
-	protected Log log = LogFactory.getLog(ExecutionReportTests.class);
+	protected static Log log = LogFactory.getLog(ExecutionReportTests.class);
 	
 	@Test
 	public void test() {

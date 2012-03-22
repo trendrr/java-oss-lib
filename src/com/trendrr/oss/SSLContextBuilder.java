@@ -40,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class SSLContextBuilder {
 
-	protected Log log = LogFactory.getLog(SSLContextBuilder.class);
+	protected static Log log = LogFactory.getLog(SSLContextBuilder.class);
 	
 	private String certificatePassword = null;
 	private String keystorePassword = null;

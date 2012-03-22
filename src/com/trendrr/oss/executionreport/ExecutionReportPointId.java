@@ -20,7 +20,7 @@ import com.trendrr.oss.Timeframe;
  */
 public class ExecutionReportPointId {
 
-	protected Log log = LogFactory.getLog(ExecutionReportPointId.class);
+	protected static Log log = LogFactory.getLog(ExecutionReportPointId.class);
 	
 	protected String fullname = null;
 	protected Date timestamp = null;

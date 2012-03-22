@@ -18,7 +18,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class ExecutionReportNode implements Comparable<ExecutionReportNode>{
 
-	protected Log log = LogFactory.getLog(ExecutionReportNode.class);
+	protected static Log log = LogFactory.getLog(ExecutionReportNode.class);
 	
 	protected ExecutionReportNode parent = null;
 	protected Set<ExecutionReportNode> children = new HashSet<ExecutionReportNode>();

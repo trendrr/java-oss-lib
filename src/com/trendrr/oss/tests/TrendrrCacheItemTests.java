@@ -22,7 +22,7 @@ import com.trendrr.oss.exceptions.TrendrrParseException;
  */
 public class TrendrrCacheItemTests {
 
-	protected Log log = LogFactory.getLog(TrendrrCacheItemTests.class);
+	protected static Log log = LogFactory.getLog(TrendrrCacheItemTests.class);
 	
 	@Test
 	public void test1() throws UnsupportedEncodingException, TrendrrParseException {

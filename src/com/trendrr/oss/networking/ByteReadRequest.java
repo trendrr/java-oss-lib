@@ -18,7 +18,7 @@ import com.trendrr.oss.exceptions.TrendrrException;
  */
 class ByteReadRequest implements ChannelCallback {
 
-	protected Log log = LogFactory.getLog(ByteReadRequest.class);
+	protected static Log log = LogFactory.getLog(ByteReadRequest.class);
 
 	private ByteReadCallback callback;
 	private int numBytes = 0;

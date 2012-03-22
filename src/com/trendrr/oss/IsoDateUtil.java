@@ -72,11 +72,11 @@ public class IsoDateUtil {
 //		test("1997");
 //		test(new Date());
 		
-		test("2011-05-06T00:00:00-0400");
-		test("2011-05-16T23:10:44.420000+00:00");
-		test("2011-05-18T18:43:30.834000 00:00");
-		System.out.println(getCurrentUTCTimestamp());
-
+//		test("2011-05-06T00:00:00-0400");
+//		test("2011-05-16T23:10:44.420000+00:00");
+//		test("2011-05-18T18:43:30.834000 00:00");
+//		System.out.println(getCurrentUTCTimestamp());
+		System.out.println(IsoDateUtil.parse("2012-03-11T00:00:00Z"));
 	}
 
 

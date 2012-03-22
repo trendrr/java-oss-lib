@@ -27,7 +27,7 @@ import com.trendrr.oss.StringHelper;
  */
 public class ExecutionReportChildPoints extends ExecutionReportPoint{
 
-	protected Log log = LogFactory.getLog(ExecutionReportChildPoints.class);
+	protected static Log log = LogFactory.getLog(ExecutionReportChildPoints.class);
 	
 	
 	TreeMap<String, ExecutionReportPoint> points = new TreeMap<String,ExecutionReportPoint>();

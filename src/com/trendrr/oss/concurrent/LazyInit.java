@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class LazyInit {
 
-	protected Log log = LogFactory.getLog(LazyInit.class);
+	protected static Log log = LogFactory.getLog(LazyInit.class);
 	
 	protected AtomicBoolean once = new AtomicBoolean(false);
 	

@@ -17,7 +17,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class ExecutionReportNodeTree {
 
-	protected Log log = LogFactory.getLog(ExecutionReportNodeTree.class);
+	protected static Log log = LogFactory.getLog(ExecutionReportNodeTree.class);
 	
 	protected HashMap<String, ExecutionReportNode> nodes = new HashMap<String, ExecutionReportNode>();
 	protected ExecutionReportNode parent = null;

@@ -18,7 +18,7 @@ public class TrendrrParseException extends TrendrrException {
 	 * 
 	 */
 	private static final long serialVersionUID = -6171885682624609544L;
-	protected Log log = LogFactory.getLog(TrendrrParseException.class);
+	protected static Log log = LogFactory.getLog(TrendrrParseException.class);
 	
 	public TrendrrParseException () {
 		this(null, null);

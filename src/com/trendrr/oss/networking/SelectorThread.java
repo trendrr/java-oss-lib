@@ -31,7 +31,7 @@ import com.trendrr.oss.exceptions.TrendrrException;
  */
 public class SelectorThread implements Runnable{
 
-	protected Log log = LogFactory.getLog(SelectorThread.class);
+	protected static Log log = LogFactory.getLog(SelectorThread.class);
 	
 	private static SelectorThread instance = null;
 	

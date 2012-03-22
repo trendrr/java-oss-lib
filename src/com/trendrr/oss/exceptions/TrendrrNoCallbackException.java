@@ -18,7 +18,7 @@ public class TrendrrNoCallbackException extends TrendrrException {
 	 * 
 	 */
 	private static final long serialVersionUID = 1364455592424623331L;
-	protected Log log = LogFactory.getLog(TrendrrNoCallbackException.class);
+	protected static Log log = LogFactory.getLog(TrendrrNoCallbackException.class);
 	
 	public TrendrrNoCallbackException () {
 		this(null, null);

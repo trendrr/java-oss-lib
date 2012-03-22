@@ -28,7 +28,7 @@ import com.trendrr.oss.exceptions.TrendrrOverflowException;
  */
 public class SocketChannelWrapper {
 
-	protected Log log = LogFactory.getLog(SocketChannelWrapper.class);
+	protected static Log log = LogFactory.getLog(SocketChannelWrapper.class);
 	protected SocketChannel channel = null;
 	protected AsynchBuffer buffer = null;
 

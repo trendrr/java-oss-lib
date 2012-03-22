@@ -34,7 +34,7 @@ import com.trendrr.oss.concurrent.TrendrrLock;
  */
 public class WhatsMyIp {
 
-	protected Log log = LogFactory.getLog(WhatsMyIp.class);
+	protected static Log log = LogFactory.getLog(WhatsMyIp.class);
 	
 	protected LazyInit lock = new LazyInit();
 	protected int timeout = 20*1000;

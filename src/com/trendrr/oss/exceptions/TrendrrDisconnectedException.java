@@ -12,7 +12,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class TrendrrDisconnectedException extends TrendrrNetworkingException {
 
-	protected Log log = LogFactory.getLog(TrendrrDisconnectedException.class);
+	protected static Log log = LogFactory.getLog(TrendrrDisconnectedException.class);
 	
 	public TrendrrDisconnectedException () {
 		this(null, null);

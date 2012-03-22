@@ -20,7 +20,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class PeriodicLock {
 
-	protected Log log = LogFactory.getLog(PeriodicLock.class);
+	protected static Log log = LogFactory.getLog(PeriodicLock.class);
 	
 	ExpirationLock timedlock = new ExpirationLock();
 	TrendrrLock lock = new TrendrrLock();

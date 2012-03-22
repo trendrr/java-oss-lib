@@ -31,7 +31,7 @@ import com.trendrr.oss.concurrent.Sleep;
  */
 public class RollingFileAppender {
 
-	protected Log log = LogFactory.getLog(RollingFileAppender.class);
+	protected static Log log = LogFactory.getLog(RollingFileAppender.class);
 	
 	protected String filename = null;
 	protected String fileExtension = "";

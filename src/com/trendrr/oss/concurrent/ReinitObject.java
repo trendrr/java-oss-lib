@@ -20,7 +20,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class ReinitObject<T> implements Initializer<T>{
 
-	protected Log log = LogFactory.getLog(ReinitObject.class);
+	protected static Log log = LogFactory.getLog(ReinitObject.class);
 	
 	private PeriodicLock lock = null;
 	private AtomicReference<T> ref = new AtomicReference<T>();

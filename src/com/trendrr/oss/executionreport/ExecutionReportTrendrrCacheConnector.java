@@ -31,7 +31,7 @@ import com.trendrr.oss.cache.TrendrrCache;
 public class ExecutionReportTrendrrCacheConnector extends
 		AbstractExecutionReportDBConnector {
 
-	protected Log log = LogFactory
+	protected static Log log = LogFactory
 			.getLog(ExecutionReportTrendrrCacheConnector.class);
 	
 	private TrendrrCache cache = null;

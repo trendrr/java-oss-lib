@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class PriorityUpdateQueue <T>{
 
-	protected Log log = LogFactory.getLog(PriorityUpdateQueue.class);
+	protected static Log log = LogFactory.getLog(PriorityUpdateQueue.class);
 	private List<T> heap = new ArrayList<T>();
 
 	

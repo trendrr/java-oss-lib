@@ -21,7 +21,7 @@ import com.trendrr.oss.Timeframe;
 public class DummyExecutionReportDBConnector extends
 		AbstractExecutionReportDBConnector {
 
-	protected Log log = LogFactory
+	protected static Log log = LogFactory
 			.getLog(DummyExecutionReportDBConnector.class);
 
 	/* (non-Javadoc)

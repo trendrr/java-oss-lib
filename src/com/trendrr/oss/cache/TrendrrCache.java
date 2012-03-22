@@ -32,7 +32,7 @@ import com.trendrr.oss.exceptions.TrendrrParseException;
  */
 public abstract class TrendrrCache {
 
-	protected Log log = LogFactory.getLog(TrendrrCache.class);
+	protected static Log log = LogFactory.getLog(TrendrrCache.class);
 
 	/**
 	 * initialize the connection.  called exactly once the first time the cache is accessed.

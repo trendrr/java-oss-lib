@@ -29,7 +29,7 @@ import com.trendrr.oss.Timeframe;
  */
 public class ExecutionReport extends TimerTask {
 
-	protected Log log = LogFactory.getLog(ExecutionReport.class);
+	protected static Log log = LogFactory.getLog(ExecutionReport.class);
 	
 	protected String name;
 	

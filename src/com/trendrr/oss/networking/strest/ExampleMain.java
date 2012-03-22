@@ -18,7 +18,7 @@ import com.trendrr.oss.concurrent.Sleep;
  */
 public class ExampleMain {
 
-	protected Log log = LogFactory.getLog(ExampleMain.class);
+	protected static Log log = LogFactory.getLog(ExampleMain.class);
 
 	public static void main(String...strings) throws Exception{
 		

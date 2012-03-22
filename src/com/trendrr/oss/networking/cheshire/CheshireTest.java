@@ -22,7 +22,7 @@ import com.trendrr.oss.exceptions.TrendrrException;
  */
 public class CheshireTest implements CheshireApiCallback{
 
-	protected Log log = LogFactory.getLog(CheshireTest.class);
+	protected static Log log = LogFactory.getLog(CheshireTest.class);
 	
 	
 	public static void main(String ...strings) throws TrendrrException, IOException {

@@ -37,7 +37,7 @@ import com.trendrr.oss.exceptions.TrendrrParseException;
  */
 public class JSONStreamReader {
 
-	protected Log log = LogFactory.getLog(JSONStreamReader.class);
+	protected static Log log = LogFactory.getLog(JSONStreamReader.class);
 	
 	Reader reader;
 	

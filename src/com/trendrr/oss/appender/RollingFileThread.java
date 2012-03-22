@@ -22,7 +22,7 @@ import com.trendrr.oss.exceptions.TrendrrIOException;
  */
 class RollingFileThread implements Runnable{
 
-	protected Log log = LogFactory.getLog(RollingFileThread.class);
+	protected static Log log = LogFactory.getLog(RollingFileThread.class);
 	
 	public RollingFileThread(RollingFileAppender cacheAppender){
 		this.appender = cacheAppender;

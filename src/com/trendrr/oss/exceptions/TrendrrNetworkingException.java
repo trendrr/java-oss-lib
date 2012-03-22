@@ -17,7 +17,7 @@ public abstract class TrendrrNetworkingException extends TrendrrException {
 	 * 
 	 */
 	private static final long serialVersionUID = -7179100604781833744L;
-	protected Log log = LogFactory.getLog(TrendrrNetworkingException.class);
+	protected static Log log = LogFactory.getLog(TrendrrNetworkingException.class);
 	
 	public TrendrrNetworkingException () {
 		this(null, null);

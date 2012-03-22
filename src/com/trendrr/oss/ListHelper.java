@@ -20,7 +20,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class ListHelper {
 
-	protected Log log = LogFactory.getLog(ListHelper.class);
+	protected static Log log = LogFactory.getLog(ListHelper.class);
 	
 	/**
 	 * checks if the lists are equivelent, i.e. all items in both lists are the same

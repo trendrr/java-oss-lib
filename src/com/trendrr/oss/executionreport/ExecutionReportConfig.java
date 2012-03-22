@@ -24,7 +24,7 @@ import com.trendrr.oss.Timeframe;
  */
 public class ExecutionReportConfig {
 
-	protected Log log = LogFactory.getLog(ExecutionReportConfig.class);
+	protected static Log log = LogFactory.getLog(ExecutionReportConfig.class);
 	
 	protected AtomicReference<ExecutionReportSerializer> serializer = new AtomicReference<ExecutionReportSerializer>(new DummyExecutionReportDBConnector());
 	protected AtomicLong flushMillis = new AtomicLong(1000*30); //how often to flush 

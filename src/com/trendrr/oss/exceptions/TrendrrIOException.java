@@ -14,7 +14,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class TrendrrIOException extends TrendrrNetworkingException{
 
-	protected Log log = LogFactory.getLog(TrendrrIOException.class);
+	protected static Log log = LogFactory.getLog(TrendrrIOException.class);
 	
 	public TrendrrIOException () {
 		this(null, null);

@@ -23,7 +23,7 @@ import com.trendrr.oss.concurrent.ReinitObject;
  */
 public class FileCache {
 
-	protected Log log = LogFactory.getLog(FileCache.class);
+	protected static Log log = LogFactory.getLog(FileCache.class);
 	
 	private static ConcurrentHashMap<String, ReinitObject<byte[]>> cache = new ConcurrentHashMap<String, ReinitObject<byte[]>> ();
 

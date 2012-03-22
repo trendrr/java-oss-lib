@@ -22,7 +22,7 @@ import com.trendrr.oss.exceptions.TrendrrException;
  */
 public class Test {
 
-	protected Log log = LogFactory.getLog(Test.class);
+	protected static Log log = LogFactory.getLog(Test.class);
 
 	/**
 	 * @param args

@@ -22,7 +22,7 @@ import com.trendrr.oss.concurrent.LazyInit;
  */
 public class TrendrrCacheStore {
 
-	protected Log log = LogFactory.getLog(TrendrrCacheStore.class);
+	protected static Log log = LogFactory.getLog(TrendrrCacheStore.class);
 	
 	protected ConcurrentHashMap<String, TrendrrCache> caches = new ConcurrentHashMap<String, TrendrrCache>();
 	protected ConcurrentHashMap<String, LazyInit> cacheLocks = new ConcurrentHashMap<String, LazyInit>();

@@ -21,7 +21,7 @@ import com.trendrr.oss.Timeframe;
  */
 public class ExecutionReportPoint implements Comparable<ExecutionReportPoint> {
 
-	protected Log log = LogFactory.getLog(ExecutionReportPoint.class);
+	protected static Log log = LogFactory.getLog(ExecutionReportPoint.class);
 	ExecutionReportPointId id = new ExecutionReportPointId();
 
 	long millis = 0l;

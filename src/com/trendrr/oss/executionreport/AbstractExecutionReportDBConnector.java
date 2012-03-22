@@ -32,7 +32,7 @@ import com.trendrr.oss.concurrent.PeriodicLock;
 public abstract class AbstractExecutionReportDBConnector implements
 		ExecutionReportSerializer {
 
-	protected Log log = LogFactory
+	protected static Log log = LogFactory
 			.getLog(AbstractExecutionReportDBConnector.class);
 
 		

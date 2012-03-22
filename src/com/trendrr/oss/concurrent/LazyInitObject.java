@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class LazyInitObject<T> {
 
-	protected Log log = LogFactory.getLog(LazyInitObject.class);
+	protected static Log log = LogFactory.getLog(LazyInitObject.class);
 	
 	AtomicReference<T> object = new AtomicReference<T>();
 	LazyInit lock = new LazyInit();
