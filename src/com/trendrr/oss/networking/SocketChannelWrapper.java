@@ -197,6 +197,13 @@ public class SocketChannelWrapper {
 		this.buffer = null;
 		this.thread = null;
 		this.closed = true;
+		
+		if (!this.writes.isEmpty()) {
+			log.warn("clearing " + this.numQueued.get() + " writes");
+		}
+		this.writes.clear();
+		this.numQueued.set(0);
+		
 	}
 
 	public boolean isClosed() {
