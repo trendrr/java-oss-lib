@@ -27,6 +27,7 @@ public class TimeframeCounter {
 	
 	AtomicLong current = new AtomicLong(0);
 	AtomicLong previous = new AtomicLong(0l);
+	AtomicLong previousEpoch = new AtomicLong(0l);
 	Timeframe timeframe = Timeframe.MINUTES;
 	AtomicLong epoch = new AtomicLong(0);
 	
@@ -42,6 +43,7 @@ public class TimeframeCounter {
 		long oldepoch = this.epoch.getAndSet(curepoch);
 		if (oldepoch != curepoch) {
 			previous.set(current.getAndSet(0));
+			previousEpoch.set(oldepoch);
 		}
 		return current.addAndGet(val);
 	}
@@ -51,14 +53,20 @@ public class TimeframeCounter {
 	 * @return
 	 */
 	public long getCurrent() {
+		if (timeframe.toTrendrrEpoch(new Date()).longValue() != this.epoch.get()) {
+			return 0l;
+		}
 		return this.current.get();
 	}
 	
 	/**
-	 * gets the most recently completed value.
+	 * gets the most recently completed from one timeframe ago (ie. yesterday, an hour ago, ect).
 	 * @return
 	 */
 	public long getPrevious() {
+		if ((timeframe.toTrendrrEpoch(new Date()).longValue()-1) != this.previousEpoch.get()) {
+			return 0l;
+		}
 		return this.previous.get();
 	}
 	
