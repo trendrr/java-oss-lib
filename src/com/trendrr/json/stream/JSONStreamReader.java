@@ -15,6 +15,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.DynMap;
 import com.trendrr.oss.DynMapFactory;
+import com.trendrr.oss.FileHelper;
 import com.trendrr.oss.exceptions.TrendrrException;
 import com.trendrr.oss.exceptions.TrendrrIOException;
 import com.trendrr.oss.exceptions.TrendrrParseException;
@@ -41,7 +42,7 @@ public class JSONStreamReader {
 	
 	Reader reader;
 	
-	long maxBufferedChars = 2048; //max size to write before we assume this is an invalid stream.
+	long maxBufferedChars = FileHelper.megsToBytes(4); //max size to write before we assume this is an invalid stream.
 	
 	public JSONStreamReader(InputStream stream) {
 		this(new InputStreamReader(stream));
