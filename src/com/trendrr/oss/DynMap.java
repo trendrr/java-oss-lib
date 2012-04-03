@@ -212,6 +212,22 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 			this.remove(k);
 		}
 	}
+	
+	/**
+	 * renames a key.  this is just shorthand for:
+	 * 
+	 * mp.put(newKey, mp.remove(currentKey));
+	 * 
+	 * @param currentKey
+	 * @param newKey
+	 */
+	public void rename(String currentKey, String newKey) {
+		Object v = this.remove(currentKey);
+		if (v == null)
+			return;
+		
+		this.put(newKey, v);
+	}
 		
 	@Override
 	public DynMap clone() {
