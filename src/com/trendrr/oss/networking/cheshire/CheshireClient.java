@@ -18,6 +18,7 @@ import com.trendrr.oss.DynMapFactory;
 import com.trendrr.oss.concurrent.Sleep;
 import com.trendrr.oss.exceptions.TrendrrDisconnectedException;
 import com.trendrr.oss.exceptions.TrendrrException;
+import com.trendrr.oss.exceptions.TrendrrTimeoutException;
 import com.trendrr.oss.networking.strest.RequestBuilder;
 import com.trendrr.oss.networking.strest.StrestClient;
 import com.trendrr.oss.networking.strest.StrestRequest;
@@ -184,9 +185,10 @@ public class CheshireClient implements CheshireApiCaller{
 	 * @return
 	 * @throws Exception
 	 */
-	public DynMap apiCall(String endPoint, Verb method, Map params) throws TrendrrException {
+	@Override
+	public DynMap apiCall(String endPoint, Verb method, Map params, long timeoutMillis) throws TrendrrTimeoutException, TrendrrException {
 		StrestRequest request = this.createRequest(endPoint, method, params);
-		StrestResponse response = this.sendWithReconnect(request);
+		StrestResponse response = this.sendWithReconnect(request, timeoutMillis);
 		String res;
 		try {
 			res = new String(response.getContent(), "utf8");
@@ -250,13 +252,15 @@ public class CheshireClient implements CheshireApiCaller{
 		}
 	}
 	
-	protected StrestResponse sendWithReconnect(StrestRequest req) throws TrendrrDisconnectedException{
+	protected StrestResponse sendWithReconnect(StrestRequest req, long timeoutMillis) throws TrendrrTimeoutException, TrendrrDisconnectedException{
 		StrestResponse response = null;
 		try {
 //			log.info("Sending request ");
 //			log.info(req);
 //			log.info("**************************");
-			response = this.strest.sendRequest(req);
+			response = this.strest.sendRequest(req, timeoutMillis);
+		} catch (TrendrrTimeoutException e) {
+			throw e;
 		} catch (TrendrrException e) {
 //			log.info("Caught", e);
 			//we are evidently not connected, so update that

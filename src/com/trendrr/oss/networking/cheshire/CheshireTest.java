@@ -51,7 +51,7 @@ public class CheshireTest implements CheshireApiCallback{
 		params.put("timeframe", "hourly");
 		params.put("namespace", "testing_1");
 		System.out.println(client.apiCall("/v1/top_elements", Verb.GET, 
-				params).toJSONString());
+				params, 0l).toJSONString());
 		
 	}
 

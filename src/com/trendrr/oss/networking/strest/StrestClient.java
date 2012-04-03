@@ -19,6 +19,7 @@ import com.trendrr.oss.exceptions.TrendrrDisconnectedException;
 import com.trendrr.oss.exceptions.TrendrrException;
 import com.trendrr.oss.exceptions.TrendrrOverflowException;
 import com.trendrr.oss.exceptions.TrendrrIOException;
+import com.trendrr.oss.exceptions.TrendrrTimeoutException;
 import com.trendrr.oss.networking.SocketChannelWrapper;
 
 
@@ -145,12 +146,16 @@ public class StrestClient {
 		}		
 	}
 	
+	public StrestResponse sendRequest(StrestRequest request) throws TrendrrException {
+		return this.sendRequest(request, 0l);
+	}	
+	
 	/**
 	 * sends a synchronious request, will wait for the result.
 	 * @param request
 	 * @return
 	 */
-	public StrestResponse sendRequest(StrestRequest request) throws TrendrrException {
+	public StrestResponse sendRequest(StrestRequest request, long timeoutMillis) throws TrendrrTimeoutException, TrendrrException {
 		try {
 			if (!this.connected.get()) {
 				throw new TrendrrDisconnectedException("Strest Client is not connected!");
@@ -158,7 +163,7 @@ public class StrestClient {
 			request.setHeaderIfAbsent(StrestHeaders.Names.STREST_TXN_ACCEPT, StrestHeaders.Values.SINGLE);
 			StrestSynchronousRequest sr = new StrestSynchronousRequest();
 			this.sendRequest(request, sr);
-			return sr.awaitResponse();
+			return sr.awaitResponse(timeoutMillis);
 		} catch (TrendrrException x) {
 			throw x;
 		} catch (Throwable t) {

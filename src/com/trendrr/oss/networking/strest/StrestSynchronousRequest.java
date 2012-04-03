@@ -4,9 +4,12 @@
 package com.trendrr.oss.networking.strest;
 
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import com.trendrr.oss.exceptions.TrendrrTimeoutException;
 
 
 
@@ -35,10 +38,16 @@ class StrestSynchronousRequest implements StrestRequestCallback{
 		}
 	}
 	
-	public StrestResponse awaitResponse() throws Throwable {
+	public StrestResponse awaitResponse(long timeoutMillis) throws Throwable {
 		try {
 			//try to aquire a semaphore, none is available so we wait.
-			lock.acquire(1);
+			if (timeoutMillis > 0) {
+				lock.acquire(1);
+			} else {
+				if (!lock.tryAcquire(timeoutMillis, TimeUnit.MILLISECONDS)) {
+					throw new TrendrrTimeoutException("Waited for " + timeoutMillis + " millis for a response");
+				}
+			}
 		} catch (InterruptedException e) {
 			log.error("Caught", e);
 			throw e;

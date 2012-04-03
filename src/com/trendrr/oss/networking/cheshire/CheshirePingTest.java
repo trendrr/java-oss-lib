@@ -31,7 +31,7 @@ public class CheshirePingTest implements CheshireApiCallback{
 		Date start = new Date();
 		for (int i=0 ; i < 100000; i++) {			
 			client.apiCall("/ping", Verb.GET, 
-					new DynMap());
+					new DynMap(), 0);
 		}
 		
 		

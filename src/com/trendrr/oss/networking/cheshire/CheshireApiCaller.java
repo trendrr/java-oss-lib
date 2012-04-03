@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.trendrr.oss.DynMap;
 import com.trendrr.oss.exceptions.TrendrrException;
+import com.trendrr.oss.exceptions.TrendrrTimeoutException;
 
 
 /**
@@ -39,9 +40,10 @@ public interface CheshireApiCaller {
 	 * @param endPoint
 	 * @param method
 	 * @param params
+	 * @param timeoutMillis throw an exception if this # of millis passes,  < 1 should be infinite.
 	 * @return
 	 * @throws Exception
 	 */
-	public DynMap apiCall(String endPoint, Verb method, Map params) throws TrendrrException;
+	public DynMap apiCall(String endPoint, Verb method, Map params, long timeoutMillis) throws TrendrrTimeoutException, TrendrrException;
 	
 }
