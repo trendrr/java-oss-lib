@@ -41,7 +41,7 @@ class StrestSynchronousRequest implements StrestRequestCallback{
 	public StrestResponse awaitResponse(long timeoutMillis) throws Throwable {
 		try {
 			//try to aquire a semaphore, none is available so we wait.
-			if (timeoutMillis > 0) {
+			if (timeoutMillis <= 0) {
 				lock.acquire(1);
 			} else {
 				if (!lock.tryAcquire(timeoutMillis, TimeUnit.MILLISECONDS)) {
