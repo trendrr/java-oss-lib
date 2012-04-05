@@ -146,6 +146,7 @@ public class AsynchBuffer {
 			totalRead += numRead;
 			if (numRead < 0) {
 				this.returnBuffer(buf);
+				
 				throw new TrendrrDisconnectedException("EOF reached!");
 			} else if (numRead == 0) {
 				//just return the buffer, we didn't get any data.
@@ -196,6 +197,10 @@ public class AsynchBuffer {
 		this.databuffers.clear();
 		this.bufferPool.clear();
 		while(!this.callbacks.isEmpty()) {
+			ChannelCallback cb = this.callbacks.poll();
+			if (cb instanceof ByteReadRequest) {
+				((ByteReadRequest)cb).flush();
+			}
 			this.callbacks.poll().onError(new TrendrrDisconnectedException("Buffer is closed, no more data available"));
 		}
 		this.callbacks.clear();
@@ -238,7 +243,6 @@ public class AsynchBuffer {
 	 */
 	private boolean readBytes(ByteReadRequest request) {
 		List<ByteBuffer> databufs = new ArrayList<ByteBuffer>();
-//		log.info("reading bytes");
 		for (ByteBuffer buf : this.databuffers) {
 			if (request.getBuf().hasRemaining()) {
 				try {

@@ -38,6 +38,16 @@ class ByteReadRequest implements ChannelCallback {
 	public void setBuf(ByteBuffer buf) {
 		this.buf = buf;
 	}
+	
+	/**
+	 * flush the remaining bytes.  this is only used for readfully
+	 * @param bytes
+	 */
+	void flush() {
+		if (this.callback instanceof ByteReadFullyCallback) {
+			this.callback.byteResult(this.buf.array());
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see com.trendrr.oss.networking.ChannelCallback#onError(com.trendrr.oss.exceptions.TrendrrException)

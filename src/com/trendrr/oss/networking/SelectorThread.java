@@ -5,6 +5,7 @@ package com.trendrr.oss.networking;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.CancelledKeyException;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -143,6 +144,8 @@ public class SelectorThread implements Runnable{
 				if (e.getMessage().equals("Broken pipe")) {
 					this.channels.get((SocketChannel)key.channel()).close();
 				}
+			} catch (CancelledKeyException x) {
+				//do nothing, will run through the ops and remove them.
 			} catch (Exception e) {
 				log.error("Caught", e);
 			}

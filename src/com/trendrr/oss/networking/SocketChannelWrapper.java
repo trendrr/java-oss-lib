@@ -38,6 +38,8 @@ public class SocketChannelWrapper {
 	protected ConcurrentLinkedQueue<ByteBuffer> writes = new ConcurrentLinkedQueue<ByteBuffer>();
 
 	protected boolean closed = false;
+	
+	protected ByteReadCallback closeListener = null;
 	AtomicInteger numQueued = new AtomicInteger(0);
 	
 	public SocketChannelWrapper(SocketChannel channel) {
@@ -51,6 +53,14 @@ public class SocketChannelWrapper {
 		this.notifyChange();
 	}
 	
+	/**
+	 * sets a callback that will get called on disconnect.  the remaining bytes will be sent, or a 0 length array if no unread bytes remain.
+	 * No exception will be sent though.
+	 * @param closeListener
+	 */
+	public void setCloseListener(ByteReadCallback closeListener) {
+		this.closeListener = closeListener;
+	}
 	/**
 	 * reads until the requested string is found.
 	 * @param delimiter
@@ -85,6 +95,10 @@ public class SocketChannelWrapper {
 		return callback.byteResult;
 	}
 
+	
+	public void readFully(ByteReadCallback callback) {
+		this.readBytes(ByteReadFullyCallback.NUMBYTES, new ByteReadFullyCallback(this, callback));
+	}
 	/**
 	 * writes to the socketchannel, throws an exception if there are > maxQueued writes waiting to be written.
 	 * @param buf
