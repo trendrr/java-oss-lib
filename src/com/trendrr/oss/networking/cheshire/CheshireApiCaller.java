@@ -46,4 +46,16 @@ public interface CheshireApiCaller {
 	 */
 	public DynMap apiCall(String endPoint, Verb method, Map params, long timeoutMillis) throws TrendrrTimeoutException, TrendrrException;
 	
+	
+	/**
+	 * gets the host address
+	 * @return
+	 */
+	public String getHost();
+	
+	/**
+	 * gets the cheshire port
+	 * @return
+	 */
+	public int getPort();
 }
