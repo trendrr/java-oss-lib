@@ -3,11 +3,13 @@
  */
 package com.trendrr.oss;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,8 +38,7 @@ public class PriorityUpdateQueue <T>{
 	 * is apparently contingent on the mappings in the map..
 	 * investigate..
 	 */
-
-	private HashMap<T, Integer> indexes = new HashMap<T, Integer>();
+	private Map<T, Integer> indexes; //map of T to int
 	
 	private Comparator<T> comparator;
 
@@ -46,9 +47,31 @@ public class PriorityUpdateQueue <T>{
 	 * @param comparator
 	 */
     public PriorityUpdateQueue(Comparator<T> comparator) {
-        this.comparator = comparator;
+    	this(comparator, new HashMap<T, Integer>(), new ArrayList<T>());
     }
-
+    
+    /**
+     * allows better map and collection implementation (i.e. trove, hppc, ect)
+     * 
+     * map should be <T,Integer>
+     * collection should be T, where get(int) is fast. 
+     * 
+     * @param comparator
+     * @param map
+     * @param collection
+     */
+    public PriorityUpdateQueue(Comparator<T> comparator, Map map, List collection) {
+        this.comparator = comparator;
+        this.heap = collection;
+        this.indexes = map;   
+    }
+    
+    
+    public PriorityUpdateQueue(Comparator<T> comparator, Map map) {
+    	this(comparator, map, new ArrayList<T>());
+    }
+    
+    
     public synchronized int getSize() {
     	return heap.size();
     }
