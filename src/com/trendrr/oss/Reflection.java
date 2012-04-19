@@ -376,8 +376,13 @@ public class Reflection {
 				// we are only interested in .class files
 				if (filename.endsWith(".class")) {
 					// removes the .class extension
-					classes.add(Class.forName(pckgname + '.'
-							+ filename.substring(0, filename.length() - 6)));
+					String className = pckgname + '.'
+							+ filename.substring(0, filename.length() - 6);
+					try {
+						classes.add(Class.forName(className));
+					} catch (NoClassDefFoundError ex) {
+						log.warn("Caught and swallowed (likely an unresolved dependancy) while trying to add: " + className, ex);
+					}
 				}
 				if (files[i].isDirectory() && recur) {
 					directoryClasses(classes, files[i], pckgname + '.' + filename, recur);
