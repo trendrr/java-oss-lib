@@ -36,40 +36,47 @@ public class TrendrrCacheTests {
 	protected static Log log = LogFactory.getLog(TrendrrCacheTests.class);
 	
 	protected int timeoutSeconds = 5;
-	public boolean testDelete(TrendrrCache cache) {
+	
+	/**
+	 * runs all the unit tests on the passed in cache.
+	 * @param cache
+	 */
+	public void runTests(TrendrrCache cache) {
+		this.testDelete(cache);
+		this.testGetSet(cache);
+		this.testSetIfAbsent(cache);
+		this.testAddToSet(cache);
+		this.testInc(cache);
+		this.testGetMulti(cache);
+		this.testIncMulti(cache);
+		
+	}
+	
+	public void testDelete(TrendrrCache cache) {
 		Date expire = Timeframe.SECONDS.add(new Date(), this.timeoutSeconds);
 		cache.set("tests", "testDeleteKey", "testing", expire);
 		cache.delete("tests", "testDeleteKey");
-		return (cache.get("tests", "testDeleteKey") == null);
+		Assert.assertTrue(cache.get("tests", "testDeleteKey") == null);
 	}
 	
-	public boolean testGetSet(TrendrrCache cache) {
+	public void testGetSet(TrendrrCache cache) {
 		Date expire = Timeframe.SECONDS.add(new Date(), this.timeoutSeconds);
 		try {
 			cache.set("tests", "testGetSet", "String Object", expire);
-			if (!cache.get(String.class, "tests", "testGetSet").equals("String Object")) {
-				return false;
-			}
-			return true;
+			Assert.assertTrue(cache.get(String.class, "tests", "testGetSet").equals("String Object"));
 		} finally {
 			cache.delete("tests", "testGetSet");
 		}
 	}
 	
-	public boolean testSetIfAbsent(TrendrrCache cache) {
+	public void testSetIfAbsent(TrendrrCache cache) {
 		Date expire = Timeframe.SECONDS.add(new Date(), this.timeoutSeconds);
 		try {
 			cache.set("tests", "testSetIfAbsent", "String Object", expire);
 			cache.setIfAbsent("tests", "testSetIfAbsent", "String Object 2", expire);
-			if (!cache.get(String.class, "tests", "testSetIfAbsent").equals("String Object")) {
-				return false;
-			}
+			Assert.assertTrue(cache.get(String.class, "tests", "testSetIfAbsent").equals("String Object"));
 			cache.setIfAbsent("tests", "testSetIfAbsent2", "String Object 3", expire);
-			if (!cache.get(String.class, "tests", "testSetIfAbsent2").equals("String Object 3")) {
-				return false;
-			}
-			
-			return true;
+			Assert.assertTrue(cache.get(String.class, "tests", "testSetIfAbsent2").equals("String Object 3"));
 		} finally {
 			cache.delete("tests", "testIncKey");
 		}
