@@ -77,6 +77,21 @@ public abstract class TrendrrCache {
 	protected abstract long _inc(String key, int value, Date expire);
 	
 	/**
+	 * increments multiple keys in a map.  
+	 * @param key
+	 * @param values
+	 * @param expire
+	 */
+	protected abstract void _incMulti(String key, Map<String, Integer> values, Date expire);
+	
+	/**
+	 * gets the map from an incMulti call.
+	 * @param key
+	 * @return
+	 */
+	protected abstract Map<String,Long> _getIncMulti(String key);
+	
+	/**
 	 * Add these items into a set add the given key.
 	 * @param str
 	 * @return
@@ -324,5 +339,28 @@ public abstract class TrendrrCache {
 	 */
 	public long inc(String key, int value, Date expire) {
 		return this.inc(null, key, value, expire);
+	}
+	
+	/**
+	 * increments multiple keys in a map (ex: a redis hashmap).
+	 * @param namespace
+	 * @param key
+	 * @param values
+	 * @param expire
+	 */
+	public void incMulti(String namespace, String key, Map<String, Integer> values, Date expire) {
+		this.init();
+		this._incMulti(this.getKey(namespace, key), values, expire);
+	}
+	
+	/**
+	 * increments multiple keys in a map (ex: a redis hashmap).
+	 * @param namespace
+	 * @param key
+	 * @param values
+	 * @param expire
+	 */
+	public void incMulti(String key, Map<String, Integer> values, Date expire) {
+		this.incMulti(null, key, values, expire);
 	}
 }
