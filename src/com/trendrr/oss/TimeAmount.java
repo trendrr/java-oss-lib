@@ -59,6 +59,10 @@ public class TimeAmount {
 		}
 	}
 	
+	public Date add(Date input, int amount) {
+		return this.frame.add(input, this.amount*amount);	
+	}
+	
 	/**
 	 * creates a
 	 * @param date
