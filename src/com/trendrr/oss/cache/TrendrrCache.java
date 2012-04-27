@@ -17,6 +17,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.DynMap;
 import com.trendrr.oss.StringHelper;
+import com.trendrr.oss.TypeCast;
 import com.trendrr.oss.concurrent.LazyInit;
 import com.trendrr.oss.exceptions.TrendrrParseException;
 
@@ -270,12 +271,31 @@ public abstract class TrendrrCache {
 	}
 	
 	/**
+	 * gets a typed value
+	 * @param cls 
+	 * @param namespace
+	 * @param key
+	 * @return
+	 */
+	public <T> T get(Class<T> cls, String namespace, String key) {
+		return TypeCast.cast(cls, this.get(namespace, key));
+	}
+	
+	public Map<String, Long> getIncMulti(String namespace, String key) {
+		this.init();
+		return this._getIncMulti(this.getKey(namespace, key));
+	}
+	
+	public Map<String, Long> getIncMulti(String key) {
+		return this.getIncMulti(null, key);
+	}
+	/**
 	 * returns a map of 
 	 * @param namespace
 	 * @param keys
 	 * @return
 	 */
-	public Map<String, Object> getMulti(String namespace, Collection<String> keys) {
+	public DynMap getMulti(String namespace, Collection<String> keys) {
 		this.init();
 		
 		/*
@@ -291,7 +311,7 @@ public abstract class TrendrrCache {
 			k.add(newKey);
 		}
 		Map<String, Object> results =  this._getMulti(k);
-		HashMap<String, Object> newResults = new HashMap<String,Object>();
+		DynMap newResults = new DynMap();
 		for (String key : results.keySet()) {
 			newResults.put(newKeys.get(key), results.get(key));
 		}
