@@ -46,7 +46,7 @@ public class StrestMessageReader implements StringReadCallback,
 		}
 		
 		this.current = null;
-		sock.readUntil(StrestUtil.CRLF + StrestUtil.CRLF, StrestUtil.DEFAULT_CHARSET, this);
+		sock.readUntil(StrestUtil.CRLF + StrestUtil.CRLF, StrestUtil.DEFAULT_CHARSET, true, this);
 	}
 	
 	/* (non-Javadoc)

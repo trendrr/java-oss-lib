@@ -20,6 +20,7 @@ class StringReadRequest implements ChannelCallback{
 
 	protected static Log log = LogFactory.getLog(StringReadRequest.class);
 
+	private boolean stripDelimiter = true;
 	private String delimiter;
 	private Charset charset;
 	private StringReadCallback callback;
@@ -27,13 +28,22 @@ class StringReadRequest implements ChannelCallback{
 	
 	
 
-	public StringReadRequest(String delimiter, Charset charset, StringReadCallback cb) {
+	public StringReadRequest(String delimiter, Charset charset, StringReadCallback cb, boolean stripDelim) {
 		this.delimiter = delimiter;
 		this.charset = charset;
 		this.callback = cb;
 		this.buf = new StringBuilder();
+		this.stripDelimiter = stripDelim;
 	}
 	
+	public boolean isStripDelimiter() {
+		return stripDelimiter;
+	}
+
+	public void setStripDelimiter(boolean stripDelimiter) {
+		this.stripDelimiter = stripDelimiter;
+	}
+
 	/* (non-Javadoc)
 	 * @see com.trendrr.oss.networking.ChannelCallback#onError(com.trendrr.oss.exceptions.TrendrrException)
 	 */

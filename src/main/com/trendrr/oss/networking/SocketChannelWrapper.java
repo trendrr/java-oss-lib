@@ -47,8 +47,8 @@ public class SocketChannelWrapper {
 		this.buffer = new AsynchBuffer();
 	}
 
-	public void readUntil(String delimiter, Charset charset, StringReadCallback callback) {
-		this.buffer.readUntil(delimiter, charset, callback);
+	public void readUntil(String delimiter, Charset charset, boolean stripDelimiter, StringReadCallback callback) {
+		this.buffer.readUntil(delimiter, charset, stripDelimiter, callback);
 		this.buffer.process();//attempt to read directly from the already buffered bytes
 		this.notifyChange();
 	}
@@ -68,9 +68,9 @@ public class SocketChannelWrapper {
 	 * @return
 	 * @throws TrendrrException
 	 */
-	public String readUntil(String delimiter, Charset charset) throws TrendrrException{
+	public String readUntil(String delimiter, Charset charset, boolean stripDelimiter) throws TrendrrException{
 		SynchronousReadCallback callback = new SynchronousReadCallback();
-		this.readUntil(delimiter, charset, callback);
+		this.readUntil(delimiter, charset, stripDelimiter, callback);
 		callback.awaitResponse();
 		if (callback.exception != null) {
 			throw callback.exception;

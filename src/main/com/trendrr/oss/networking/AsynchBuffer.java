@@ -59,8 +59,8 @@ public class AsynchBuffer {
 	 * @param callback
 	 * @param charset
 	 */
-	public synchronized void readUntil(String delimiter, Charset charset, StringReadCallback callback) {
-		this.callbacks.add(new StringReadRequest(delimiter, charset, callback));
+	public synchronized void readUntil(String delimiter, Charset charset, boolean stripDelimiter, StringReadCallback callback) {
+		this.callbacks.add(new StringReadRequest(delimiter, charset, callback, stripDelimiter));
 	}
 	
 	/**
@@ -68,9 +68,9 @@ public class AsynchBuffer {
 	 * @param dilimiter
 	 * @param charset
 	 */
-	public String readUntil(String delimiter, Charset charset) throws TrendrrException{
+	public String readUntil(String delimiter, Charset charset, boolean stripDelimiter) throws TrendrrException{
 		SynchronousReadCallback callback = new SynchronousReadCallback();
-		this.readUntil(delimiter, charset, callback);
+		this.readUntil(delimiter, charset, stripDelimiter, callback);
 		callback.awaitResponse();
 		if (callback.exception != null) {
 			throw callback.exception;
@@ -301,12 +301,19 @@ public class AsynchBuffer {
 				
 				charBuf.clear();
 				
-				if (request.getBuf().length() > request.getDelimiter().length() + fromIndex) {
+				//check that there is at least the possibility of another delimiter.
+				if (request.getBuf().length() >= request.getDelimiter().length() + fromIndex) {
 					int found = builder.indexOf(delimiter, fromIndex);
 					if (found != -1) {
 						String val = builder.toString();
 //						log.info(val);
-						retVal = val.substring(0, found);
+						int endIndex = found;
+						if (!request.isStripDelimiter()) {
+							endIndex += delimiter.length();
+						}
+						
+						retVal = val.substring(0, endIndex);
+						
 						String remaining = val.substring(found+delimiter.length());
 //						log.info(remaining);
 						//now need to add this back to the ByteBuffer..
