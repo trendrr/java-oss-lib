@@ -327,15 +327,19 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		if (val == null && key.contains(".")) {
 			//try to reach into the object..
 			String[] items = key.split("\\.");
-			DynMap cur = this.get(DynMap.class, items[0]);
+			DynMap cur = this.getMap(items[0]);
 			if (cur == null) {
 				return null;
 			}
+			this.put(items[0], cur);
 			for (int i= 1; i < items.length-1; i++) {				
-				cur = cur.get(DynMap.class, items[i]);
+				DynMap cur1 = cur.getMap(items[i]);
 				
-				if (cur == null)
+				if (cur1 == null)
 					return null;
+				cur.put(items[i], cur1); //we readd it in case the map needed to be typecasted.
+				cur = cur1;
+				
 			}
 			return cur.remove(items[items.length-1]);
 		}
