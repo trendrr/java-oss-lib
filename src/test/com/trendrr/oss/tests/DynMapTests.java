@@ -128,16 +128,28 @@ public class DynMapTests {
 	
 	@Test
 	public void removeWithDotTest2() {
+		//Test submaps are parsed to dynmap.
+		DynMap mp = DynMapFactory.instance("{ \"key\" : 90," +
+				"\"map1\" : {" +
+					"\"key2\" : \"today\"" +
+				"}," +
+				"\"list\" : [ 1,2,3]" +
+			" }");
+		
+		mp.remove("map1.key2");
+		
+		Assert.assertNull(mp.get("map1.key2"));
+		
+		//now test that other map implementations are readded as dynmaps
+		
 		DynMap mp2 = new DynMap();
 		JSONObject json = new JSONObject();
+		json.put("id_str","abdefg");
 		
-		DynMap user = new DynMap();
-		user.put("id_str","abdefg");
-		json.putAll(user);
 		mp2.put("user",json);
 		System.out.println(mp2.get(DynMap.class,"user"));
 		System.out.println((mp2.remove("user.id_str")));
-		Assert.assertFalse(mp2.getString("user.id_str").equals("abdefg"));
+		Assert.assertNull(mp2.getString("user.id_str"));
 		System.out.println("mp2: "+mp2);
 	}
 	
