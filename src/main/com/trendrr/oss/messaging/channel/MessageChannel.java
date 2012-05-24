@@ -3,35 +3,86 @@
  */
 package com.trendrr.oss.messaging.channel;
 
-
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.trendrr.oss.DynMap;
+import com.trendrr.oss.concurrent.SafeBox;
+import com.trendrr.oss.tests.messaging.EchoClass;
 
 
 /**
  * A synchronous channel.  multiple threads can submit tasks to the channel.  All requests are handled in
  * order by the ChannelRequestHandler.  The ChannelRequestHandler operates in a single dedicated thread.
  * 
+ * Note that throughput goes up as the number of threads submitting tasks goes up.  The wait/notify cycle 
+ * is full of latency, so using this for 1to1 thread communication is slow.
+ * 
  * 
  * @author Dustin Norlander
  * @created May 16, 2012
  * 
  */
-public class MessageChannel implements Runnable {
+public class MessageChannel implements Runnable{
 
 	protected static Log log = LogFactory.getLog(MessageChannel.class);
 	
-	protected ArrayBlockingQueue<ChannelRequest> requests = new ArrayBlockingQueue<ChannelRequest>(1);
-	protected ArrayBlockingQueue<ChannelResponse> responses = new ArrayBlockingQueue<ChannelResponse>(1);
+	ArrayBlockingQueue<ChannelRequest> requests = new ArrayBlockingQueue<ChannelRequest>(200);
+
 	protected String name;
 	protected ChannelRequestHandler handler;
 	
 	private static ConcurrentHashMap<String, MessageChannel> channels = new ConcurrentHashMap<String, MessageChannel>();
+	
+	public static void main (String ...strings) throws Exception{
+		
+		EchoClass echo = new EchoClass();
+		ChannelMethodRequestHandler handler = new ChannelMethodRequestHandler(echo);
+		MessageChannel channel = MessageChannel.create("test", handler);
+		int num = 500000;
+		//warm up.
+		for (int i=0; i < 100; i++) {
+			Object val = channel.request("stringLength", "1234");
+			List<Object> vals = (List<Object>)channel.request("inputToList", "one", "two");
+		}
+		
+		
+		Date start = new Date();
+		for (int i=0; i < num; i++) {
+			Object val = channel.request("stringLength", "1234");
+			List<Object> vals = (List<Object>)channel.request("inputToList", "one", "two");
+		}
+		long millis = (new Date().getTime()-start.getTime());
+		System.out.println("MESSAGE CHANNEL COMPLETED " + num + " IN " + (new Date().getTime()-start.getTime()));
+		
+		start = new Date();
+		for (int i=0; i < num; i++) {
+			Object val = handler.handleRequest("stringLength", "1234");
+			List<Object> vals = (List<Object>)handler.handleRequest("inputToList", "one", "two");
+		}
+		
+		System.out.println("HANDLER COMPLETED " + num + " IN " + (new Date().getTime()-start.getTime()));
+		
+		
+		
+		start = new Date();
+		for (int i=0; i < num; i++) {
+			Object val = echo.stringLength("1234");
+			List<Object> vals = echo.inputToList( "one", "two");
+		}
+		
+		System.out.println("COMPLETED " + num + " IN " + (new Date().getTime()-start.getTime()));
+		
+		
+		channel.stop();
+		
+	}
+	
 	
 	/**
 	 * creates a new channel with the given name.  If a channel already exists with that name, it is stopped and this channel will
@@ -94,9 +145,10 @@ public class MessageChannel implements Runnable {
 	 * @return
 	 * @throws Exception
 	 */
-	public synchronized Object request(ChannelRequest request) throws Exception{
-		requests.put(request);
-		ChannelResponse response = responses.take();
+	public Object request(ChannelRequest request) throws Exception{
+		
+		this.requests.put(request);
+		ChannelResponse response = request.awaitResponse();	
 		if (response.getError() != null) {
 			throw response.getError();
 		}
@@ -109,25 +161,22 @@ public class MessageChannel implements Runnable {
 	 */
 	@Override
 	public void run() {
+
+		ChannelRequest request = new ChannelStopRequest();
 		while(true) {
 			try {
-				ChannelRequest request = requests.take();
+				request = this.requests.take();
 				if (request instanceof ChannelStopRequest) {
 					log.warn("Channel: " + this.name + " stopping");
 					//TODO: a channel stop callback?
 					return;
 				}
 				Object result = this.handler.handleRequest(request.getEndpoint(), request.getInputs());
-				this.responses.put(new ChannelResponse(result, null));
+				request.setResponse(new ChannelResponse(result, null));
 				
 			} catch (Exception e) {
-				try {
-					this.responses.put(new ChannelResponse(null, e));
-				} catch (InterruptedException e1) {
-					log.warn("Caught", e1);
-				}
+				request.setResponse(new ChannelResponse(null, e));
 			}
 		}
 	}
-	
 }
