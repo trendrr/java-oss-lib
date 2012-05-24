@@ -136,8 +136,8 @@ public class DynMapTests {
 		json.putAll(user);
 		mp2.put("user",json);
 		System.out.println(mp2.get(DynMap.class,"user"));
-		System.out.println("mp2: "+mp2);
-		Assert.assertTrue(((String)mp2.remove("user.id_str")).equals("abdefg"));
+		System.out.println((mp2.remove("user.id_str"));
+		Assert.assertFalse(mp2.getString("user.id_str").equals("abdefg"));
 		System.out.println("mp2: "+mp2);
 	}
 	
