@@ -13,6 +13,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import com.trendrr.json.simple.JSONObject;
 import com.trendrr.oss.DynMap;
 import com.trendrr.oss.DynMapFactory;
 
@@ -123,6 +124,21 @@ public class DynMapTests {
 		mp1.remove("map1");
 		Assert.assertTrue(mp1.size() == 0);
 		
+	}
+	
+	@Test
+	public void removeWithDotTest2() {
+		DynMap mp2 = new DynMap();
+		JSONObject json = new JSONObject();
+		
+		DynMap user = new DynMap();
+		user.put("id_str","abdefg");
+		json.putAll(user);
+		mp2.put("user",json);
+		System.out.println(mp2.get(DynMap.class,"user"));
+		System.out.println("mp2: "+mp2);
+		Assert.assertTrue(((String)mp2.remove("user.id_str")).equals("abdefg"));
+		System.out.println("mp2: "+mp2);
 	}
 	
 	@Test
