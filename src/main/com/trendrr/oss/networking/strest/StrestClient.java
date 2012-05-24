@@ -167,6 +167,12 @@ public class StrestClient {
 		} catch (TrendrrException x) {
 			throw x;
 		} catch (Throwable t) {
+			if (t instanceof IOException) {
+				IOException iox = (IOException)t;
+				if (iox.getMessage().equalsIgnoreCase("not connected")) {
+					throw new TrendrrDisconnectedException(iox);
+				}
+			} 
 			throw new TrendrrException(new Exception(t));
 		}
 	}

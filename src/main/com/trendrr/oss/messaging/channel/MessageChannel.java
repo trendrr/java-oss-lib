@@ -3,17 +3,12 @@
  */
 package com.trendrr.oss.messaging.channel;
 
-import java.util.Date;
-import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Semaphore;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.trendrr.oss.concurrent.SafeBox;
-import com.trendrr.oss.tests.messaging.EchoClass;
 
 
 /**
@@ -38,51 +33,6 @@ public class MessageChannel implements Runnable{
 	protected ChannelRequestHandler handler;
 	
 	private static ConcurrentHashMap<String, MessageChannel> channels = new ConcurrentHashMap<String, MessageChannel>();
-	
-	public static void main (String ...strings) throws Exception{
-		
-		EchoClass echo = new EchoClass();
-		ChannelMethodRequestHandler handler = new ChannelMethodRequestHandler(echo);
-		MessageChannel channel = MessageChannel.create("test", handler);
-		int num = 500000;
-		//warm up.
-		for (int i=0; i < 100; i++) {
-			Object val = channel.request("stringLength", "1234");
-			List<Object> vals = (List<Object>)channel.request("inputToList", "one", "two");
-		}
-		
-		
-		Date start = new Date();
-		for (int i=0; i < num; i++) {
-			Object val = channel.request("stringLength", "1234");
-			List<Object> vals = (List<Object>)channel.request("inputToList", "one", "two");
-		}
-		long millis = (new Date().getTime()-start.getTime());
-		System.out.println("MESSAGE CHANNEL COMPLETED " + num + " IN " + (new Date().getTime()-start.getTime()));
-		
-		start = new Date();
-		for (int i=0; i < num; i++) {
-			Object val = handler.handleRequest("stringLength", "1234");
-			List<Object> vals = (List<Object>)handler.handleRequest("inputToList", "one", "two");
-		}
-		
-		System.out.println("HANDLER COMPLETED " + num + " IN " + (new Date().getTime()-start.getTime()));
-		
-		
-		
-		start = new Date();
-		for (int i=0; i < num; i++) {
-			Object val = echo.stringLength("1234");
-			List<Object> vals = echo.inputToList( "one", "two");
-		}
-		
-		System.out.println("COMPLETED " + num + " IN " + (new Date().getTime()-start.getTime()));
-		
-		
-		channel.stop();
-		
-	}
-	
 	
 	/**
 	 * creates a new channel with the given name.  If a channel already exists with that name, it is stopped and this channel will
