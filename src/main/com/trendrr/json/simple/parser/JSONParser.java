@@ -13,6 +13,7 @@ import java.util.Map;
 
 import com.trendrr.json.simple.JSONArray;
 import com.trendrr.json.simple.JSONObject;
+import com.trendrr.oss.DynMap;
 
 
 /**
@@ -273,11 +274,11 @@ public class JSONParser {
 	
 	private Map createObjectContainer(ContainerFactory containerFactory){
 		if(containerFactory == null)
-			return new JSONObject();
+			return new DynMap();
 		Map m = containerFactory.createObjectContainer();
 		
 		if(m == null)
-			return new JSONObject();
+			return new DynMap();
 		return m;
 	}
 	
