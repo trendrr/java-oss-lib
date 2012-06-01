@@ -70,7 +70,6 @@ public class StrestMessageReader implements StringReadCallback {
 	 */
 	@Override
 	public void stringResult(String result) {
-		System.out.println("RESULT: " +result);
 		List<DynMap> val;
 		try {
 			val = this.parser.addString(result);
@@ -78,7 +77,6 @@ public class StrestMessageReader implements StringReadCallback {
 //			if (tmp != null) 
 //				val.add(tmp);
 			for (DynMap mp : val) {
-				System.out.println("message map: " + mp);
 				this.client.get().incoming(new StrestJsonResponse(mp));
 			}
 		} catch (TrendrrParseException e) {
