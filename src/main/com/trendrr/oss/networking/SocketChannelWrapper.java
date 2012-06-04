@@ -36,7 +36,7 @@ public class SocketChannelWrapper {
 	protected TrendrrLock threadInit = new TrendrrLock();
 
 	protected ConcurrentLinkedQueue<ByteBuffer> writes = new ConcurrentLinkedQueue<ByteBuffer>();
-
+	
 	protected boolean closed = false;
 	
 	protected ByteReadCallback closeListener = null;
@@ -168,7 +168,9 @@ public class SocketChannelWrapper {
 		return this.writes;
 	}
 	
-	
+	public int getWriteQueueSize() {
+		return this.numQueued.get();
+	}
 	
 	/**
 	 * Attempts to read from the network, and process any callbacks.  
