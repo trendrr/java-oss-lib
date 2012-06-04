@@ -57,9 +57,11 @@ public class StrestClient {
 
 	protected int maxWaitingForResponse = 0; //the maximum number of waiting callbacks.
 	protected int maxQueuedWrites = 200; //the maximum number of writes that have queued up.
-
+	protected boolean waitOnMaxQueuedWrites = false; //should we block or exception when queue is full?
 	
 
+
+	
 
 	public StrestClient(String host, int port) {
 		this.host = host;
@@ -135,6 +137,13 @@ public class StrestClient {
 
 				throw new TrendrrIOException(this.maxWaitingForResponse + " waiting for response, me thinks theres a network problem, or you need to slow down!");
 			}
+			
+			while (this.isWaitOnMaxQueuedWrites() && this.socket.getWriteQueueSize() >= this.maxQueuedWrites) {
+				//wait for space.
+				log.warn("Write queue is full, waiting for space...");
+				Sleep.millis(25);
+			}
+ 			
 			if (request.getHeader(StrestHeader.Name.TXN_ACCEPT) == null) {
 				request.setTxnAccept(TxnAccept.MULTI);
 			}
@@ -249,5 +258,17 @@ public class StrestClient {
 
 	public void setMaxQueuedWrites(int maxQueuedWrites) {
 		this.maxQueuedWrites = maxQueuedWrites;
+	}
+	
+	/**
+	 * wait or exception when max queued writes is reached? default to false
+	 * @return
+	 */
+	public boolean isWaitOnMaxQueuedWrites() {
+		return waitOnMaxQueuedWrites;
+	}
+
+	public void setWaitOnMaxQueuedWrites(boolean waitOnMaxQueuedWrites) {
+		this.waitOnMaxQueuedWrites = waitOnMaxQueuedWrites;
 	}
 }
