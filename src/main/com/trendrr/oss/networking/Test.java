@@ -11,6 +11,7 @@ import java.nio.charset.Charset;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.trendrr.oss.DynMap;
 import com.trendrr.oss.concurrent.Sleep;
 import com.trendrr.oss.exceptions.TrendrrException;
 
@@ -32,35 +33,52 @@ public class Test {
 		try {
 			channel = SocketChannel.open();
 		
-			channel.connect(new InetSocketAddress("localhost", 8000));
+			channel.connect(new InetSocketAddress("localhost", 8009));
 			
-			Sleep.seconds(30);
+			
 			
 			SocketChannelWrapper wrapper = new SocketChannelWrapper(channel);
-			wrapper.write("GET /hello/jerk HTTP/1.0\r\n\r\n".getBytes());
-		
-			wrapper.readUntil("\r\n\r\n", Charset.forName("utf8"), new StringReadCallback(){
-				@Override
-				public void onError(TrendrrException ex) {
-					ex.printStackTrace();
-				}
+			
+			for (int i=0; i < 10; i++) {
+				DynMap mp = new DynMap();
+				mp.put("key1", "something");
+				mp.put("index", i);
+				mp.putWithDot("test1.test2.key", "300");
 
-				@Override
-				public void stringResult(String result) {
-					System.out.println("RESULT: " + result);
-				}
+				mp.putWithDot("test1.test2.key22", "32200");
 				
-			});
+				String str = mp.toJSONString() + mp.toJSONString() + mp.toJSONString();
+				wrapper.write(str.getBytes("utf8"));
+				System.out.println(mp.toJSONString());
+
+			}
 			
-			byte[] bytes = wrapper.readBytes(197);
-			System.out.println("GOT BYTES! : " + bytes.length);
-			System.out.println(new String(bytes));
+			Sleep.seconds(10);
 			
-			wrapper.write("GET /echo HTTP/1.0\r\n\r\n".getBytes());
-			System.out.println(wrapper.readUntil("\r\n\r\n", Charset.forName("utf8")));
-			
-			System.out.println(wrapper.readUntil("PARAMS", Charset.forName("utf8")));
-			
+//			wrapper.write("GET /hello/jerk HTTP/1.0\r\n\r\n".getBytes());
+//		
+//			wrapper.readUntil("\r\n\r\n", Charset.forName("utf8"), new StringReadCallback(){
+//				@Override
+//				public void onError(TrendrrException ex) {
+//					ex.printStackTrace();
+//				}
+//
+//				@Override
+//				public void stringResult(String result) {
+//					System.out.println("RESULT: " + result);
+//				}
+//				
+//			});
+//			
+//			byte[] bytes = wrapper.readBytes(197);
+//			System.out.println("GOT BYTES! : " + bytes.length);
+//			System.out.println(new String(bytes));
+//			
+//			wrapper.write("GET /echo HTTP/1.0\r\n\r\n".getBytes());
+//			System.out.println(wrapper.readUntil("\r\n\r\n", Charset.forName("utf8")));
+//			
+//			System.out.println(wrapper.readUntil("PARAMS", Charset.forName("utf8")));
+//			
 			
 			
 //			
