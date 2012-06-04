@@ -63,8 +63,8 @@ public abstract class StrestJsonBase implements StrestPacketBase {
 	 */
 	@Override
 	public String getHeader(StrestHeader.Name header) {
-		System.out.println("MAP: " + this.map);
-		System.out.println("header: " + header);
+//		System.out.println("MAP: " + this.map);
+//		System.out.println("header: " + header);
 		return this.map.getString("strest." + header.getJsonName());
 	}
 
