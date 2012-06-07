@@ -52,7 +52,7 @@ public class ConsistentHashRing<T> {
 	}
 	
 	/**
-	 * gets all the items in the ring
+	 * gets all the items in the ring.  this returns a copy.
 	 * @return
 	 */
 	public synchronized List<T> getAll() {
