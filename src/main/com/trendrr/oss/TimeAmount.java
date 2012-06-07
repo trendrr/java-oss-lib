@@ -36,6 +36,10 @@ public class TimeAmount {
 		return amount;
 	}
 	
+	public static TimeAmount instance(Timeframe frame, int amount) {
+		return new TimeAmount(frame, amount);
+	}
+	
 	/**
 	 * parses a string like":
 	 * 10 minutes
