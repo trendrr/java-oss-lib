@@ -6,6 +6,7 @@ package com.trendrr.oss.networking.cheshire;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.channels.AlreadyConnectedException;
+import java.util.Date;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -53,10 +54,20 @@ public class CheshireClient implements CheshireApiCaller{
 	protected int reconnectWaitSeconds = 5;
 	protected boolean keepalive = false;
 	
+	protected Date lastSuccessfulPing = null;
+	
 	protected Timer timer = null; //timer for keepalive pings
 	
 	public synchronized boolean isKeepalive() {
 		return keepalive;
+	}
+	
+	/**
+	 * the date of the last successful ping.  could be null
+	 * @return
+	 */
+	public Date getLastSuccessfulPing() {
+		return lastSuccessfulPing;
 	}
 	
 	/**
@@ -78,6 +89,7 @@ public class CheshireClient implements CheshireApiCaller{
 				public void run() {
 					try {
 						self.ping();
+						self.lastSuccessfulPing = new Date();
 					} catch (TrendrrDisconnectedException x) {
 						//make one reconnect attempt. 
 						try {
