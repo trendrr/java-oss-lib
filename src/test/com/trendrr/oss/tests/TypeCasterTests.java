@@ -55,6 +55,7 @@ public class TypeCasterTests {
 	@Test
 	public void numberTests() {
 		Assert.assertTrue(TypeCast.cast(Long.class, "30335816244924417") == 30335816244924417l);
+		Assert.assertTrue(TypeCast.cast(Long.class, "-30335816244924417") == -30335816244924417l);
 		Assert.assertTrue(TypeCast.cast(Double.class, "303358162.44924417") == 303358162.44924417);
 		
 	}

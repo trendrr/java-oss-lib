@@ -26,7 +26,10 @@ public class NumberCaster extends TypeCaster<Number> {
 				return this.fromNumber(cls, num);
 			}
 			//we remove characters that could resonably be associated with a number
-			String str = StringHelper.removeAll(TypeCast.cast(String.class, obj), ' ', ',', '$');
+			String str = TypeCast.cast(String.class, obj);
+			if (str == null)
+				return null;
+			str = str.replaceAll("[^0-9\\.\\-eE]", "");//StringHelper.removeAll(TypeCast.cast(String.class, obj), ' ', ',', '$');
 			
 			if (cls.equals(Long.class)) {
 				return Long.parseLong(str);
