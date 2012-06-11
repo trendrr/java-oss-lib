@@ -32,6 +32,11 @@ public interface CheshireApiCaller {
 	public void apiCall(String endPoint, Verb method, Map params, CheshireApiCallback callback);
 	
 	/**
+	 * closes this connection
+	 */
+	public void close();
+	
+	/**
 	 * A synchronous call.  blocks until response is available.  Please note that this does *NOT* block concurrent api calls, so you can continue to 
 	 * make calls in other threads.
 	 * 
