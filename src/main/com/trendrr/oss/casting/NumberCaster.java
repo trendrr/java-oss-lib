@@ -29,7 +29,9 @@ public class NumberCaster extends TypeCaster<Number> {
 			String str = TypeCast.cast(String.class, obj);
 			if (str == null)
 				return null;
-			str = str.replaceAll("[^0-9\\.\\-eE]", "");//StringHelper.removeAll(TypeCast.cast(String.class, obj), ' ', ',', '$');
+			// We need to count on this string being only a number.
+			// if we are too aggressive things like {this:70} will parse to a number when we don't want it to. 
+			str = StringHelper.removeAll(TypeCast.cast(String.class, obj), ' ', ',', '$').trim();
 			
 			if (cls.equals(Long.class)) {
 				return Long.parseLong(str);
