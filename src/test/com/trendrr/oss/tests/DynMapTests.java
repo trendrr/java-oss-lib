@@ -57,8 +57,6 @@ public class DynMapTests {
 		DynMap mp = new DynMap();
 		mp.putWithDot("facebook.val", 12);
 		Assert.assertNull(mp.getInteger("facebook"));
-		System.out.println(mp.getInteger("facebook"));
-		System.out.println(mp);
 	}
 	
 	@Test

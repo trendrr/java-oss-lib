@@ -95,7 +95,26 @@ public class SocketChannelWrapper {
 		return callback.byteResult;
 	}
 
+	/**
+	 * reads bytes until the end of the stream.
+	 * @return
+	 * @throws TrendrrException
+	 */
+	public byte[] readFully() throws TrendrrException{
+		SynchronousReadCallback callback = new SynchronousReadCallback();
+		this.readFully(callback);
+		callback.awaitResponse();
+		if (callback.exception != null) {
+			throw callback.exception;
+		}
+		return callback.byteResult;
+		
+	}
 	
+	/**
+	 * reads until the end of the stream
+	 * @param callback
+	 */
 	public void readFully(ByteReadCallback callback) {
 		this.readBytes(ByteReadFullyCallback.NUMBYTES, new ByteReadFullyCallback(this, callback));
 	}
