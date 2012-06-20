@@ -53,6 +53,15 @@ public class DynMapTests {
 	}
 	
 	@Test
+	public void getDotTest() {
+		DynMap mp = new DynMap();
+		mp.putWithDot("facebook.val", 12);
+		Assert.assertNull(mp.getInteger("facebook"));
+		System.out.println(mp.getInteger("facebook"));
+		System.out.println(mp);
+	}
+	
+	@Test
 	public void putDotTest() {
 		DynMap mp = new DynMap();
 		mp.putWithDot("map1.map2.map3.val", 0);
@@ -60,6 +69,15 @@ public class DynMapTests {
 		mp.putWithDot("map1.map2.val", 10);
 		
 		Assert.assertNotNull(mp.getMap("map1"));
+	}
+	
+	@Test
+	public void putNull(){
+		DynMap mp = new DynMap();
+		mp.putWithDot("alpha."+null, 23);
+		System.out.println(mp);
+		Assert.assertEquals(mp.getInteger("alpha."+null).intValue(), 23);
+		System.out.println(mp.getMap("alpha").getInteger("null"));
 	}
 	
 	@Test
@@ -148,9 +166,9 @@ public class DynMapTests {
 		
 		mp2.put("user",json);
 		System.out.println(mp2.get(DynMap.class,"user"));
-		System.out.println((mp2.remove("user.id_str")));
+		System.out.println("removing: "+(mp2.remove("user.id_str")));
 		Assert.assertNull(mp2.getString("user.id_str"));
-		System.out.println("mp2: "+mp2);
+		System.out.println("mp2 after remove: "+mp2);
 	}
 	
 	@Test
