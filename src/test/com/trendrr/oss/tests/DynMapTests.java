@@ -53,6 +53,15 @@ public class DynMapTests {
 	}
 	
 	@Test
+	public void getDotTest() {
+		DynMap mp = new DynMap();
+		mp.putWithDot("facebook.val", 12);
+		Assert.assertNull(mp.getInteger("facebook"));
+		
+		
+	}
+	
+	@Test
 	public void putDotTest() {
 		DynMap mp = new DynMap();
 		mp.putWithDot("map1.map2.map3.val", 0);
