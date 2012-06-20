@@ -21,6 +21,8 @@ public class StrestHeader {
 	public static String STREST_PROTOCOL = "strest";
 	public static float STREST_VERSION = 2.0f;
 	
+	public static final String HTTP_LINE_ENDING = "\r\n";
+	
 	private static AtomicLong txn = new AtomicLong(0l);
 	public static String generateTxnId() {
 		return Long.toHexString(txn.incrementAndGet());
