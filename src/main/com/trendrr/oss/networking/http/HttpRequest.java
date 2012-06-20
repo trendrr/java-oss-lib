@@ -36,8 +36,14 @@ public class HttpRequest implements StrestPacketBase {
 	protected byte[] content;
 	protected String path = "/";
 	protected String host;
+	protected boolean isSSL = false;
 	
-	
+	public boolean isSSL() {
+		return isSSL;
+	}
+	public void setSSL(boolean isSSL) {
+		this.isSSL = isSSL;
+	}
 	public Method getMethod() {
 		return method;
 	}
@@ -89,6 +95,9 @@ public class HttpRequest implements StrestPacketBase {
 		
 		if (uri.getQuery() != null) {
 			this.path += "?" + uri.getQuery();
+		}
+		if (uri.getScheme().equals("https")) {
+			this.isSSL = true;
 		}
 	}
 	
