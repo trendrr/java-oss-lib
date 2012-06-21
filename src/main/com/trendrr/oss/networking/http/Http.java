@@ -35,6 +35,8 @@ import com.trendrr.oss.networking.SocketChannelWrapper;
 /**
  * Simple http class.
  * 
+ * This makes it much easier to deal with headers, and funky requests.  Apache httpclient is unusable...
+ * 
  * 
  * @author Dustin Norlander
  * @created Jun 13, 2012
@@ -49,8 +51,8 @@ public class Http {
 		request.setUrl("https://google.com");
 		request.setMethod("POST");
 		request.setContent("application/json", "this is something something".getBytes());
-		request(request);
-//		System.out.println(new String(result));
+		HttpResponse response = request(request);
+		System.out.println(new String(response.getContent()));
 		
 	}
 	
