@@ -3,6 +3,7 @@
  */
 package com.trendrr.oss.networking.http;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -164,7 +165,11 @@ public class HttpResponse implements StrestPacketBase {
 	 */
 	@Override
 	public void setContent(DynMap content) {
-		// TODO Auto-generated method stub
+		try {
+			this.setContent("application/json", content.toJSONString().getBytes("utf8"));
+		} catch (UnsupportedEncodingException e) {
+			log.error("Caught", e);
+		}
 		
 	}
 
@@ -173,8 +178,8 @@ public class HttpResponse implements StrestPacketBase {
 	 */
 	@Override
 	public void setContent(String contentType, byte[] bytes) {
-		// TODO Auto-generated method stub
-		
+		this.addHeader("Content-Type", contentType);
+		this.content = bytes;
 	}
 
 	/* (non-Javadoc)
@@ -182,8 +187,7 @@ public class HttpResponse implements StrestPacketBase {
 	 */
 	@Override
 	public byte[] getContent() {
-		// TODO Auto-generated method stub
-		return null;
+		return content;
 	}
 
 	/* (non-Javadoc)
