@@ -4,6 +4,7 @@
 package com.trendrr.oss.networking.http;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.DynMap;
 import com.trendrr.oss.Regex;
+import com.trendrr.oss.StringHelper;
 import com.trendrr.oss.TypeCast;
 import com.trendrr.oss.exceptions.TrendrrException;
 import com.trendrr.oss.exceptions.TrendrrIOException;
@@ -47,10 +49,11 @@ public class Http {
 	protected static Log log = LogFactory.getLog(Http.class);
 	
 	public static void main(String ...strings) throws Exception {
+		
 		HttpRequest request = new HttpRequest();
-		request.setUrl("https://google.com");
+		request.setUrl("https://tools.questionmarket.com/verveindex/trendrr_ping.pl");
 		request.setMethod("POST");
-		request.setContent("application/json", "this is something something".getBytes());
+		request.setContent("application/json", "this is a test".getBytes());
 		HttpResponse response = request(request);
 		System.out.println(new String(response.getContent()));
 		
@@ -97,7 +100,7 @@ public class Http {
 				System.out.println(headers);
 				
 				HttpResponse response = HttpResponse.parse(headers);
-					
+				
 				byte[] content = null;
 				
 				if (response.getHeader("Content-Length") != null) {
@@ -107,8 +110,15 @@ public class Http {
 					String chunked = response.getHeader("Transfer-Encoding");
 					if (chunked != null && chunked.equalsIgnoreCase("chunked")) {
 						//TODO: handle chunked encoding!
+				
+						String b;
+						StringBuilder contentBuffer = new StringBuilder(); 
 						
-						
+						while(!(b = br.readLine()).isEmpty()){
+								contentBuffer.append(b);
+						}
+						String status = Regex.matchFirst(contentBuffer.toString(), "\\{.+\\}", true);
+						content = status.getBytes();
 					}
 				}
 				
@@ -145,7 +155,15 @@ public class Http {
 					String chunked = response.getHeader("Transfer-Encoding");
 					if (chunked != null && chunked.equalsIgnoreCase("chunked")) {
 						//TODO: handle chunked encoding!
-						
+						int length = 1;
+						StringBuilder contentBuffer = new StringBuilder(); 
+						while(length>0){
+							String w = wrapper.readUntil("\n", Charset.forName("utf8"), true);
+							length = w.length();
+							contentBuffer.append(w);
+						}
+						String status = Regex.matchFirst(contentBuffer.toString(), "\\{.+\\}", true);
+						content = status.getBytes();
 					}
 				}
 				
