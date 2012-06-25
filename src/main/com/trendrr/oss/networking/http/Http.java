@@ -53,12 +53,15 @@ public class Http {
 	public static void main(String ...strings) throws Exception {
 		
 		HttpRequest request = new HttpRequest();
-//		request.setUrl("https://tools.questionmarket.com/verveindex/trendrr_ping.pl");
-		request.setUrl("https://www.google.com/#hl=en&output=search&sclient=psy-ab&q=test&oq=test&aq=f&aqi=g4");
-		request.setMethod("GET");
-//		request.setContent("application/xml", "this is a test".getBytes());
+//		request.setUrl("https://www.google.com/#hl=en&output=search&sclient=psy-ab&q=test&oq=test&aq=f&aqi=g4");
+//		request.setMethod("GET");
+
+		request.setUrl("https://tools.questionmarket.com/verveindex/trendrr_ping.pl");
+		request.setMethod("POST");
+		request.setContent("application/json", "this is a test".getBytes());
+
 		HttpResponse response = request(request);
-		System.out.println(response.getContent().length);
+		System.out.println(new String(response.getContent()));
 		
 	}
 	
@@ -131,10 +134,14 @@ public class Http {
 							
 							content = new byte[length];
 							int numread;
-							while((numread = in.read(content, 0, content.length)) != -1){
+							int total=0;
+							while(total < length && 
+								 (numread = in.read(content, 0, content.length-total)) != -1){
 								System.out.println("written: "+numread+" ctr="+ctr);
 								outstream.write(content, 0, numread);
+								total+=numread;
 							}
+							br.readLine();//clear trailing line break
 							
 //							System.out.println("written: "+in.read(content));
 //							outstream.write(content);
