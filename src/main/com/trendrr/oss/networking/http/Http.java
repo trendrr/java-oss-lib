@@ -5,6 +5,8 @@ package com.trendrr.oss.networking.http;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -55,7 +57,7 @@ public class Http {
 		request.setMethod("POST");
 		request.setContent("application/json", "this is a test".getBytes());
 		HttpResponse response = request(request);
-		System.out.println(new String(response.getContent()));
+		System.out.println(response.getContent().length);
 		
 	}
 	
@@ -89,6 +91,7 @@ public class Http {
 			    
 			    // Read from in and write to out...
 			    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			    ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 				String t;
 				
 //				s.getInputStream().r
@@ -107,18 +110,32 @@ public class Http {
 					content = new byte[getContentLength(response)];
 					in.read(content);
 				} else {
+					content = new byte[100];
 					String chunked = response.getHeader("Transfer-Encoding");
 					if (chunked != null && chunked.equalsIgnoreCase("chunked")) {
 						//TODO: handle chunked encoding!
 				
 						String b;
-						StringBuilder contentBuffer = new StringBuilder(); 
-						
-						while(!(b = br.readLine()).isEmpty()){
-								contentBuffer.append(b);
+//						StringBuilder contentBuffer = new StringBuilder(); 
+						int length = 1;
+						String line = "";
+						int offset = 0;
+						while(!line.equals("0")){
+							line = br.readLine();
+							System.out.println("line: "+line);
+							length = Integer.parseInt(line,16);
+							System.out.println("length: "+length+", offset "+offset);
+							content = new byte[length];
+							System.out.println("written: "+in.read(content));
+							outstream.write(content);
+//							System.out.println(br.read(charbuf, offset, length));
+							offset = length;
+//							System.out.println(content.length);
+							br.readLine();//call to just skip through the content line
 						}
-						String status = Regex.matchFirst(contentBuffer.toString(), "\\{.+\\}", true);
-						content = status.getBytes();
+						
+//						String status = Regex.matchFirst(contentBuffer.toString(), "\\{.+\\}", true);
+//						content = status.getBytes();
 					}
 				}
 				
@@ -127,7 +144,7 @@ public class Http {
 			    // Close the socket
 			    in.close();
 			    out.close();
-			    response.setContent(content);
+			    response.setContent(outstream.toByteArray());
 				return response;
 			
 			} else {
@@ -155,15 +172,15 @@ public class Http {
 					String chunked = response.getHeader("Transfer-Encoding");
 					if (chunked != null && chunked.equalsIgnoreCase("chunked")) {
 						//TODO: handle chunked encoding!
-						int length = 1;
-						StringBuilder contentBuffer = new StringBuilder(); 
-						while(length>0){
-							String w = wrapper.readUntil("\n", Charset.forName("utf8"), true);
-							length = w.length();
-							contentBuffer.append(w);
-						}
-						String status = Regex.matchFirst(contentBuffer.toString(), "\\{.+\\}", true);
-						content = status.getBytes();
+//						int length = 1;
+//						StringBuilder contentBuffer = new StringBuilder(); 
+//						while(length>0){
+//							String w = wrapper.readUntil("\n", Charset.forName("utf8"), true);
+//							length = w.length();
+//							contentBuffer.append(w);
+//						}
+//						String status = Regex.matchFirst(contentBuffer.toString(), "\\{.+\\}", true);
+//						content = status.getBytes();
 					}
 				}
 				
