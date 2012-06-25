@@ -53,9 +53,10 @@ public class Http {
 	public static void main(String ...strings) throws Exception {
 		
 		HttpRequest request = new HttpRequest();
-		request.setUrl("https://tools.questionmarket.com/verveindex/trendrr_ping.pl");
-		request.setMethod("POST");
-		request.setContent("application/json", "this is a test".getBytes());
+//		request.setUrl("https://tools.questionmarket.com/verveindex/trendrr_ping.pl");
+		request.setUrl("https://www.google.com/#hl=en&output=search&sclient=psy-ab&q=test&oq=test&aq=f&aqi=g4");
+		request.setMethod("GET");
+//		request.setContent("application/xml", "this is a test".getBytes());
 		HttpResponse response = request(request);
 		System.out.println(response.getContent().length);
 		
@@ -118,20 +119,29 @@ public class Http {
 						String b;
 //						StringBuilder contentBuffer = new StringBuilder(); 
 						int length = 1;
-						String line = "";
+						String chunk = "";
 						int offset = 0;
-						while(!line.equals("0")){
-							line = br.readLine();
-							System.out.println("line: "+line);
-							length = Integer.parseInt(line,16);
+						int ctr = 0;
+						while(!chunk.equals("0")){
+							ctr++;
+							chunk = br.readLine();
+							System.out.println("line: "+chunk);
+							length = Integer.parseInt(chunk,16);
 							System.out.println("length: "+length+", offset "+offset);
+							
 							content = new byte[length];
-							System.out.println("written: "+in.read(content));
-							outstream.write(content);
-//							System.out.println(br.read(charbuf, offset, length));
-							offset = length;
-//							System.out.println(content.length);
-							br.readLine();//call to just skip through the content line
+							int numread;
+							while((numread = in.read(content, 0, content.length)) != -1){
+								System.out.println("written: "+numread+" ctr="+ctr);
+								outstream.write(content, 0, numread);
+							}
+							
+//							System.out.println("written: "+in.read(content));
+//							outstream.write(content);
+////							System.out.println(br.read(charbuf, offset, length));
+//							offset = length;
+////							System.out.println(content.length);
+//							br.readLine();//call to just skip through the content line
 						}
 						
 //						String status = Regex.matchFirst(contentBuffer.toString(), "\\{.+\\}", true);
@@ -140,7 +150,7 @@ public class Http {
 				}
 				
 				br.close();
-			    
+			    outstream.flush();
 			    // Close the socket
 			    in.close();
 			    out.close();
