@@ -81,10 +81,13 @@ public class DynMapTests {
 		mp.putWithDot("user.screenname", "darthvader");
 		
 		Set<String> ks = mp.keySetWithDot();
+		Assert.assertEquals(ks.size(), 4);
 		Iterator it = ks.iterator();
 		while(it.hasNext()){
 			Assert.assertNull(mp.get(it.next()));
+			
 		}
+		
 		
 		
 	}
