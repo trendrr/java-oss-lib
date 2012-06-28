@@ -409,6 +409,38 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		return this.get(Date.class, key, defaultValue);
 	}
 	
+	/**
+	 * Returns a keyset with fullkeys 
+	 * @return
+	 */
+	
+	public Set<String> keySetWithDot(){
+		Set<String> keyset = new HashSet<String>();
+		keyset = getFullKey(this);
+		return keyset;
+	}
+	
+	public Set<String> getFullKey(DynMap map){
+		String fullkey = "";
+		Set<String> keyset = new HashSet<String>();
+		for(Object key:map.keySet()){
+			
+			if(map.getMap((String) key)!=null){
+			
+				fullkey = (String)key + "." + ((getFullKey(map.getMap((String) key)).toArray())[0]);
+			}
+			else
+			{	
+				
+				fullkey = (String) key;
+				
+			}
+			
+			keyset.add(fullkey);
+		}
+		
+		return keyset;
+	}
 	
 	/**
 	 * Returns a typed list.  See TypeCast.getTypedList
