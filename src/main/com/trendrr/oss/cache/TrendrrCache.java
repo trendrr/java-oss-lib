@@ -312,6 +312,9 @@ public abstract class TrendrrCache {
 		}
 		Map<String, Object> results =  this._getMulti(k);
 		DynMap newResults = new DynMap();
+		if (results == null){
+			return newResults;
+		}
 		for (String key : results.keySet()) {
 			newResults.put(newKeys.get(key), results.get(key));
 		}

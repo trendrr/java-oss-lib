@@ -35,6 +35,8 @@ import com.trendrr.oss.networking.SocketChannelWrapper;
 /**
  * Simple http class.
  * 
+ * This makes it much easier to deal with headers, and funky requests.  Apache httpclient is unusable...
+ * 
  * 
  * @author Dustin Norlander
  * @created Jun 13, 2012
@@ -49,8 +51,8 @@ public class Http {
 		request.setUrl("https://google.com");
 		request.setMethod("POST");
 		request.setContent("application/json", "this is something something".getBytes());
-		request(request);
-//		System.out.println(new String(result));
+		HttpResponse response = request(request);
+		System.out.println(new String(response.getContent()));
 		
 	}
 	
@@ -74,7 +76,9 @@ public class Http {
 	
 			    SocketFactory socketFactory = SSLSocketFactory.getDefault();
 			    Socket socket = socketFactory.createSocket(host, port);
-	
+			    //TODO: socket timeouts
+			    
+			    
 			    // Create streams to securely send and receive data to the server
 			    InputStream in = socket.getInputStream();
 			    OutputStream out = socket.getOutputStream();
@@ -91,47 +95,61 @@ public class Http {
 				}
 				String headers = headerBuilder.toString();
 				System.out.println(headers);
-				byte[] content = new byte[getContentLength(headers)];
-				in.read(content);
+				
+				HttpResponse response = HttpResponse.parse(headers);
+					
+				byte[] content = null;
+				
+				if (response.getHeader("Content-Length") != null) {
+					content = new byte[getContentLength(response)];
+					in.read(content);
+				} else {
+					String chunked = response.getHeader("Transfer-Encoding");
+					if (chunked != null && chunked.equalsIgnoreCase("chunked")) {
+						//TODO: handle chunked encoding!
+						
+						
+					}
+				}
 				
 				br.close();
 			    
 			    // Close the socket
 			    in.close();
 			    out.close();
-			    HttpResponse response = HttpResponse.parse(headers);
-				response.setContent(content);
+			    response.setContent(content);
 				return response;
 			
 			} else {
-				
-	//				Socket s = new Socket(host, port);
-	//				
-	//				OutputStream os = s.getOutputStream();
-	//				os.write(request.toByteArray());
-	//				os.flush();
-	//				BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
-	//				String t;
-	//				
-	//				s.getInputStream().r
-	//				while((t = br.readLine()) != null) System.out.println(t);
-	//				br.close();
-				
-				
+	
 				
 				
 				SocketChannel channel = SocketChannel.open();
+				
 				channel.connect(new InetSocketAddress(host, port));
+				
 				SocketChannelWrapper wrapper = new SocketChannelWrapper(channel);
+
 				System.out.println(new String(request.toByteArray(), "utf8"));
 				wrapper.write(request.toByteArray());
 				
 				String headers = wrapper.readUntil("\r\n\r\n", Charset.forName("utf8"), true);
 				
-				byte[] contentbytes = wrapper.readBytes(getContentLength(headers));
-				wrapper.close();
 				HttpResponse response = HttpResponse.parse(headers);
-				response.setContent(contentbytes);
+				
+				byte[] content = null;
+				
+				if (response.getHeader("Content-Length") != null) {
+					content = wrapper.readBytes(getContentLength(response));
+				} else {
+					String chunked = response.getHeader("Transfer-Encoding");
+					if (chunked != null && chunked.equalsIgnoreCase("chunked")) {
+						//TODO: handle chunked encoding!
+						
+					}
+				}
+				
+				response.setContent(content);
 				return response;
 				
 			}
@@ -142,15 +160,22 @@ public class Http {
 		}
 	}
 	
-	private static int getContentLength(String headers) {
-		String tmp = Regex.matchFirst(headers, "Content\\-Length\\:\\s+[0-9]+", true);
-		int length = 0;
-		if (tmp != null) {
-			length = TypeCast.cast(Integer.class, tmp.replaceAll("[^0-9]", ""), 0);
-		}
+	private static int getContentLength(HttpResponse response) {
+		int length = TypeCast.cast(Integer.class, response.getHeader("Content-Length"), 0);
 		return length;
-		
 	}
+	
+	
+	public static String get(String url) throws TrendrrNetworkingException {
+		return get(url, null);
+	}
+	/**
+	 * Shortcut to do a simple GET request.  returns the content on 200, else throws an exception
+	 * @param url
+	 * @param params
+	 * @return
+	 * @throws TrendrrNetworkingException
+	 */
 	public static String get(String url, DynMap params) throws TrendrrNetworkingException {
 		try {
 			if (!url.contains("?")) {
@@ -159,20 +184,20 @@ public class Http {
 			if (params != null) {
 				url += params.toURLString();
 			}
+			HttpRequest request = new HttpRequest();
+			request.setUrl(url);
+			request.setMethod("GET");
+			HttpResponse response = request(request);
 			
-			URL u = new URL(url);
-	        URLConnection c = u.openConnection();
-	        BufferedReader in = new BufferedReader(
-	                                new InputStreamReader(
-	                                c.getInputStream()));
-	        String inputLine;
-	        StringBuilder response = new StringBuilder();
-	        while ((inputLine = in.readLine()) != null) {
-	        	response.append(inputLine);
-	        }
-	        in.close();
-			return response.toString();
-		} catch (Exception x) {
+			if (response.getStatusCode() == 200) {
+				return new String(response.getContent(), "utf8");
+			}
+			//TODO: some kind of http exception.
+			throw new TrendrrNetworkingException("Error from response") {
+			};
+		} catch (TrendrrNetworkingException e) { 
+			throw e;
+		}catch (Exception x) {
 			throw new TrendrrIOException(x);
 		}
 	}
