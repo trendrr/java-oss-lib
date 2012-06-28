@@ -5,8 +5,11 @@ package com.trendrr.oss.tests;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import junit.framework.Assert;
@@ -68,7 +71,23 @@ public class DynMapTests {
 		
 		Assert.assertNotNull(mp.getMap("map1"));
 	}
-	
+	@Test
+	public void keysetwithDottest(){
+		DynMap mp = new DynMap();
+		mp.put("date", new Date());
+		//mp.putWithDot("user.name", "sourabh");
+		mp.putWithDot("user.name.first ","Anakin");
+		mp.putWithDot("user.name.last", "Skywalker");
+		mp.putWithDot("user.screenname", "darthvader");
+		
+		Set<String> ks = mp.keySetWithDot();
+		Iterator it = ks.iterator();
+		while(it.hasNext()){
+			Assert.assertNull(mp.get(it.next()));
+		}
+		
+		
+	}
 	@Test
 	public void putNull(){
 		DynMap mp = new DynMap();
