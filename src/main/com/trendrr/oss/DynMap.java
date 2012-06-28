@@ -420,23 +420,24 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		return keyset;
 	}
 	
-	public Set<String> getFullKey(DynMap map){
-		String fullkey = "";
+	private Set<String> getFullKey(DynMap map){
+		//String fullkey = "";
 		Set<String> keyset = new HashSet<String>();
 		for(Object key:map.keySet()){
 			
 			if(map.getMap((String) key)!=null){
-			
-				fullkey = (String)key + "." + ((getFullKey(map.getMap((String) key)).toArray())[0]);
+				Iterator it = (getFullKey(map.getMap((String) key))).iterator();
+				while(it.hasNext())
+				keyset.add((String)key + "." + it.next());
+				
 			}
 			else
 			{	
 				
-				fullkey = (String) key;
+				keyset.add((String) key);
 				
 			}
 			
-			keyset.add(fullkey);
 		}
 		
 		return keyset;
