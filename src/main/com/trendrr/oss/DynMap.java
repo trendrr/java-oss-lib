@@ -423,13 +423,13 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	private Set<String> getFullKey(DynMap map){
 		//String fullkey = "";
 		Set<String> keyset = new HashSet<String>();
-		for(Object key:map.keySet()){
+		for(String key:map.keySet()){
 			
 			if(map.getMap((String) key)!=null){
 				Iterator it = (getFullKey(map.getMap((String) key))).iterator();
-				while(it.hasNext())
-				keyset.add((String)key + "." + it.next());
-				
+				while(it.hasNext()){
+					keyset.add((String)key + "." + it.next());
+				}
 			}
 			else
 			{	
