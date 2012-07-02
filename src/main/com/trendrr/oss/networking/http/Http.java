@@ -216,6 +216,18 @@ public class Http {
 		int length = TypeCast.cast(Integer.class, response.getHeader("Content-Length"), 0);
 		return length;
 	}
+	
+	
+	public static String get(String url) throws TrendrrNetworkingException {
+		return get(url, null);
+	}
+	/**
+	 * Shortcut to do a simple GET request.  returns the content on 200, else throws an exception
+	 * @param url
+	 * @param params
+	 * @return
+	 * @throws TrendrrNetworkingException
+	 */
 	public static String get(String url, DynMap params) throws TrendrrNetworkingException {
 		try {
 			if (!url.contains("?")) {
@@ -224,20 +236,20 @@ public class Http {
 			if (params != null) {
 				url += params.toURLString();
 			}
+			HttpRequest request = new HttpRequest();
+			request.setUrl(url);
+			request.setMethod("GET");
+			HttpResponse response = request(request);
 			
-			URL u = new URL(url);
-	        URLConnection c = u.openConnection();
-	        BufferedReader in = new BufferedReader(
-	                                new InputStreamReader(
-	                                c.getInputStream()));
-	        String inputLine;
-	        StringBuilder response = new StringBuilder();
-	        while ((inputLine = in.readLine()) != null) {
-	        	response.append(inputLine);
-	        }
-	        in.close();
-			return response.toString();
-		} catch (Exception x) {
+			if (response.getStatusCode() == 200) {
+				return new String(response.getContent(), "utf8");
+			}
+			//TODO: some kind of http exception.
+			throw new TrendrrNetworkingException("Error from response") {
+			};
+		} catch (TrendrrNetworkingException e) { 
+			throw e;
+		}catch (Exception x) {
 			throw new TrendrrIOException(x);
 		}
 	}
