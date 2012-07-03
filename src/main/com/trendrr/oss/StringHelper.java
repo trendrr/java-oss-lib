@@ -30,7 +30,7 @@ public class StringHelper {
 	 * @param delim
 	 * @return
 	 */
-	public static String join(List lst, String delim) {
+	public static String join(Collection lst, String delim) {
 		StringBuilder builder = new StringBuilder();
 		for (Object obj : lst) {
 			if (obj != null)
