@@ -19,6 +19,6 @@ class ChannelStopRequest extends ChannelRequest {
 	 * @param params
 	 */
 	public ChannelStopRequest() {
-		super("kill", null);
+		super("kill", new Object[0]);
 	}
 }
