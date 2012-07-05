@@ -415,6 +415,14 @@ public class StringHelper {
     	
     }
     
+    public static String removeAll(String input, Collection toRemove) {
+    	String ret = input;
+    	for (Object str : toRemove) {
+    		ret = ret.replace(str.toString(), "");
+    	}
+    	return ret;
+    }
+    
     
     /**
      * removes all instances of the inputed strings. strings are matches not regexes.
