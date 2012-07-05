@@ -31,6 +31,24 @@ public class StringHelper {
 	 * @return
 	 */
 	public static String join(Collection lst, String delim) {
+		return joinCol(lst, delim);
+	}
+	
+	
+	public static String join(List lst, String delim) {
+		//this method should not be necessary, but exceptions thrown in test env show that it is..
+		//strange..
+		return joinCol((Collection)lst, delim);
+	}
+	
+	/**
+	 * split into separate method so we don't get any accidental recursion
+	 * between join(list) and join(collection).
+	 * @param lst
+	 * @param delim
+	 * @return
+	 */
+	private static String joinCol(Collection lst, String delim) {
 		StringBuilder builder = new StringBuilder();
 		for (Object obj : lst) {
 			if (obj != null)
@@ -41,6 +59,9 @@ public class StringHelper {
 		builder.delete(builder.length()-delim.length(), builder.length());
 		return builder.toString();
 	}
+	
+	
+
 	
 	public static String underscoreSpaces(String input) {
 		if (input == null)
