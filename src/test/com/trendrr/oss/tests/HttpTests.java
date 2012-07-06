@@ -45,62 +45,21 @@ public class HttpTests {
 //	}
 	
 	@Test
-	public void readTest() throws TrendrrException, IOException{
-		
-		String b;
-//		StringBuilder contentBuffer = new StringBuilder(); 
-		int length = 1;
-		String chunk = "";
-		int offset = 0;
-		int ctr = 0;
-		
-		 //test inputstream, read from file
-		String t;
-		
-//	    String filepath = "/home/markg/Documents/mark/httptestdoc1";
-//		InputStream in = new FileInputStream(filepath);
-//	    BufferedReader br = new BufferedReader(new FileReader(filepath));
-	    
-	    String inst = "11\n{ \"status\":\"ok\" }\n0\n";
-	    InputStream in = new ByteArrayInputStream(inst.getBytes());
-	    BufferedReader br = new BufferedReader(new StringReader(inst));
-	    
-	    ByteArrayOutputStream outstream = new ByteArrayOutputStream();
-		
-	    
-		byte[] content = null;
-		while(!chunk.equals("0")){
-			ctr++;
-			chunk = br.readLine();
-			System.out.println("line: "+chunk);
-			length = Integer.parseInt(chunk,16);
-			System.out.println("length: "+length+", offset "+offset);
-			
-			content = new byte[length];
-			int numread;
-			int total=0;
-			while(total < length && 
-				 (numread = in.read(content, 0, content.length-total)) != -1){
-				System.out.println("written: "+numread+" ctr="+ctr);
-				System.out.println("wrote: "+new String(content));
-				outstream.write(content, 0, numread);
-				total+=numread;
-			}
-			br.readLine();//clear trailing line break
-		}
-		br.close();
-		in.close();
-	    
-		outstream.flush();
-		String result = new String(outstream.toByteArray());
-	    Assert.assertEquals("{ \"status\":\"ok\" }", result);
-	    
-		
-//		String status = Regex.matchFirst(contentBuffer.toString(), "\\{.+\\}", true);
-//		content = status.getBytes();
+	public void testRequest() throws TrendrrException, IOException{
+		HttpRequest request = new HttpRequest();
+		request.setUrl(GET_url);
+		request.setMethod("GET");
+
+//		request.setUrl("https://tools.questionmarket.com/verveindex/trendrr_ping.pl");
+//		request.setMethod("POST");
+//		request.setContent("application/json", "this is a test".getBytes());
+
+		HttpResponse response = request(request);
+		String result = new String(response.getContent());
+		Assert.assertEquals("{ \"status\":\"ok\" }", result);
 	}
 	
-	public static HttpResponse testRequest(HttpRequest request) throws TrendrrException {
+	public static HttpResponse request(HttpRequest request) throws TrendrrException {
 		String host = request.getHost();
 		int port = 80;
 		if (host.contains(":")) {
