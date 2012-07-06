@@ -70,6 +70,10 @@ public class CheshireClient implements CheshireApiCaller{
 		return lastSuccessfulPing;
 	}
 	
+	public synchronized void setLastSuccessfullPing(Date d) {
+		this.lastSuccessfulPing = d;
+	}
+	
 	/**
 	 * setting this to true will keep the connection open.  
 	 * 
@@ -183,6 +187,7 @@ public class CheshireClient implements CheshireApiCaller{
 	 */
 	public void ping() throws TrendrrException {
 		strest.sendRequest( this.createRequest("/ping", Verb.GET, null));
+		this.setLastSuccessfullPing(new Date());
 	}
 	
 	/**
