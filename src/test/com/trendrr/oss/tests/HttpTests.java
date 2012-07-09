@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.channels.SocketChannel;
@@ -35,14 +36,16 @@ public class HttpTests {
 
 	public static final String GET_url = "https://www.youtube.com/watch?v=jgMutAOEQ5I&feature=g-vrec";
 
-//	@Test
-//	public void GETTest() throws TrendrrException{
-//		HttpRequest request = new HttpRequest();
-//		request.setUrl(GET_url);
-//		request.setMethod("GET");
-//		HttpResponse response = Http.request(request);
-//		System.out.println(new String(response.getContent()));
-//	}
+	@Test
+	public void GETTest() throws TrendrrException, UnsupportedEncodingException{
+		HttpRequest request = new HttpRequest();
+		request.setUrl(GET_url);
+		request.setMethod("GET");
+		HttpResponse response = Http.request(request);
+		String html = new String(response.getContent(), "utf8").trim();
+		//check that we read the whole html content
+		Assert.assertTrue(html.endsWith("</html>"));
+	}
 	
 	@Test
 	public void testRequest() throws TrendrrException, IOException{
@@ -58,6 +61,7 @@ public class HttpTests {
 		String result = new String(response.getContent());
 		Assert.assertEquals("{ \"status\":\"ok\" }", result);
 	}
+	
 	
 	public static HttpResponse request(HttpRequest request) throws TrendrrException {
 		String host = request.getHost();
@@ -95,17 +99,20 @@ public class HttpTests {
 				
 				 //test inputstream, read from file
 				
-//			    String filepath = "/home/markg/Documents/mark/httptestdoc1";
-//				InputStream in = new FileInputStream(filepath);
-//			    BufferedReader br = new BufferedReader(new FileReader(filepath));
+				
+				
+			    String filepath = "/home/markg/Documents/mark/httptestdoc";
+				in = new FileInputStream(filepath);
+			    br = new BufferedReader(new FileReader(filepath));
 			    
-			    String inst = "11\n{ \"status\":\"ok\" }\n0\n";
-			    in = new ByteArrayInputStream(inst.getBytes());
-			    br = new BufferedReader(new StringReader(inst));
+//			    String inst = "11\n{ \"status\":\"ok\" }\n0\n";
+//			    in = new ByteArrayInputStream(inst.getBytes());
+//			    br = new BufferedReader(new StringReader(inst));
 				
 //				s.getInputStream().r
 				StringBuilder headerBuilder = new StringBuilder();
 				while(!(t = br.readLine()).isEmpty()) {
+					System.out.println(t);
 					headerBuilder.append(t).append("\r\n");
 				}
 				String headers = headerBuilder.toString();
@@ -114,7 +121,6 @@ public class HttpTests {
 				HttpResponse response = HttpResponse.parse(headers);
 				
 				byte[] content = null;
-//				String filepath = "/home/markg/Documents/mark/httptestdoc1";
 				
 				if (response.getHeader("Content-Length") != null) {
 					content = new byte[getContentLength(response)];
@@ -125,10 +131,7 @@ public class HttpTests {
 					if (chunked != null && chunked.equalsIgnoreCase("chunked")) {
 						//TODO: handle chunked encoding!
 				
-//						BufferedWriter bw = new BufferedWriter(new FileWriter(filepath));
-						
 						String b;
-//						StringBuilder contentBuffer = new StringBuilder(); 
 						int length = 1;
 						String chunk = "";
 						int offset = 0;
