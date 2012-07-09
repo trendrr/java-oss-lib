@@ -53,15 +53,15 @@ public class Http {
 	public static void main(String ...strings) throws Exception {
 		
 		HttpRequest request = new HttpRequest();
-//		request.setUrl("https://www.google.com/#hl=en&output=search&sclient=psy-ab&q=test&oq=test&aq=f&aqi=g4");
-//		request.setMethod("GET");
+		request.setUrl("https://www.google.com/#hl=en&output=search&sclient=psy-ab&q=test&oq=test&aq=f&aqi=g4");
+		request.setMethod("GET");
 
-		request.setUrl("https://tools.questionmarket.com/verveindex/trendrr_ping.pl");
-		request.setMethod("POST");
-		request.setContent("application/json", "this is a test".getBytes());
+//		request.setUrl("https://tools.questionmarket.com/verveindex/trendrr_ping.pl");
+//		request.setMethod("POST");
+//		request.setContent("application/json", "this is a test".getBytes());
 
 		HttpResponse response = request(request);
-		System.out.println(new String(response.getContent()));
+//		System.out.println(new String(response.getContent()));
 		
 	}
 	
@@ -95,6 +95,7 @@ public class Http {
 			    
 			    // Read from in and write to out...
 			    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+//			    InputStreamReader br = new InputStreamReader(in);
 			    ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 				String t;
 				
@@ -108,19 +109,19 @@ public class Http {
 				
 				HttpResponse response = HttpResponse.parse(headers);
 				
-				byte[] content = null;
+				char[] content = null;
 				
+				String output = "";
 				if (response.getHeader("Content-Length") != null) {
-					content = new byte[getContentLength(response)];
-					in.read(content);
+					content = new char[getContentLength(response)];
+					br.read(content);
 				} else {
-					content = new byte[100];
+//					content = new byte[100];
 					String chunked = response.getHeader("Transfer-Encoding");
 					if (chunked != null && chunked.equalsIgnoreCase("chunked")) {
 						//TODO: handle chunked encoding!
 				
-						String b;
-//						StringBuilder contentBuffer = new StringBuilder(); 
+						
 						int length = 1;
 						String chunk = "";
 						int offset = 0;
@@ -132,13 +133,15 @@ public class Http {
 							length = Integer.parseInt(chunk,16);
 							System.out.println("length: "+length+", offset "+offset);
 							
-							content = new byte[length];
+							content = new char[length];
 							int numread;
 							int total=0;
+							
 							while(total < length && 
-								 (numread = in.read(content, 0, content.length-total)) != -1){
+								 (numread = br.read(content, 0, content.length-total)) != -1){
 								System.out.println("written: "+numread+" ctr="+ctr);
-								outstream.write(content, 0, numread);
+//								outstream.write(content, 0, numread);
+								output += new String(content);
 								total+=numread;
 							}
 							br.readLine();//clear trailing line break
@@ -157,11 +160,13 @@ public class Http {
 				}
 				
 				br.close();
-			    outstream.flush();
+//			    outstream.flush();
 			    // Close the socket
 			    in.close();
 			    out.close();
-			    response.setContent(outstream.toByteArray());
+//			    response.setContent(outstream.toByteArray());
+//			    System.out.println(output);
+			    response.setContent(output.getBytes());
 				return response;
 			
 			} else {
