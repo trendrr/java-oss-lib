@@ -3,6 +3,7 @@
  */
 package com.trendrr.oss.networking.http;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
@@ -13,6 +14,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URL;
@@ -61,7 +63,7 @@ public class Http {
 //		request.setContent("application/json", "this is a test".getBytes());
 
 		HttpResponse response = request(request);
-//		System.out.println(new String(response.getContent()));
+		System.out.println(new String(response.getContent()));
 		
 	}
 	
@@ -95,9 +97,12 @@ public class Http {
 			    
 			    // Read from in and write to out...
 			    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			    BufferedWriter bw = new BufferedWriter(new StringWriter());
 //			    InputStreamReader br = new InputStreamReader(in);
 			    ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 				String t;
+				StringBuilder contentBuilder = new StringBuilder();
+				
 				
 //				s.getInputStream().r
 				StringBuilder headerBuilder = new StringBuilder();
@@ -140,10 +145,22 @@ public class Http {
 							while(total < length && 
 								 (numread = br.read(content, 0, content.length-total)) != -1){
 								System.out.println("written: "+numread+" ctr="+ctr);
-//								outstream.write(content, 0, numread);
-								output += new String(content);
+//								System.out.println(content);
+								contentBuilder.append(content);
+
 								total+=numread;
+								System.out.println("total read: "+total);
+								System.out.println("left to read: "+(content.length-total)+"\n");
 							}
+							String ch = Character.toString(content[content.length-1]);
+							byte[] b = ch.getBytes();
+							System.out.println("char is: "+b.length);
+//							if(Character.toString(content[length-1]).equals("\n")){
+//								System.out.println("newline!");
+//							}
+//							else{
+//								System.out.println("char is: "+content[length-1]);
+//							}
 							br.readLine();//clear trailing line break
 							
 //							System.out.println("written: "+in.read(content));
@@ -151,7 +168,6 @@ public class Http {
 ////							System.out.println(br.read(charbuf, offset, length));
 //							offset = length;
 ////							System.out.println(content.length);
-//							br.readLine();//call to just skip through the content line
 						}
 						
 //						String status = Regex.matchFirst(contentBuffer.toString(), "\\{.+\\}", true);
@@ -166,7 +182,7 @@ public class Http {
 			    out.close();
 //			    response.setContent(outstream.toByteArray());
 //			    System.out.println(output);
-			    response.setContent(output.getBytes());
+			    response.setContent(contentBuilder.toString().getBytes());
 				return response;
 			
 			} else {
