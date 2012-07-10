@@ -37,7 +37,7 @@ public class DynMapCaster extends TypeCaster<DynMap> {
 					return toDynMap((Map)obj);
 				}
 			} catch (Exception x) {
-				log.info("Unable to parse string: " + object + " into a DynMap (" + x.getMessage() + ")");
+//				log.info("Unable to parse string: " + object + " into a DynMap (" + x.getMessage() + ")");
 			}
 			return null;
 		}
