@@ -35,6 +35,7 @@ import com.trendrr.oss.TypeCast;
 import com.trendrr.oss.exceptions.TrendrrException;
 import com.trendrr.oss.exceptions.TrendrrIOException;
 import com.trendrr.oss.exceptions.TrendrrNetworkingException;
+import com.trendrr.oss.exceptions.TrendrrParseException;
 import com.trendrr.oss.networking.SocketChannelWrapper;
 
 
@@ -77,6 +78,7 @@ public class Http {
 			port = TypeCast.cast(Integer.class, tmp[1]);
 		}
 		
+		Socket socket = null;
 		try {
 			if (request.isSSL()) {
 				System.out.println("SSL!");
@@ -86,151 +88,104 @@ public class Http {
 			   }
 	
 			    SocketFactory socketFactory = SSLSocketFactory.getDefault();
-			    Socket socket = socketFactory.createSocket(host, port);
-			    //TODO: socket timeouts
-			    
-			    
-			    // Create streams to securely send and receive data to the server
-			    InputStream in = socket.getInputStream();
-			    OutputStream out = socket.getOutputStream();
-			    out.write(request.toByteArray());
-			    
-			    // Read from in and write to out...
-			    BufferedReader br = new BufferedReader(new InputStreamReader(in));
-			    BufferedWriter bw = new BufferedWriter(new StringWriter());
-//			    InputStreamReader br = new InputStreamReader(in);
-			    ByteArrayOutputStream outstream = new ByteArrayOutputStream();
-				String t;
-				StringBuilder contentBuilder = new StringBuilder();
-				
-				
-//				s.getInputStream().r
-				StringBuilder headerBuilder = new StringBuilder();
-				while(!(t = br.readLine()).isEmpty()) {
-					headerBuilder.append(t).append("\r\n");
-				}
-				String headers = headerBuilder.toString();
-				System.out.println(headers);
-				
-				HttpResponse response = HttpResponse.parse(headers);
-				
-				char[] content = null;
-				
-				String output = "";
-				if (response.getHeader("Content-Length") != null) {
-					content = new char[getContentLength(response)];
-					br.read(content);
-				} else {
-//					content = new byte[100];
-					String chunked = response.getHeader("Transfer-Encoding");
-					if (chunked != null && chunked.equalsIgnoreCase("chunked")) {
-						//TODO: handle chunked encoding!
-				
-						
-						int length = 1;
-						String chunk = "";
-						int offset = 0;
-						int ctr = 0;
-						while(!chunk.equals("0")){
-							ctr++;
-							chunk = br.readLine();
-							System.out.println("line: "+chunk);
-							length = Integer.parseInt(chunk,16);
-							System.out.println("length: "+length+", offset "+offset);
-							
-							content = new char[length];
-							int numread;
-							int total=0;
-							
-							while(total < length && 
-								 (numread = br.read(content, 0, content.length-total)) != -1){
-								System.out.println("written: "+numread+" ctr="+ctr);
-//								System.out.println(content);
-								contentBuilder.append(content);
-
-								total+=numread;
-								System.out.println("total read: "+total);
-								System.out.println("left to read: "+(content.length-total)+"\n");
-							}
-							String ch = Character.toString(content[content.length-1]);
-							byte[] b = ch.getBytes();
-							System.out.println("char is: "+b.length);
-//							if(Character.toString(content[length-1]).equals("\n")){
-//								System.out.println("newline!");
-//							}
-//							else{
-//								System.out.println("char is: "+content[length-1]);
-//							}
-							br.readLine();//clear trailing line break
-							
-//							System.out.println("written: "+in.read(content));
-//							outstream.write(content);
-////							System.out.println(br.read(charbuf, offset, length));
-//							offset = length;
-////							System.out.println(content.length);
-						}
-						
-//						String status = Regex.matchFirst(contentBuffer.toString(), "\\{.+\\}", true);
-//						content = status.getBytes();
-					}
-				}
-				
-				br.close();
-//			    outstream.flush();
-			    // Close the socket
-			    in.close();
-			    out.close();
-//			    response.setContent(outstream.toByteArray());
-//			    System.out.println(output);
-			    response.setContent(contentBuilder.toString().getBytes());
-				return response;
-			
+			    socket = socketFactory.createSocket(host, port);
+			    return doRequest(request, socket);
 			} else {
-	
-				
-				
-				SocketChannel channel = SocketChannel.open();
-				
-				channel.connect(new InetSocketAddress(host, port));
-				
-				SocketChannelWrapper wrapper = new SocketChannelWrapper(channel);
-
-				System.out.println(new String(request.toByteArray(), "utf8"));
-				wrapper.write(request.toByteArray());
-				
-				String headers = wrapper.readUntil("\r\n\r\n", Charset.forName("utf8"), true);
-				
-				HttpResponse response = HttpResponse.parse(headers);
-				
-				byte[] content = null;
-				
-				if (response.getHeader("Content-Length") != null) {
-					content = wrapper.readBytes(getContentLength(response));
-				} else {
-					String chunked = response.getHeader("Transfer-Encoding");
-					if (chunked != null && chunked.equalsIgnoreCase("chunked")) {
-						//TODO: handle chunked encoding!
-//						int length = 1;
-//						StringBuilder contentBuffer = new StringBuilder(); 
-//						while(length>0){
-//							String w = wrapper.readUntil("\n", Charset.forName("utf8"), true);
-//							length = w.length();
-//							contentBuffer.append(w);
-//						}
-//						String status = Regex.matchFirst(contentBuffer.toString(), "\\{.+\\}", true);
-//						content = status.getBytes();
-					}
-				}
-				
-				response.setContent(content);
-				return response;
-				
+				socket = new Socket(host, port);
+				return doRequest(request, socket);
 			}
 		} catch (IOException x) {
 			throw new TrendrrIOException(x);
 		} catch (Exception x) {
 			throw new TrendrrException(x);
+		} finally {
+			try {
+				if (socket != null) 
+				{
+					socket.close();
+				}
+			} catch (Exception x) {}
 		}
+	}
+	
+	
+	private static HttpResponse doRequest(HttpRequest request, Socket socket) throws IOException, TrendrrParseException {
+		 //TODO: socket timeouts
+	    
+	    
+	    // Create streams to securely send and receive data to the server
+	    InputStream in = socket.getInputStream();
+	    OutputStream out = socket.getOutputStream();
+	    out.write(request.toByteArray());
+	    
+	    // Read from in and write to out...
+	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+	    BufferedWriter bw = new BufferedWriter(new StringWriter());
+		String t;
+		StringBuilder contentBuilder = new StringBuilder();
+		
+		
+//		s.getInputStream().r
+		StringBuilder headerBuilder = new StringBuilder();
+		while(!(t = br.readLine()).isEmpty()) {
+			headerBuilder.append(t).append("\r\n");
+		}
+		String headers = headerBuilder.toString();
+		System.out.println(headers);
+		
+		HttpResponse response = HttpResponse.parse(headers);
+		
+		char[] content = null;
+		
+		if (response.getHeader("Content-Length") != null) {
+			content = new char[getContentLength(response)];
+			br.read(content);
+			contentBuilder.append(content);
+		} else {
+			String chunked = response.getHeader("Transfer-Encoding");
+			if (chunked != null && chunked.equalsIgnoreCase("chunked")) {
+				//TODO: handle chunked encoding!
+		
+				
+				int length = 1;
+				String chunk = "";
+				int offset = 0;
+				int ctr = 0;
+				while(!chunk.equals("0")){
+					ctr++;
+					chunk = br.readLine();
+					System.out.println("line: "+chunk);
+					length = Integer.parseInt(chunk,16);
+					System.out.println("length: "+length+", offset "+offset);
+					
+					content = new char[length];
+					int numread;
+					int total=0;
+					
+					while(total < length && 
+						 (numread = br.read(content, 0, content.length-total)) != -1){
+						System.out.println("written: "+numread+" ctr="+ctr);
+//						System.out.println(content);
+						contentBuilder.append(content);
+
+						total+=numread;
+						System.out.println("total read: "+total);
+						System.out.println("left to read: "+(content.length-total)+"\n");
+					}
+					String ch = Character.toString(content[content.length-1]);
+					byte[] b = ch.getBytes();
+					System.out.println("char is: "+b.length);
+					br.readLine();//clear trailing line break
+				}
+				
+			}
+		}
+		
+		br.close();
+	    in.close();
+	    out.close();
+	    response.setContent(contentBuilder.toString().getBytes());
+		return response;
 	}
 	
 	private static int getContentLength(HttpResponse response) {
@@ -277,7 +232,7 @@ public class Http {
 	
 	public static String post(String url, DynMap params) throws TrendrrNetworkingException {
 		try {
-						
+			//TODO: update for using request.	
 			URL u = new URL(url);
 	        URLConnection c = u.openConnection();
 	        c.setDoOutput(true);

@@ -24,9 +24,11 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import com.trendrr.oss.DynMap;
 import com.trendrr.oss.TypeCast;
 import com.trendrr.oss.exceptions.TrendrrException;
 import com.trendrr.oss.exceptions.TrendrrIOException;
+import com.trendrr.oss.exceptions.TrendrrNetworkingException;
 import com.trendrr.oss.networking.SocketChannelWrapper;
 import com.trendrr.oss.networking.http.Http;
 import com.trendrr.oss.networking.http.HttpRequest;
@@ -48,6 +50,13 @@ public class HttpTests {
 		Assert.assertTrue(html.endsWith("</html>"));
 	}
 	
+	@Test
+	public void pingTest() throws TrendrrNetworkingException {
+		DynMap result = DynMap.instance(Http.get("strest.trendrr.com/ping"));
+		Assert.assertEquals("PONG", result.getString("data"));
+	}
+	
+	
 //	@Test
 	public void testRequest() throws TrendrrException, IOException{
 		HttpRequest request = new HttpRequest();
@@ -62,5 +71,8 @@ public class HttpTests {
 		String result = new String(response.getContent());
 		Assert.assertEquals("{ \"status\":\"ok\" }", result);
 	}
+	
+	
+	
 
 }

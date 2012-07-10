@@ -82,6 +82,9 @@ public class HttpRequest implements StrestPacketBase {
 	 * @param url
 	 */
 	public void setUrl(String url) {
+		if (!url.startsWith("http")) {
+			url = "http://" + url;
+		}
 		URI uri = URI.create(url);
 		if (uri.getPort() <= 0) {
 			this.host = uri.getHost();
