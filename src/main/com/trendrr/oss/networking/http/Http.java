@@ -64,7 +64,7 @@ public class Http {
 //		request.setContent("application/json", "this is a test".getBytes());
 
 		HttpResponse response = request(request);
-		System.out.println(new String(response.getContent()));
+//		System.out.println(new String(response.getContent()));
 		
 	}
 	
@@ -148,34 +148,35 @@ public class Http {
 		
 				
 				int length = 1;
-				String chunk = "";
+				String lengthstr = "";
 				int offset = 0;
 				int ctr = 0;
-				while(!chunk.equals("0")){
-					ctr++;
-					chunk = br.readLine();
-					System.out.println("line: "+chunk);
-					length = Integer.parseInt(chunk,16);
-					System.out.println("length: "+length+", offset "+offset);
-					
-					content = new char[length];
-					int numread;
-					int total=0;
-					
-					while(total < length && 
-						 (numread = br.read(content, 0, content.length-total)) != -1){
-						System.out.println("written: "+numread+" ctr="+ctr);
-//						System.out.println(content);
-						contentBuilder.append(content);
+				while(!(lengthstr = br.readLine()).equals("0")){
+					System.out.println("line:"+lengthstr);
+					if(lengthstr.isEmpty()){
+						System.out.println("lengthstr is empty, skipping");
+						continue;
+					}else {
+						ctr++;
+//						lengthstr = br.readLine();
+						length = Integer.parseInt(lengthstr,16);
+						System.out.println("length: "+length+", offset "+offset);
+						
+						content = new char[length];
+						int numread;
+						int total=0;
+						
+						while(total < length && 
+							 (numread = br.read(content, 0, content.length-total)) != -1){
+							System.out.println("written: "+numread+" ctr="+ctr);
+//							System.out.println("content: "+new String(content));
+							contentBuilder.append(content);
 
-						total+=numread;
-						System.out.println("total read: "+total);
-						System.out.println("left to read: "+(content.length-total)+"\n");
+							total+=numread;
+						}
 					}
-					String ch = Character.toString(content[content.length-1]);
-					byte[] b = ch.getBytes();
-					System.out.println("char is: "+b.length);
-					br.readLine();//clear trailing line break
+					
+					
 				}
 				
 			}
@@ -184,6 +185,8 @@ public class Http {
 		br.close();
 	    in.close();
 	    out.close();
+//	    System.out.println(contentBuilder.toString());
+	    
 	    response.setContent(contentBuilder.toString().getBytes());
 		return response;
 	}
