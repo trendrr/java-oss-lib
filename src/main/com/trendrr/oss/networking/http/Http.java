@@ -216,7 +216,7 @@ public class Http {
 		byte[] temp = new byte[1000];//is this large enough to handle any header content?
 		
 		int offset=-1;
-		while((char)current != '\n'){
+		while((char)current != endline){
 			offset++;
 			in.read(temp, offset, 1);
 //			System.out.println("result at: "+offset+"="+(char)temp[offset]);
