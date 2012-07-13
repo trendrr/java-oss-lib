@@ -8,12 +8,14 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -55,6 +57,11 @@ public class Http {
 	
 	public static void main(String ...strings) throws Exception {
 		
+//		String test = "11\n{ \"status\":\"OK\" }\n0";
+//		byte[] a = readLine('\n',new ByteArrayInputStream(test.getBytes()));
+//		System.out.println("a is: "+a.toString()+" of length "+ a.length);
+		
+		
 		HttpRequest request = new HttpRequest();
 		request.setUrl("https://www.google.com/#hl=en&output=search&sclient=psy-ab&q=test&oq=test&aq=f&aqi=g4");
 		request.setMethod("GET");
@@ -64,7 +71,7 @@ public class Http {
 //		request.setContent("application/json", "this is a test".getBytes());
 
 		HttpResponse response = request(request);
-//		System.out.println(new String(response.getContent()));
+		System.out.println(new String(response.getContent()));
 		
 	}
 	
@@ -120,26 +127,36 @@ public class Http {
 	    
 	    // Read from in and write to out...
 	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
-	    BufferedWriter bw = new BufferedWriter(new StringWriter());
-		String t;
+	    String t;
 		StringBuilder contentBuilder = new StringBuilder();
+		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+		
+		//file
+		String filepath = "/home/markg/Documents/mark/httptestdoc";
+		BufferedWriter bw = new BufferedWriter(new FileWriter(filepath));
+		
+		
 		
 		
 //		s.getInputStream().r
 		StringBuilder headerBuilder = new StringBuilder();
-		while(!(t = br.readLine()).isEmpty()) {
+		byte[] dum1;
+		while(!(t = readLine('\n',in)).isEmpty()) {
+			System.out.println("t is--"+t+"--end");
+			System.out.println(t.length());
 			headerBuilder.append(t).append("\r\n");
 		}
 		String headers = headerBuilder.toString();
-		System.out.println(headers);
+		System.out.println("headers: \n"+headers);
 		
 		HttpResponse response = HttpResponse.parse(headers);
 		
-		char[] content = null;
+		byte[] content = null;
+		
 		
 		if (response.getHeader("Content-Length") != null) {
-			content = new char[getContentLength(response)];
-			br.read(content);
+			content = new byte[getContentLength(response)];
+			in.read(content);
 			contentBuilder.append(content);
 		} else {
 			String chunked = response.getHeader("Transfer-Encoding");
@@ -149,31 +166,37 @@ public class Http {
 				
 				int length = 1;
 				String lengthstr = "";
-				int offset = 0;
 				int ctr = 0;
-				while(!(lengthstr = br.readLine()).equals("0")){
+				
+//				System.out.println("test: "+testRead('\n',br,in));
+				
+//				System.exit(1);
+				
+				while(!(lengthstr = readLine('\n',in)).equals("0")){ 
 					System.out.println("line:"+lengthstr);
 					if(lengthstr.isEmpty()){
 						System.out.println("lengthstr is empty, skipping");
+//						System.out.println("content: "+new String(content));
 						continue;
 					}else {
 						ctr++;
 //						lengthstr = br.readLine();
 						length = Integer.parseInt(lengthstr,16);
-						System.out.println("length: "+length+", offset "+offset);
+						System.out.println("length: "+length);
 						
-						content = new char[length];
+						content = new byte[length];
 						int numread;
 						int total=0;
 						
 						while(total < length && 
-							 (numread = br.read(content, 0, content.length-total)) != -1){
+							 (numread = in.read(content,0,length)) != -1){
 							System.out.println("written: "+numread+" ctr="+ctr);
 //							System.out.println("content: "+new String(content));
-							contentBuilder.append(content);
-
+							outstream.write(content, 0, numread);
 							total+=numread;
 						}
+//						bw.write(content);
+//						contentBuilder.append(content);
 					}
 					
 					
@@ -181,14 +204,49 @@ public class Http {
 				
 			}
 		}
-		
+		outstream.close();
 		br.close();
 	    in.close();
 	    out.close();
+	    bw.close();
 //	    System.out.println(contentBuilder.toString());
-	    
-	    response.setContent(contentBuilder.toString().getBytes());
+	    response.setContent(outstream.toByteArray());
+//	    response.setContent(contentBuilder.toString().getBytes());
 		return response;
+	}
+	
+	private static String readLine(char endline, InputStream in) throws IOException{
+		byte current = 'a';
+		
+//		
+//		String a = br.readLine();
+//		int strlen = a.length() +1; //for the newline char
+//		System.out.println(a+"is the first line");
+//		int length = Integer.parseInt(a,16);
+//		System.out.println("length is "+length);
+//		
+//		//first read thru the string
+//		byte[] dummy = new byte[strlen];
+//		System.out.println("dummyread is "+in.read(dummy, 0, strlen));
+//		
+		byte[] temp = new byte[1000];
+//		int numread = in.read(result, 0, length);
+//		System.out.println("numread is "+numread);
+		
+		int offset=0;
+		while((char)current != '\n'){
+			in.read(temp, offset, 1);
+//			System.out.println("result at: "+offset+"="+(char)temp[offset]);
+			current = temp[offset];
+			offset++;
+		}
+		
+		byte[] result = new byte[offset-2];
+		for(int i=0; i<result.length; i++){
+			result[i]=temp[i];
+		}
+		
+		return new String(result);
 	}
 	
 	private static int getContentLength(HttpResponse response) {
