@@ -157,7 +157,8 @@ public class Http {
 		if (response.getHeader("Content-Length") != null) {
 			content = new byte[getContentLength(response)];
 			in.read(content);
-			contentBuilder.append(content);
+			outstream.write(content, 0, content.length);
+//			contentBuilder.append(content);
 		} else {
 			String chunked = response.getHeader("Transfer-Encoding");
 			if (chunked != null && chunked.equalsIgnoreCase("chunked")) {
@@ -168,10 +169,6 @@ public class Http {
 				String lengthstr = "";
 				int ctr = 0;
 				
-//				System.out.println("test: "+testRead('\n',br,in));
-				
-//				System.exit(1);
-				
 				while(!(lengthstr = readLine('\n',in)).equals("0")){ 
 					System.out.println("line:"+lengthstr);
 					if(lengthstr.isEmpty()){
@@ -180,7 +177,6 @@ public class Http {
 						continue;
 					}else {
 						ctr++;
-//						lengthstr = br.readLine();
 						length = Integer.parseInt(lengthstr,16);
 						System.out.println("length: "+length);
 						
