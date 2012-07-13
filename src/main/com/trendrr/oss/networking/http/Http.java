@@ -213,17 +213,17 @@ public class Http {
 	
 	private static String readLine(char endline, InputStream in) throws IOException{
 		byte current = 'a';
-		byte[] temp = new byte[1000];
+		byte[] temp = new byte[1000];//is this large enough to handle any header content?
 		
-		int offset=0;
+		int offset=-1;
 		while((char)current != '\n'){
+			offset++;
 			in.read(temp, offset, 1);
 //			System.out.println("result at: "+offset+"="+(char)temp[offset]);
 			current = temp[offset];
-			offset++;
 		}
 		
-		byte[] result = new byte[offset-2];
+		byte[] result = new byte[offset-1];
 		for(int i=0; i<result.length; i++){
 			result[i]=temp[i];
 		}
