@@ -213,21 +213,7 @@ public class Http {
 	
 	private static String readLine(char endline, InputStream in) throws IOException{
 		byte current = 'a';
-		
-//		
-//		String a = br.readLine();
-//		int strlen = a.length() +1; //for the newline char
-//		System.out.println(a+"is the first line");
-//		int length = Integer.parseInt(a,16);
-//		System.out.println("length is "+length);
-//		
-//		//first read thru the string
-//		byte[] dummy = new byte[strlen];
-//		System.out.println("dummyread is "+in.read(dummy, 0, strlen));
-//		
 		byte[] temp = new byte[1000];
-//		int numread = in.read(result, 0, length);
-//		System.out.println("numread is "+numread);
 		
 		int offset=0;
 		while((char)current != '\n'){
