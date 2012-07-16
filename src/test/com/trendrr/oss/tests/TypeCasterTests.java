@@ -31,12 +31,16 @@ public class TypeCasterTests {
 		Assert.assertTrue(TypeCast.cast(Boolean.class, "t"));
 		Assert.assertTrue(TypeCast.cast(Boolean.class, "on"));
 		Assert.assertTrue(TypeCast.cast(Boolean.class, "yes"));
+		Assert.assertTrue(TypeCast.cast(Boolean.class, "1"));
+		Assert.assertTrue(TypeCast.cast(Boolean.class, 1));
 		
 		
 		Assert.assertFalse(TypeCast.cast(Boolean.class, "false"));
 		Assert.assertFalse(TypeCast.cast(Boolean.class, "f"));
 		Assert.assertFalse(TypeCast.cast(Boolean.class, "off"));
 		Assert.assertFalse(TypeCast.cast(Boolean.class, "no"));
+		Assert.assertFalse(TypeCast.cast(Boolean.class, "0"));
+		Assert.assertFalse(TypeCast.cast(Boolean.class, 0));
 	}
 	
 	@Test
