@@ -140,10 +140,12 @@ public class Http {
 		
 //		s.getInputStream().r
 		StringBuilder headerBuilder = new StringBuilder();
-		byte[] dum1;
 		while(!(t = readLine(in)).isEmpty()) {
+			if(t.equals("\n"))
+				continue;
+			
 			System.out.println("t is--"+t+"--end");
-			System.out.println(t.length());
+			System.out.println("t.length="+t.length());
 			headerBuilder.append(t).append("\r\n");
 		}
 		String headers = headerBuilder.toString();
@@ -171,8 +173,8 @@ public class Http {
 				
 				while(!(lengthstr = readLine(in)).equals("0")){ 
 					System.out.println("line:"+lengthstr);
-					if(lengthstr.isEmpty()){
-						System.out.println("lengthstr is empty, skipping");
+					if(lengthstr.isEmpty() || lengthstr.equals("\n")){
+						System.out.println("lengthstr is empty or newline, skipping");
 //						System.out.println("content: "+new String(content));
 						continue;
 					}else {
@@ -223,7 +225,12 @@ public class Http {
 			current = temp[offset];
 		}
 		
-		byte[] result = new byte[offset-1];
+		//if the only char is \n, return "\n", then handle outside this method
+		if(offset==0 && (char)current=='\n')
+			return "\n";
+		
+		System.out.println("offset: "+(offset));
+		byte[] result = new byte[offset];
 		for(int i=0; i<result.length; i++){
 			result[i]=temp[i];
 		}
