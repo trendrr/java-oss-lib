@@ -141,7 +141,7 @@ public class Http {
 //		s.getInputStream().r
 		StringBuilder headerBuilder = new StringBuilder();
 		byte[] dum1;
-		while(!(t = readLine('\n',in)).isEmpty()) {
+		while(!(t = readLine(in)).isEmpty()) {
 			System.out.println("t is--"+t+"--end");
 			System.out.println(t.length());
 			headerBuilder.append(t).append("\r\n");
@@ -169,7 +169,7 @@ public class Http {
 				String lengthstr = "";
 				int ctr = 0;
 				
-				while(!(lengthstr = readLine('\n',in)).equals("0")){ 
+				while(!(lengthstr = readLine(in)).equals("0")){ 
 					System.out.println("line:"+lengthstr);
 					if(lengthstr.isEmpty()){
 						System.out.println("lengthstr is empty, skipping");
@@ -211,12 +211,12 @@ public class Http {
 		return response;
 	}
 	
-	private static String readLine(char endline, InputStream in) throws IOException{
+	private static String readLine(InputStream in) throws IOException{
 		byte current = 'a';
 		byte[] temp = new byte[1000];//is this large enough to handle any header content?
 		
 		int offset=-1;
-		while((char)current != endline){
+		while((char)current != '\n' && (char)current != '\r'){
 			offset++;
 			in.read(temp, offset, 1);
 //			System.out.println("result at: "+offset+"="+(char)temp[offset]);
