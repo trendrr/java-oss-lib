@@ -129,7 +129,7 @@ public class Http {
 	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
 	    String t;
 		StringBuilder contentBuilder = new StringBuilder();
-		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+		ByteArrayOutputStream contentoutput = new ByteArrayOutputStream();
 		
 		//file
 		String filepath = "/home/markg/Documents/mark/httptestdoc";
@@ -159,7 +159,7 @@ public class Http {
 		if (response.getHeader("Content-Length") != null) {
 			content = new byte[getContentLength(response)];
 			in.read(content);
-			outstream.write(content, 0, content.length);
+			contentoutput.write(content, 0, content.length);
 //			contentBuilder.append(content);
 		} else {
 			String chunked = response.getHeader("Transfer-Encoding");
@@ -190,7 +190,7 @@ public class Http {
 							 (numread = in.read(content,0,length)) != -1){
 							System.out.println("written: "+numread+" ctr="+ctr);
 //							System.out.println("content: "+new String(content));
-							outstream.write(content, 0, numread);
+							contentoutput.write(content, 0, numread);
 							total+=numread;
 						}
 //						bw.write(content);
@@ -202,13 +202,13 @@ public class Http {
 				
 			}
 		}
-		outstream.close();
+		contentoutput.close();
 		br.close();
 	    in.close();
 	    out.close();
 	    bw.close();
 //	    System.out.println(contentBuilder.toString());
-	    response.setContent(outstream.toByteArray());
+	    response.setContent(contentoutput.toByteArray());
 //	    response.setContent(contentBuilder.toString().getBytes());
 		return response;
 	}
