@@ -52,20 +52,20 @@ public class HttpTests {
 	
 	@Test
 	public void pingTest() throws TrendrrNetworkingException {
+//		System.out.println(Http.get("strest.trendrr.com/ping"));
+		
 		DynMap result = DynMap.instance(Http.get("strest.trendrr.com/ping"));
 		Assert.assertEquals("PONG", result.getString("data"));
 	}
 	
 	
-//	@Test
+	@Test
 	public void testRequest() throws TrendrrException, IOException{
 		HttpRequest request = new HttpRequest();
-		request.setUrl(GET_url);
-		request.setMethod("GET");
 
-//		request.setUrl("https://tools.questionmarket.com/verveindex/trendrr_ping.pl");
-//		request.setMethod("POST");
-//		request.setContent("application/json", "this is a test".getBytes());
+		request.setUrl("https://tools.questionmarket.com/verveindex/trendrr_ping.pl");
+		request.setMethod("POST");
+		request.setContent("application/json", "this is a test".getBytes());
 
 		HttpResponse response = Http.request(request);
 		String result = new String(response.getContent());

@@ -8,12 +8,14 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -54,6 +56,11 @@ public class Http {
 	protected static Log log = LogFactory.getLog(Http.class);
 	
 	public static void main(String ...strings) throws Exception {
+		
+//		String test = "11\n{ \"status\":\"OK\" }\n0";
+//		byte[] a = readLine('\n',new ByteArrayInputStream(test.getBytes()));
+//		System.out.println("a is: "+a.toString()+" of length "+ a.length);
+		
 		
 		HttpRequest request = new HttpRequest();
 		request.setUrl("https://www.google.com/#hl=en&output=search&sclient=psy-ab&q=test&oq=test&aq=f&aqi=g4");
@@ -120,27 +127,40 @@ public class Http {
 	    
 	    // Read from in and write to out...
 	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
-	    BufferedWriter bw = new BufferedWriter(new StringWriter());
-		String t;
+	    String t;
 		StringBuilder contentBuilder = new StringBuilder();
+		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+		
+		//file
+		String filepath = "/home/markg/Documents/mark/httptestdoc";
+		BufferedWriter bw = new BufferedWriter(new FileWriter(filepath));
+		
+		
 		
 		
 //		s.getInputStream().r
 		StringBuilder headerBuilder = new StringBuilder();
-		while(!(t = br.readLine()).isEmpty()) {
+		while(!(t = readLine(in)).isEmpty()) {
+			if(t.equals("\n"))
+				continue;
+			
+			System.out.println("t is--"+t+"--end");
+			System.out.println("t.length="+t.length());
 			headerBuilder.append(t).append("\r\n");
 		}
 		String headers = headerBuilder.toString();
-		System.out.println(headers);
+		System.out.println("headers: \n"+headers);
 		
 		HttpResponse response = HttpResponse.parse(headers);
 		
-		char[] content = null;
+		byte[] content = null;
+		
 		
 		if (response.getHeader("Content-Length") != null) {
-			content = new char[getContentLength(response)];
-			br.read(content);
-			contentBuilder.append(content);
+			content = new byte[getContentLength(response)];
+			in.read(content);
+			outstream.write(content, 0, content.length);
+//			contentBuilder.append(content);
 		} else {
 			String chunked = response.getHeader("Transfer-Encoding");
 			if (chunked != null && chunked.equalsIgnoreCase("chunked")) {
@@ -148,44 +168,74 @@ public class Http {
 		
 				
 				int length = 1;
-				String chunk = "";
-				int offset = 0;
+				String lengthstr = "";
 				int ctr = 0;
-				while(!chunk.equals("0")){
-					ctr++;
-					chunk = br.readLine();
-					System.out.println("line: "+chunk);
-					length = Integer.parseInt(chunk,16);
-					System.out.println("length: "+length+", offset "+offset);
-					
-					content = new char[length];
-					int numread;
-					int total=0;
-					
-					while(total < length && 
-						 (numread = br.read(content, 0, content.length-total)) != -1){
-						System.out.println("written: "+numread+" ctr="+ctr);
-//						System.out.println(content);
-						contentBuilder.append(content);
-
-						total+=numread;
-						System.out.println("total read: "+total);
-						System.out.println("left to read: "+(content.length-total)+"\n");
+				
+				while(!(lengthstr = readLine(in)).equals("0")){ 
+					System.out.println("line:"+lengthstr);
+					if(lengthstr.isEmpty() || lengthstr.equals("\n")){
+						System.out.println("lengthstr is empty or newline, skipping");
+//						System.out.println("content: "+new String(content));
+						continue;
+					}else {
+						ctr++;
+						length = Integer.parseInt(lengthstr,16);
+						System.out.println("length: "+length);
+						
+						content = new byte[length];
+						int numread;
+						int total=0;
+						
+						while(total < length && 
+							 (numread = in.read(content,0,length)) != -1){
+							System.out.println("written: "+numread+" ctr="+ctr);
+//							System.out.println("content: "+new String(content));
+							outstream.write(content, 0, numread);
+							total+=numread;
+						}
+//						bw.write(content);
+//						contentBuilder.append(content);
 					}
-					String ch = Character.toString(content[content.length-1]);
-					byte[] b = ch.getBytes();
-					System.out.println("char is: "+b.length);
-					br.readLine();//clear trailing line break
+					
+					
 				}
 				
 			}
 		}
-		
+		outstream.close();
 		br.close();
 	    in.close();
 	    out.close();
-	    response.setContent(contentBuilder.toString().getBytes());
+	    bw.close();
+//	    System.out.println(contentBuilder.toString());
+	    response.setContent(outstream.toByteArray());
+//	    response.setContent(contentBuilder.toString().getBytes());
 		return response;
+	}
+	
+	private static String readLine(InputStream in) throws IOException{
+		byte current = 'a';
+		byte[] temp = new byte[1000];//is this large enough to handle any header content?
+		
+		int offset=-1;
+		while((char)current != '\n' && (char)current != '\r'){
+			offset++;
+			in.read(temp, offset, 1);
+//			System.out.println("result at: "+offset+"="+(char)temp[offset]);
+			current = temp[offset];
+		}
+		
+		//if the only char is \n, return "\n", then handle outside this method
+		if(offset==0 && (char)current=='\n')
+			return "\n";
+		
+		System.out.println("offset: "+(offset));
+		byte[] result = new byte[offset];
+		for(int i=0; i<result.length; i++){
+			result[i]=temp[i];
+		}
+		
+		return new String(result);
 	}
 	
 	private static int getContentLength(HttpResponse response) {
