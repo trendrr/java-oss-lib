@@ -141,15 +141,12 @@ public class Http {
 //		s.getInputStream().r
 		StringBuilder headerBuilder = new StringBuilder();
 		while(!(t = readLine(in)).isEmpty()) {
-			if(t.equals("\n"))
-				continue;
-			
 			System.out.println("t is--"+t+"--end");
 			System.out.println("t.length="+t.length());
 			headerBuilder.append(t).append("\r\n");
 		}
 		String headers = headerBuilder.toString();
-		System.out.println("headers: \n"+headers);
+		System.out.println("headers="+headers+"--end");
 		
 		HttpResponse response = HttpResponse.parse(headers);
 		
@@ -213,24 +210,33 @@ public class Http {
 		return response;
 	}
 	
+	/**
+	 * Method reads string until occurrence of "\r\n" or "\n", consistent with HTTP protocol
+	 * @param in stream to read in from
+	 * @return String consists of characters upto and excluding the newline characters
+	 */
 	private static String readLine(InputStream in) throws IOException{
 		byte current = 'a';
 		byte[] temp = new byte[1000];//is this large enough to handle any header content?
 		
 		int offset=-1;
-		while((char)current != '\n' && (char)current != '\r'){
+		while((char)current != '\n'){
 			offset++;
 			in.read(temp, offset, 1);
 //			System.out.println("result at: "+offset+"="+(char)temp[offset]);
 			current = temp[offset];
 		}
+			
+		int resultlen = 0;
+		if(offset > 0){
+			if((char)temp[offset-1]=='\r'){//in case of "\r\n" termination, we ignore the \r
+				resultlen = offset-1;
+			}else{
+				resultlen = offset;//in case of lone "\n" termination
+			}
+		}
 		
-		//if the only char is \n, return "\n", then handle outside this method
-		if(offset==0 && (char)current=='\n')
-			return "\n";
-		
-		System.out.println("offset: "+(offset));
-		byte[] result = new byte[offset];
+		byte[] result = new byte[resultlen];
 		for(int i=0; i<result.length; i++){
 			result[i]=temp[i];
 		}
