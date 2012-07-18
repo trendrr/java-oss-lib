@@ -63,7 +63,7 @@ public class Http {
 		
 		
 		HttpRequest request = new HttpRequest();
-		request.setUrl("https://www.google.com/#hl=en&output=search&sclient=psy-ab&q=test&oq=test&aq=f&aqi=g4");
+		request.setUrl("http://www.google.com/#hl=en&output=search&sclient=psy-ab&q=test&oq=test&aq=f&aqi=g4");
 		request.setMethod("GET");
 
 //		request.setUrl("https://tools.questionmarket.com/verveindex/trendrr_ping.pl");
@@ -155,7 +155,7 @@ public class Http {
 				int length = 1;
 				String lengthstr = "";
 				
-				while(!(lengthstr = readLine(in)).equals("0")){ 
+				while((lengthstr = readLine(in)) != null){ 
 					System.out.println("line:"+lengthstr);
 					if(lengthstr.isEmpty()){
 						System.out.println("lengthstr is empty, skipping");
@@ -163,6 +163,11 @@ public class Http {
 					}else {
 						length = Integer.parseInt(lengthstr,16);
 						System.out.println("length: "+length);
+						
+						if(length==0){
+							System.out.println("last chunk has been read");
+							break;
+						}
 						
 						content = new byte[length];
 						int numread;
@@ -176,8 +181,6 @@ public class Http {
 							total+=numread;
 						}
 					}
-					
-					
 				}
 				
 			}
