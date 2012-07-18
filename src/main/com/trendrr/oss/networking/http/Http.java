@@ -126,17 +126,8 @@ public class Http {
 	    out.write(request.toByteArray());
 	    
 	    // Read from in and write to out...
-	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
 	    String t;
-		StringBuilder contentBuilder = new StringBuilder();
 		ByteArrayOutputStream contentoutput = new ByteArrayOutputStream();
-		
-		//file
-		String filepath = "/home/markg/Documents/mark/httptestdoc";
-		BufferedWriter bw = new BufferedWriter(new FileWriter(filepath));
-		
-		
-		
 		
 //		s.getInputStream().r
 		StringBuilder headerBuilder = new StringBuilder();
@@ -157,13 +148,10 @@ public class Http {
 			content = new byte[getContentLength(response)];
 			in.read(content);
 			contentoutput.write(content, 0, content.length);
-//			contentBuilder.append(content);
 		} else {
 			String chunked = response.getHeader("Transfer-Encoding");
 			if (chunked != null && chunked.equalsIgnoreCase("chunked")) {
-				//TODO: handle chunked encoding!
-		
-				
+
 				int length = 1;
 				String lengthstr = "";
 				int ctr = 0;
@@ -190,8 +178,6 @@ public class Http {
 							contentoutput.write(content, 0, numread);
 							total+=numread;
 						}
-//						bw.write(content);
-//						contentBuilder.append(content);
 					}
 					
 					
@@ -200,13 +186,9 @@ public class Http {
 			}
 		}
 		contentoutput.close();
-		br.close();
 	    in.close();
 	    out.close();
-	    bw.close();
-//	    System.out.println(contentBuilder.toString());
 	    response.setContent(contentoutput.toByteArray());
-//	    response.setContent(contentBuilder.toString().getBytes());
 		return response;
 	}
 	
