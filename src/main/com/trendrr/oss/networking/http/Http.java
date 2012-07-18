@@ -174,7 +174,7 @@ public class Http {
 						int total=0;
 						
 						while(total < length && 
-							 (numread = in.read(content,0,length)) != -1){
+							 (numread = in.read(content,0,content.length-total)) != -1){
 							System.out.println("written: "+numread);
 //							System.out.println("content: "+new String(content));
 							contentoutput.write(content, 0, numread);
