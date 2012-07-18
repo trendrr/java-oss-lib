@@ -69,7 +69,7 @@ public class HttpTests {
 
 		HttpResponse response = Http.request(request);
 		String result = new String(response.getContent());
-		Assert.assertEquals("{ \"status\":\"ok\" }", result);
+		Assert.assertEquals("{ \"status\":\"OK\" }", result);
 	}
 	
 	
