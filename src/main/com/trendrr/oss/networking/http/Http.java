@@ -154,16 +154,13 @@ public class Http {
 
 				int length = 1;
 				String lengthstr = "";
-				int ctr = 0;
 				
 				while(!(lengthstr = readLine(in)).equals("0")){ 
 					System.out.println("line:"+lengthstr);
-					if(lengthstr.isEmpty() || lengthstr.equals("\n")){
-						System.out.println("lengthstr is empty or newline, skipping");
-//						System.out.println("content: "+new String(content));
+					if(lengthstr.isEmpty()){
+						System.out.println("lengthstr is empty, skipping");
 						continue;
 					}else {
-						ctr++;
 						length = Integer.parseInt(lengthstr,16);
 						System.out.println("length: "+length);
 						
@@ -173,7 +170,7 @@ public class Http {
 						
 						while(total < length && 
 							 (numread = in.read(content,0,length)) != -1){
-							System.out.println("written: "+numread+" ctr="+ctr);
+							System.out.println("written: "+numread);
 //							System.out.println("content: "+new String(content));
 							contentoutput.write(content, 0, numread);
 							total+=numread;
