@@ -22,23 +22,24 @@ public class ExampleMain {
 
 	public static void main(String...strings) throws Exception{
 		
-		StrestClient client = new StrestClient("localhost", 8010);
+		StrestClient client = new StrestClient("localhost", 8008);
 		//EXAMPLE Blocking request.
+		client.connect();
 		while(true) {
 			try {
 					System.out.println("Connecting ...");
 					Date start = new Date();
-					client.connect();
+
 					System.out.println("Connected in: " + (new Date().getTime() - start.getTime()));
 					
 					System.out.println("Sending request");
-					StrestResponse response = client.sendRequest(new RequestBuilder().uri("/ping").method("GET").getRequest());
+					StrestResponse response = client.sendRequest(new RequestBuilder().uri("/").method("GET").getRequest());
 					System.out.println("***********************************");
 					System.out.println(new String(response.getContent()));
 					System.out.println("***********************************");
 					
 					System.out.println("Closing ...");
-					client.close();
+//					client.close();
 					System.out.println("sleeping ...");
 				
 				} catch (Exception x) {
