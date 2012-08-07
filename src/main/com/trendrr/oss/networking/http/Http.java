@@ -63,7 +63,7 @@ public class Http {
 		
 		
 		HttpRequest request = new HttpRequest();
-		request.setUrl("https://www.google.com/#hl=en&output=search&sclient=psy-ab&q=test&oq=test&aq=f&aqi=g4");
+		request.setUrl("http://www.google.com/#hl=en&output=search&sclient=psy-ab&q=test&oq=test&aq=f&aqi=g4");
 		request.setMethod("GET");
 
 //		request.setUrl("https://tools.questionmarket.com/verveindex/trendrr_ping.pl");
@@ -126,30 +126,18 @@ public class Http {
 	    out.write(request.toByteArray());
 	    
 	    // Read from in and write to out...
-	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
 	    String t;
-		StringBuilder contentBuilder = new StringBuilder();
-		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
-		
-		//file
-		String filepath = "/home/markg/Documents/mark/httptestdoc";
-		BufferedWriter bw = new BufferedWriter(new FileWriter(filepath));
-		
-		
-		
+		ByteArrayOutputStream contentoutput = new ByteArrayOutputStream();
 		
 //		s.getInputStream().r
 		StringBuilder headerBuilder = new StringBuilder();
 		while(!(t = readLine(in)).isEmpty()) {
-			if(t.equals("\n"))
-				continue;
-			
 			System.out.println("t is--"+t+"--end");
 			System.out.println("t.length="+t.length());
 			headerBuilder.append(t).append("\r\n");
 		}
 		String headers = headerBuilder.toString();
-		System.out.println("headers: \n"+headers);
+		System.out.println("headers="+headers+"--end");
 		
 		HttpResponse response = HttpResponse.parse(headers);
 		
@@ -159,78 +147,78 @@ public class Http {
 		if (response.getHeader("Content-Length") != null) {
 			content = new byte[getContentLength(response)];
 			in.read(content);
-			outstream.write(content, 0, content.length);
-//			contentBuilder.append(content);
+			contentoutput.write(content, 0, content.length);
 		} else {
 			String chunked = response.getHeader("Transfer-Encoding");
 			if (chunked != null && chunked.equalsIgnoreCase("chunked")) {
-				//TODO: handle chunked encoding!
-		
-				
+
 				int length = 1;
 				String lengthstr = "";
-				int ctr = 0;
 				
-				while(!(lengthstr = readLine(in)).equals("0")){ 
+				while((lengthstr = readLine(in)) != null){ 
 					System.out.println("line:"+lengthstr);
-					if(lengthstr.isEmpty() || lengthstr.equals("\n")){
-						System.out.println("lengthstr is empty or newline, skipping");
-//						System.out.println("content: "+new String(content));
+					if(lengthstr.isEmpty()){
+						System.out.println("lengthstr is empty, skipping");
 						continue;
 					}else {
-						ctr++;
 						length = Integer.parseInt(lengthstr,16);
 						System.out.println("length: "+length);
+						
+						if(length==0){
+							System.out.println("last chunk has been read");
+							break;
+						}
 						
 						content = new byte[length];
 						int numread;
 						int total=0;
 						
 						while(total < length && 
-							 (numread = in.read(content,0,length)) != -1){
-							System.out.println("written: "+numread+" ctr="+ctr);
+							 (numread = in.read(content,0,content.length-total)) != -1){
+							System.out.println("written: "+numread);
 //							System.out.println("content: "+new String(content));
-							outstream.write(content, 0, numread);
+							contentoutput.write(content, 0, numread);
 							total+=numread;
 						}
-//						bw.write(content);
-//						contentBuilder.append(content);
 					}
-					
-					
 				}
 				
 			}
 		}
-		outstream.close();
-		br.close();
+		contentoutput.close();
 	    in.close();
 	    out.close();
-	    bw.close();
-//	    System.out.println(contentBuilder.toString());
-	    response.setContent(outstream.toByteArray());
-//	    response.setContent(contentBuilder.toString().getBytes());
+	    response.setContent(contentoutput.toByteArray());
 		return response;
 	}
 	
+	/**
+	 * Method reads string until occurrence of "\r\n" or "\n", consistent with HTTP protocol
+	 * @param in stream to read in from
+	 * @return String consists of characters upto and excluding the newline characters
+	 */
 	private static String readLine(InputStream in) throws IOException{
 		byte current = 'a';
 		byte[] temp = new byte[1000];//is this large enough to handle any header content?
 		
 		int offset=-1;
-		while((char)current != '\n' && (char)current != '\r'){
+		while((char)current != '\n'){
 			offset++;
 			in.read(temp, offset, 1);
 //			System.out.println("result at: "+offset+"="+(char)temp[offset]);
 			current = temp[offset];
 		}
+			
+		int resultlen = 0;
+		if(offset > 0){
+			if((char)temp[offset-1]=='\r'){//in case of "\r\n" termination, we ignore the \r
+				resultlen = offset-1;
+			}else{
+				resultlen = offset;//in case of lone "\n" termination
+			}
+		}
 		
-		//if the only char is \n, return "\n", then handle outside this method
-		if(offset==0 && (char)current=='\n')
-			return "\n";
-		
-		System.out.println("offset: "+(offset));
-		byte[] result = new byte[offset];
+		byte[] result = new byte[resultlen];
 		for(int i=0; i<result.length; i++){
 			result[i]=temp[i];
 		}
