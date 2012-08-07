@@ -140,7 +140,7 @@ public class StrestClient {
 			
 			while (this.isWaitOnMaxQueuedWrites() && this.socket.getWriteQueueSize() >= this.maxQueuedWrites) {
 				//wait for space.
-				log.warn("Write queue is full, waiting for space...");
+//				log.warn("Write queue is full, waiting for space...");
 				Sleep.millis(25);
 			}
  			
