@@ -3,9 +3,7 @@
  */
 package com.trendrr.oss.networking.strest;
 
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,35 +48,16 @@ public class RequestBuilder {
 		}
 	}
 	
-//	/**
-//	 * sets the host and the uri. 
-//	 * 
-//	 * this is assumed to be a properly formed url
-//	 * @param url
-//	 * @return
-//	 * @throws MalformedURLException
-//	 */
-//	public RequestBuilder url(String url) throws MalformedURLException {
-//		try {
-//			URL u = new URL(url);
-//			String host = u.getHost();
-//			request.setHeader(StrestHeaders.Names.HOST, host);
-//			String uri = url.substring(url.indexOf(host) + host.length());
-//			request.setUri(uri);
-//		} catch (Exception x) {
-//			MalformedURLException m = new MalformedURLException("Unable to parse: " + url);
-//			m.initCause(x);
-//			throw m;
-//		}
-//		return this;
-//	}
-	
 	public RequestBuilder uri(String uri) {
 		request.setUri(uri);
 		return this;
 	}
 	
 	
+	public RequestBuilder params(Map params) {
+		request.setParams(DynMap.instance(params));
+		return this;
+	}
 	
 	/**
 	 * adds params to the uri. 

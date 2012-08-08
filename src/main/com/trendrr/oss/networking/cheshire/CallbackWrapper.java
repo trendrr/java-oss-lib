@@ -10,7 +10,9 @@ import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.DynMap;
 import com.trendrr.oss.networking.strest.StrestRequestCallback;
-import com.trendrr.oss.networking.strest.StrestResponse;
+import com.trendrr.oss.networking.strest.models.StrestResponse;
+import com.trendrr.oss.networking.strest.models.json.StrestJsonBase;
+
 
 
 /**
@@ -39,13 +41,7 @@ class CallbackWrapper implements StrestRequestCallback{
 	 */
 	@Override
 	public void response(StrestResponse response) {
-
-		try {
-			String res = new String(response.getContent(), "utf8");
-			cb.response(DynMap.instance(res));
-		} catch (UnsupportedEncodingException e) {
-			log.warn("Caught, this should NEVER happen", e);
-		}
+		cb.response(((StrestJsonBase)response).getMap());
 	}
 
 	/* (non-Javadoc)

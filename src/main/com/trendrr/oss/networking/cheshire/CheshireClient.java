@@ -22,8 +22,9 @@ import com.trendrr.oss.exceptions.TrendrrException;
 import com.trendrr.oss.exceptions.TrendrrTimeoutException;
 import com.trendrr.oss.networking.strest.RequestBuilder;
 import com.trendrr.oss.networking.strest.StrestClient;
-import com.trendrr.oss.networking.strest.StrestRequest;
-import com.trendrr.oss.networking.strest.StrestResponse;
+import com.trendrr.oss.networking.strest.models.StrestRequest;
+import com.trendrr.oss.networking.strest.models.StrestResponse;
+import com.trendrr.oss.networking.strest.models.json.StrestJsonBase;
 
 
 /**
@@ -206,13 +207,7 @@ public class CheshireClient implements CheshireApiCaller{
 	public DynMap apiCall(String endPoint, Verb method, Map params, long timeoutMillis) throws TrendrrTimeoutException, TrendrrException {
 		StrestRequest request = this.createRequest(endPoint, method, params);
 		StrestResponse response = this.sendWithReconnect(request, timeoutMillis);
-		String res;
-		try {
-			res = new String(response.getContent(), "utf8");
-		} catch (UnsupportedEncodingException e) {
-			throw new TrendrrException("WHAT bad encoding!!?", e);
-		}
-		return DynMapFactory.instanceFromJSON(res);
+		return ((StrestJsonBase)response).getMap();
 	}
 	
 	private StrestRequest createRequest(String endPoint, Verb method, Map params) {
@@ -228,12 +223,7 @@ public class CheshireClient implements CheshireApiCaller{
 			} else {
 				pms = DynMap.instance(params);
 			}
-			
-			if (method == Verb.POST) {
-				builder.paramsPOST(pms);
-			} else {
-				builder.paramsGET(pms);
-			}
+			builder.params(params);
 		}
 		return builder.getRequest();
 	}
