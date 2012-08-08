@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.trendrr.oss.networking.strest;
+package com.trendrr.oss.strest;
 
 import java.util.Date;
 
@@ -9,7 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.concurrent.Sleep;
-import com.trendrr.oss.networking.strest.models.StrestResponse;
+import com.trendrr.oss.strest.models.StrestResponse;
 
 
 /**

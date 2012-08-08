@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.trendrr.oss.networking.cheshire;
+package com.trendrr.oss.strest.cheshire;
 
 import java.io.IOException;
 import java.util.Date;
@@ -17,41 +17,27 @@ import com.trendrr.oss.exceptions.TrendrrException;
 
 /**
  * @author Dustin Norlander
- * @created Feb 21, 2012
+ * @created Feb 23, 2012
  * 
  */
-public class CheshireTest implements CheshireApiCallback{
+public class CheshirePingTest implements CheshireApiCallback{
 
-	protected static Log log = LogFactory.getLog(CheshireTest.class);
-	
+	protected static Log log = LogFactory.getLog(CheshirePingTest.class);
 	
 	public static void main(String ...strings) throws TrendrrException, IOException {
-		CheshireClient client = new CheshireClient("localhost", 7094);
+		CheshireClient client = new CheshireClient("localhost", 8010);
 		client.connect();
-		CheshireTest callback = new CheshireTest();
+		CheshirePingTest callback = new CheshirePingTest();
 		Date start = new Date();
-		for (int i=0 ; i < 1000000; i++) {
-			DynMap params = new DynMap();
-			params.put("timeframe", "hourly");
-			params.put("namespace", "testing_1");
-			params.put("unique", StringHelper.randomString(1));
-			params.put("val", 1);
-			
-			
-			client.apiCall("/v1/increment", Verb.POST, 
-					params, callback);
-			
+		for (int i=0 ; i < 100000; i++) {			
+			client.apiCall("/ping", Verb.GET, 
+					new DynMap(), 0);
 		}
 		
 		
 		Sleep.seconds(5);
 		
 		System.out.println("Completed in : " + (new Date().getTime() - start.getTime() - 5000));
-		DynMap params = new DynMap();
-		params.put("timeframe", "hourly");
-		params.put("namespace", "testing_1");
-		System.out.println(client.apiCall("/v1/top_elements", Verb.GET, 
-				params, 0l).toJSONString());
 		
 	}
 

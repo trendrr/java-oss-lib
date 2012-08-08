@@ -1,9 +1,9 @@
 /**
  * 
  */
-package com.trendrr.oss.networking.strest;
+package com.trendrr.oss.strest;
 
-import com.trendrr.oss.networking.strest.models.StrestResponse;
+import com.trendrr.oss.strest.models.StrestResponse;
 
 /**
  * @author dustin

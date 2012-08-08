@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.trendrr.oss.networking.strest.models.json;
+package com.trendrr.oss.strest.models.json;
 
 import java.io.UnsupportedEncodingException;
 
@@ -10,11 +10,11 @@ import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.DynMap;
 
-import com.trendrr.oss.networking.strest.models.StrestHeader;
-import com.trendrr.oss.networking.strest.models.StrestRequest;
-import com.trendrr.oss.networking.strest.models.StrestHeader.Method;
-import com.trendrr.oss.networking.strest.models.StrestHeader.Name;
-import com.trendrr.oss.networking.strest.models.StrestHeader.TxnAccept;
+import com.trendrr.oss.strest.models.StrestHeader;
+import com.trendrr.oss.strest.models.StrestRequest;
+import com.trendrr.oss.strest.models.StrestHeader.Method;
+import com.trendrr.oss.strest.models.StrestHeader.Name;
+import com.trendrr.oss.strest.models.StrestHeader.TxnAccept;
 
 
 /**

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.trendrr.oss.networking.cheshire;
+package com.trendrr.oss.strest.cheshire;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -20,11 +20,11 @@ import com.trendrr.oss.concurrent.Sleep;
 import com.trendrr.oss.exceptions.TrendrrDisconnectedException;
 import com.trendrr.oss.exceptions.TrendrrException;
 import com.trendrr.oss.exceptions.TrendrrTimeoutException;
-import com.trendrr.oss.networking.strest.RequestBuilder;
-import com.trendrr.oss.networking.strest.StrestClient;
-import com.trendrr.oss.networking.strest.models.StrestRequest;
-import com.trendrr.oss.networking.strest.models.StrestResponse;
-import com.trendrr.oss.networking.strest.models.json.StrestJsonBase;
+import com.trendrr.oss.strest.RequestBuilder;
+import com.trendrr.oss.strest.StrestClient;
+import com.trendrr.oss.strest.models.StrestRequest;
+import com.trendrr.oss.strest.models.StrestResponse;
+import com.trendrr.oss.strest.models.json.StrestJsonBase;
 
 
 /**

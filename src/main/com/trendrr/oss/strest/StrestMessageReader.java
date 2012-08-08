@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.trendrr.oss.networking.strest;
+package com.trendrr.oss.strest;
 
 import java.nio.charset.Charset;
 import java.util.List;
@@ -17,8 +17,8 @@ import com.trendrr.oss.exceptions.TrendrrParseException;
 import com.trendrr.oss.networking.ByteReadCallback;
 import com.trendrr.oss.networking.SocketChannelWrapper;
 import com.trendrr.oss.networking.StringReadCallback;
-import com.trendrr.oss.networking.strest.models.StrestResponse;
-import com.trendrr.oss.networking.strest.models.json.StrestJsonResponse;
+import com.trendrr.oss.strest.models.StrestResponse;
+import com.trendrr.oss.strest.models.json.StrestJsonResponse;
 
 
 /**

@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package com.trendrr.oss.networking.strest;
+package com.trendrr.oss.strest;
 
 import java.nio.charset.Charset;
 import java.util.concurrent.atomic.AtomicLong;

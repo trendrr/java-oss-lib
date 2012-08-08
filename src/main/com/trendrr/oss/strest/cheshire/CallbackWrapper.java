@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.trendrr.oss.networking.cheshire;
+package com.trendrr.oss.strest.cheshire;
 
 import java.io.UnsupportedEncodingException;
 
@@ -9,9 +9,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.DynMap;
-import com.trendrr.oss.networking.strest.StrestRequestCallback;
-import com.trendrr.oss.networking.strest.models.StrestResponse;
-import com.trendrr.oss.networking.strest.models.json.StrestJsonBase;
+import com.trendrr.oss.strest.StrestRequestCallback;
+import com.trendrr.oss.strest.models.StrestResponse;
+import com.trendrr.oss.strest.models.json.StrestJsonBase;
 
 
 

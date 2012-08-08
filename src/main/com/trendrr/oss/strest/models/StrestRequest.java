@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.trendrr.oss.networking.strest.models;
+package com.trendrr.oss.strest.models;
 
 import com.trendrr.oss.DynMap;
 

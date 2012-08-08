@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.trendrr.oss.networking.strest;
+package com.trendrr.oss.strest;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -22,11 +22,11 @@ import com.trendrr.oss.exceptions.TrendrrOverflowException;
 import com.trendrr.oss.exceptions.TrendrrIOException;
 import com.trendrr.oss.exceptions.TrendrrTimeoutException;
 import com.trendrr.oss.networking.SocketChannelWrapper;
-import com.trendrr.oss.networking.strest.models.StrestHeader;
-import com.trendrr.oss.networking.strest.models.StrestRequest;
-import com.trendrr.oss.networking.strest.models.StrestResponse;
-import com.trendrr.oss.networking.strest.models.StrestHeader.TxnAccept;
-import com.trendrr.oss.networking.strest.models.StrestHeader.TxnStatus;
+import com.trendrr.oss.strest.models.StrestHeader;
+import com.trendrr.oss.strest.models.StrestRequest;
+import com.trendrr.oss.strest.models.StrestResponse;
+import com.trendrr.oss.strest.models.StrestHeader.TxnAccept;
+import com.trendrr.oss.strest.models.StrestHeader.TxnStatus;
 
 
 

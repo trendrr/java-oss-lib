@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.trendrr.oss.networking.cheshire;
+package com.trendrr.oss.strest.cheshire;
 
 /**
  * @author Dustin Norlander
