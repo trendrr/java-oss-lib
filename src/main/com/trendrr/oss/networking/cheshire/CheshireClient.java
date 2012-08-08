@@ -307,6 +307,17 @@ public class CheshireClient implements CheshireApiCaller{
 		this.reconnectWaitSeconds = reconnectWaitSeconds;
 	}
 	
+	/**
+	 * wait or exception when max queued writes is reached? default to false
+	 * @return
+	 */
+	public boolean isWaitOnMaxQueuedWrites() {
+		return this.strest.isWaitOnMaxQueuedWrites();
+	}
+
+	public void setWaitOnMaxQueuedWrites(boolean waitOnMaxQueuedWrites) {
+		this.strest.setWaitOnMaxQueuedWrites(waitOnMaxQueuedWrites);
+	}
 
 	public String getHost() {
 		return host;
