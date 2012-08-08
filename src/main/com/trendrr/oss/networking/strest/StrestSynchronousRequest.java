@@ -20,7 +20,9 @@ import com.trendrr.oss.exceptions.TrendrrTimeoutException;
  * @author Dustin Norlander
  * @created Mar 15, 2011
  * 
+ * @deprecated use com.trendrr.oss.strest
  */
+@Deprecated
 class StrestSynchronousRequest implements StrestRequestCallback{
 
 	protected static Log log = LogFactory.getLog(StrestSynchronousRequest.class);

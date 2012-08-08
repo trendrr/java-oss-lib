@@ -17,7 +17,9 @@ import com.trendrr.oss.exceptions.TrendrrTimeoutException;
  * @author Dustin Norlander
  * @created Oct 20, 2011
  * 
+ * @deprecated use com.trendrr.oss.strest
  */
+@Deprecated
 public interface CheshireApiCaller {
 
 	/**

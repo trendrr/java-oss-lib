@@ -19,7 +19,9 @@ import com.trendrr.oss.exceptions.TrendrrException;
  * @author Dustin Norlander
  * @created Feb 23, 2012
  * 
+ * @deprecated use com.trendrr.oss.strest
  */
+@Deprecated
 public class CheshirePingTest implements CheshireApiCallback{
 
 	protected static Log log = LogFactory.getLog(CheshirePingTest.class);

@@ -7,7 +7,9 @@ package com.trendrr.oss.networking.cheshire;
  * @author Dustin Norlander
  * @created Apr 6, 2011
  * 
+ * @deprecated use com.trendrr.oss.strest
  */
+@Deprecated
 public enum Verb {
 	GET(),
 	POST(),

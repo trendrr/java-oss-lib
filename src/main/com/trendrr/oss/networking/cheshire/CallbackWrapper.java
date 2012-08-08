@@ -17,7 +17,9 @@ import com.trendrr.oss.networking.strest.StrestResponse;
  * @author Dustin Norlander
  * @created Apr 6, 2011
  * 
+ * @deprecated use com.trendrr.oss.strest
  */
+@Deprecated
 class CallbackWrapper implements StrestRequestCallback{
 
 	protected static Log log = LogFactory.getLog(CallbackWrapper.class);

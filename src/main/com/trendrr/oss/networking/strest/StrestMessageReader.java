@@ -18,7 +18,9 @@ import com.trendrr.oss.networking.StringReadCallback;
  * @author Dustin Norlander
  * @created Mar 14, 2011
  * 
+ * @deprecated use com.trendrr.oss.strest
  */
+@Deprecated
 public class StrestMessageReader implements StringReadCallback,
 		ByteReadCallback {
 

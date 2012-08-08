@@ -32,7 +32,9 @@ import org.apache.commons.logging.LogFactory;
  * @author Dustin Norlander
  * @created Mar 11, 2011
  * 
+ * @deprecated use com.trendrr.oss.strest
  */
+@Deprecated
 public class StrestUtil {
 
 	private static AtomicLong txn = new AtomicLong(0l);

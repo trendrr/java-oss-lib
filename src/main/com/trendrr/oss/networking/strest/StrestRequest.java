@@ -15,7 +15,9 @@ import org.apache.commons.logging.LogFactory;
  * @author Dustin Norlander
  * @created Mar 11, 2011
  * 
+ * @deprecated use com.trendrr.oss.strest
  */
+@Deprecated
 public class StrestRequest {
 
 	protected static Log log = LogFactory.getLog(StrestRequest.class);

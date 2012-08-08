@@ -37,8 +37,9 @@ import com.trendrr.oss.networking.SocketChannelWrapper;
  * 
  * @author Dustin Norlander
  * @created Mar 14, 2011
- * 
+ * @deprecated use com.trendrr.oss.strest
  */
+@Deprecated
 public class StrestClient {
 
 	protected static Log log = LogFactory.getLog(StrestClient.class);

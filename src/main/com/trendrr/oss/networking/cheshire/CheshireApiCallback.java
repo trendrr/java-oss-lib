@@ -10,7 +10,9 @@ import com.trendrr.oss.DynMap;
  * @author Dustin Norlander
  * @created Apr 6, 2011
  * 
+ * @deprecated use com.trendrr.oss.strest
  */
+@Deprecated
 public interface CheshireApiCallback {
 	/**
 	 * the response

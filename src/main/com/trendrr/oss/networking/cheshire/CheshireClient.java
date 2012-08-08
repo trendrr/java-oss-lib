@@ -39,7 +39,9 @@ import com.trendrr.oss.networking.strest.StrestResponse;
  * @author Dustin Norlander
  * @created Apr 6, 2011
  * 
+ * @deprecated use com.trendrr.oss.strest
  */
+@Deprecated
 public class CheshireClient implements CheshireApiCaller{
 
 	protected static Log log = LogFactory.getLog(CheshireClient.class);
