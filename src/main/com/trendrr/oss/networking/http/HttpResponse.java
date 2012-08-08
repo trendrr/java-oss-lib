@@ -14,8 +14,8 @@ import com.trendrr.oss.DynMap;
 import com.trendrr.oss.Regex;
 import com.trendrr.oss.TypeCast;
 import com.trendrr.oss.exceptions.TrendrrParseException;
-import com.trendrr.oss.networking.strest.v2.models.StrestHeader.Name;
-import com.trendrr.oss.networking.strest.v2.models.StrestPacketBase;
+import com.trendrr.oss.networking.strest.models.StrestPacketBase;
+import com.trendrr.oss.networking.strest.models.StrestHeader.Name;
 
 
 /**

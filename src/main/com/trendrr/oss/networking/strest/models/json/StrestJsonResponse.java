@@ -1,15 +1,15 @@
 /**
  * 
  */
-package com.trendrr.oss.networking.strest.v2.models.json;
+package com.trendrr.oss.networking.strest.models.json;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.DynMap;
-import com.trendrr.oss.networking.strest.v2.models.StrestHeader.TxnStatus;
-import com.trendrr.oss.networking.strest.v2.models.StrestHeader;
-import com.trendrr.oss.networking.strest.v2.models.StrestResponse;
+import com.trendrr.oss.networking.strest.models.StrestHeader;
+import com.trendrr.oss.networking.strest.models.StrestResponse;
+import com.trendrr.oss.networking.strest.models.StrestHeader.TxnStatus;
 
 
 /**

@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,6 +22,11 @@ import com.trendrr.oss.exceptions.TrendrrOverflowException;
 import com.trendrr.oss.exceptions.TrendrrIOException;
 import com.trendrr.oss.exceptions.TrendrrTimeoutException;
 import com.trendrr.oss.networking.SocketChannelWrapper;
+import com.trendrr.oss.networking.strest.models.StrestHeader;
+import com.trendrr.oss.networking.strest.models.StrestRequest;
+import com.trendrr.oss.networking.strest.models.StrestResponse;
+import com.trendrr.oss.networking.strest.models.StrestHeader.TxnAccept;
+import com.trendrr.oss.networking.strest.models.StrestHeader.TxnStatus;
 
 
 
@@ -51,9 +57,11 @@ public class StrestClient {
 
 	protected int maxWaitingForResponse = 0; //the maximum number of waiting callbacks.
 	protected int maxQueuedWrites = 200; //the maximum number of writes that have queued up.
-
+	protected boolean waitOnMaxQueuedWrites = false; //should we block or exception when queue is full?
 	
 
+
+	
 
 	public StrestClient(String host, int port) {
 		this.host = host;
@@ -130,14 +138,27 @@ public class StrestClient {
 				throw new TrendrrIOException(this.maxWaitingForResponse + " waiting for response, me thinks theres a network problem, or you need to slow down!");
 			}
 			
-			request.setHeaderIfAbsent(StrestHeaders.Names.STREST_TXN_ACCEPT, StrestHeaders.Values.MULTI);
-			ByteBuffer buf = request.getBytesAsBuffer();
+			while (this.isWaitOnMaxQueuedWrites() && this.socket.getWriteQueueSize() >= this.maxQueuedWrites) {
+				//wait for space.
+//				log.warn("Write queue is full, waiting for space...");
+				Sleep.millis(25);
+			}
+ 			
+			if (request.getHeader(StrestHeader.Name.TXN_ACCEPT) == null) {
+				request.setTxnAccept(TxnAccept.MULTI);
+			}
+			if (request.getTxnId() == null) {
+				request.setTxnId(StrestHeader.generateTxnId());
+			}
+			
+			byte[] bytes = request.toByteArray();
+			
 			if (callback != null)
-				this.callbacks.put(request.getHeader(StrestHeaders.Names.STREST_TXN_ID), callback);
+				this.callbacks.put(request.getTxnId(), callback);
 			if (this.maxQueuedWrites > 0) {
-				socket.write(buf, this.maxQueuedWrites);
+				socket.write(bytes, this.maxQueuedWrites);
 			} else {
-				socket.write(buf);
+				socket.write(bytes);
 			}
 		} catch (Exception e) {
 			if (callback != null) {
@@ -160,7 +181,7 @@ public class StrestClient {
 			if (!this.connected.get()) {
 				throw new TrendrrDisconnectedException("Strest Client is not connected!");
 			}
-			request.setHeaderIfAbsent(StrestHeaders.Names.STREST_TXN_ACCEPT, StrestHeaders.Values.SINGLE);
+			request.setTxnAccept(TxnAccept.SINGLE);
 			StrestSynchronousRequest sr = new StrestSynchronousRequest();
 			this.sendRequest(request, sr);
 			return sr.awaitResponse(timeoutMillis);
@@ -172,7 +193,7 @@ public class StrestClient {
 				if (iox.getMessage().equalsIgnoreCase("not connected")) {
 					throw new TrendrrDisconnectedException(iox);
 				}
-			} 
+			}
 			throw new TrendrrException(new Exception(t));
 		}
 	}
@@ -181,8 +202,8 @@ public class StrestClient {
 	 * incoming message from the reader.
 	 */
 	void incoming(StrestResponse response) {
-		String txnId = response.getHeader(StrestHeaders.Names.STREST_TXN_ID);
-		String txnStatus = response.getHeader(StrestHeaders.Names.STREST_TXN_STATUS);
+		String txnId = response.getTxnId();
+		TxnStatus txnStatus = response.getTxnStatus();
 		StrestRequestCallback cb = this.callbacks.get(txnId);
 		if (cb == null) {
 			//Server sent us a response to transaction that doesn't exist or is already closed!
@@ -195,7 +216,7 @@ public class StrestClient {
 			log.error("Caught", x);
 		}
 		
-		if (!StrestHeaders.Values.CONTINUE.equalsIgnoreCase(txnStatus)) {
+		if (txnStatus != TxnStatus.CONTINUE) {
 			this.callbacks.remove(txnId);
 			cb.txnComplete(txnId);
 		}
@@ -237,5 +258,17 @@ public class StrestClient {
 
 	public void setMaxQueuedWrites(int maxQueuedWrites) {
 		this.maxQueuedWrites = maxQueuedWrites;
+	}
+	
+	/**
+	 * wait or exception when max queued writes is reached? default to false
+	 * @return
+	 */
+	public boolean isWaitOnMaxQueuedWrites() {
+		return waitOnMaxQueuedWrites;
+	}
+
+	public void setWaitOnMaxQueuedWrites(boolean waitOnMaxQueuedWrites) {
+		this.waitOnMaxQueuedWrites = waitOnMaxQueuedWrites;
 	}
 }

@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.concurrent.Sleep;
+import com.trendrr.oss.networking.strest.models.StrestResponse;
 
 
 /**
@@ -22,7 +23,7 @@ public class ExampleMain {
 
 	public static void main(String...strings) throws Exception{
 		
-		StrestClient client = new StrestClient("localhost", 8008);
+		StrestClient client = new StrestClient("localhost", 8009);
 		//EXAMPLE Blocking request.
 		client.connect();
 		while(true) {
@@ -33,9 +34,9 @@ public class ExampleMain {
 					System.out.println("Connected in: " + (new Date().getTime() - start.getTime()));
 					
 					System.out.println("Sending request");
-					StrestResponse response = client.sendRequest(new RequestBuilder().uri("/").method("GET").getRequest());
+					StrestResponse response = client.sendRequest(new RequestBuilder().uri("/ping").method("GET").getRequest());
 					System.out.println("***********************************");
-					System.out.println(new String(response.getContent()));
+					System.out.println(new String(response.toString()));
 					System.out.println("***********************************");
 					
 					System.out.println("Closing ...");
@@ -46,7 +47,7 @@ public class ExampleMain {
 					x.printStackTrace();
 				}
 				
-			Sleep.seconds(1);
+			Sleep.seconds(5);
 		}
 //		System.out.println("NOW TEST THE FIREHOSE");
 //		//EXAMPLE Asynch Firehose request

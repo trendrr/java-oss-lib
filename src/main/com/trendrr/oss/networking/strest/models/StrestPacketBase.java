@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.trendrr.oss.networking.strest.v2.models;
+package com.trendrr.oss.networking.strest.models;
 
 import java.util.Collection;
 

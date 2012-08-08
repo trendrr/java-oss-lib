@@ -11,6 +11,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.DynMap;
+import com.trendrr.oss.networking.strest.models.StrestHeader;
+import com.trendrr.oss.networking.strest.models.StrestRequest;
+import com.trendrr.oss.networking.strest.models.StrestHeader.TxnAccept;
+import com.trendrr.oss.networking.strest.models.json.StrestJsonRequest;
 
 /**
  * @author Dustin Norlander
@@ -40,34 +44,34 @@ public class RequestBuilder {
 	
 	public RequestBuilder(StrestRequest request) {
 		if (request == null) {
-			this.request = new StrestRequest();
+			this.request = new StrestJsonRequest();
 		} else {
 			this.request = request;
 		}
 	}
 	
-	/**
-	 * sets the host and the uri. 
-	 * 
-	 * this is assumed to be a properly formed url
-	 * @param url
-	 * @return
-	 * @throws MalformedURLException
-	 */
-	public RequestBuilder url(String url) throws MalformedURLException {
-		try {
-			URL u = new URL(url);
-			String host = u.getHost();
-			request.setHeader(StrestHeaders.Names.HOST, host);
-			String uri = url.substring(url.indexOf(host) + host.length());
-			request.setUri(uri);
-		} catch (Exception x) {
-			MalformedURLException m = new MalformedURLException("Unable to parse: " + url);
-			m.initCause(x);
-			throw m;
-		}
-		return this;
-	}
+//	/**
+//	 * sets the host and the uri. 
+//	 * 
+//	 * this is assumed to be a properly formed url
+//	 * @param url
+//	 * @return
+//	 * @throws MalformedURLException
+//	 */
+//	public RequestBuilder url(String url) throws MalformedURLException {
+//		try {
+//			URL u = new URL(url);
+//			String host = u.getHost();
+//			request.setHeader(StrestHeaders.Names.HOST, host);
+//			String uri = url.substring(url.indexOf(host) + host.length());
+//			request.setUri(uri);
+//		} catch (Exception x) {
+//			MalformedURLException m = new MalformedURLException("Unable to parse: " + url);
+//			m.initCause(x);
+//			throw m;
+//		}
+//		return this;
+//	}
 	
 	public RequestBuilder uri(String uri) {
 		request.setUri(uri);
@@ -96,49 +100,49 @@ public class RequestBuilder {
 		return this;
 	}
 	
-	/**
-	 * adds params to the content section and sets the Content-Type to
-	 * 
-	 * @param params
-	 * @return
-	 */
-	public RequestBuilder paramsPOST(DynMap params) {
-		String encodedParams = params.toURLString();
-		log.info(encodedParams);
-		if (encodedParams == null || encodedParams.isEmpty()) {
-			return this;
-		}
-		return this.contentUTF8("application/x-www-form-urlencoded", encodedParams);
-	}
-	
-	/**
-	 * Adds params to content section as json string, with mime type set to json
-	 * @param params
-	 * @return
-	 */
-	public RequestBuilder paramsJSONPOST(DynMap params){
-		String json = params.toJSONString();
-		log.info(json);
-		if(json == null || json.isEmpty()){
-			return this;
-		}
-		return this.contentUTF8("application/json", json);
-	}
-	
-	/**
-	 * encodes the text as utf8 and swallows and logs a warning for any character encoding exceptions
-	 * @param mimeType
-	 * @param content
-	 * @return
-	 */
-	public RequestBuilder contentUTF8(String mimeType, String content) {
-		try {
-			this.content(mimeType, content.getBytes("utf8"));
-		} catch (UnsupportedEncodingException e) {
-			log.warn("Swallowed", e);
-		}
-		return this;
-	}
+//	/**
+//	 * adds params to the content section and sets the Content-Type to
+//	 * 
+//	 * @param params
+//	 * @return
+//	 */
+//	public RequestBuilder paramsPOST(DynMap params) {
+//		String encodedParams = params.toURLString();
+//		log.info(encodedParams);
+//		if (encodedParams == null || encodedParams.isEmpty()) {
+//			return this;
+//		}
+//		return this.contentUTF8("application/x-www-form-urlencoded", encodedParams);
+//	}
+//	
+//	/**
+//	 * Adds params to content section as json string, with mime type set to json
+//	 * @param params
+//	 * @return
+//	 */
+//	public RequestBuilder paramsJSONPOST(DynMap params){
+//		String json = params.toJSONString();
+//		log.info(json);
+//		if(json == null || json.isEmpty()){
+//			return this;
+//		}
+//		return this.contentUTF8("application/json", json);
+//	}
+//	
+//	/**
+//	 * encodes the text as utf8 and swallows and logs a warning for any character encoding exceptions
+//	 * @param mimeType
+//	 * @param content
+//	 * @return
+//	 */
+//	public RequestBuilder contentUTF8(String mimeType, String content) {
+//		try {
+//			this.content(mimeType, content.getBytes("utf8"));
+//		} catch (UnsupportedEncodingException e) {
+//			log.warn("Swallowed", e);
+//		}
+//		return this;
+//	}
 	
 	/**
 	 * sets a custom transaction Id.  a unique txn id is 
@@ -147,7 +151,7 @@ public class RequestBuilder {
 	 * @return
 	 */
 	public RequestBuilder txnId(String id) {
-		request.setHeader(StrestHeaders.Names.STREST_TXN_ID, id);
+		request.setTxnId(id);
 		return this;
 	}
 	
@@ -160,25 +164,20 @@ public class RequestBuilder {
 	 * @return
 	 */
 	public RequestBuilder txnAccept(String val) {
-		request.setHeader(StrestHeaders.Names.STREST_TXN_ACCEPT, val);
+		request.setTxnAccept(TxnAccept.instance(val));
 		return this;
 	}
 	
 	public RequestBuilder method(String method) {
-		request.setMethod(method);
+		request.setMethod(StrestHeader.Method.instance(method));
 		return this;
 	}
 	
-	public RequestBuilder header(String header, Object value) {
-		request.setHeader(header, value);
+	public RequestBuilder header(String header, String value) {
+		request.addHeader(header, value);
 		return this;
 	}
-	
-	public RequestBuilder content(String contentType, byte[] bytes) {
-		request.setContent(contentType, bytes);
-		return this;
-	}
-	
+		
 	public StrestRequest getRequest() {
 		return this.request;
 	}

@@ -3,6 +3,8 @@
  */
 package com.trendrr.oss.networking.strest;
 
+import com.trendrr.oss.networking.strest.models.StrestResponse;
+
 /**
  * @author dustin
  *
