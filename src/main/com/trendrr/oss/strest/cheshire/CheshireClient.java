@@ -179,7 +179,7 @@ public class CheshireClient implements CheshireApiCaller{
 			this.attemptReconnect();
 		}
 		StrestRequest request = this.createRequest(endPoint, method, params);
-		strest.sendRequest(request, new CallbackWrapper(callback));
+		strest.sendRequest(request, new CallbackWrapper(this,callback));
 	}
 	
 	/**
@@ -232,9 +232,10 @@ public class CheshireClient implements CheshireApiCaller{
 	 * Called if we get an exception when making a request, repeatedly attempts to reconnect
 	 * Returns true if successful, false otherwise
 	 */
-	protected synchronized boolean attemptReconnect(){
-		if(this.strest.isConnected())
+	synchronized boolean attemptReconnect(){
+		if(this.strest.isConnected()) {
 			return true;
+		}
 		
 		if (this.maxReconnectAttempts == 0) {
 			return false;

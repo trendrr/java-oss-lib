@@ -9,6 +9,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.DynMap;
+import com.trendrr.oss.exceptions.TrendrrDisconnectedException;
+import com.trendrr.oss.exceptions.TrendrrException;
 import com.trendrr.oss.strest.StrestRequestCallback;
 import com.trendrr.oss.strest.models.StrestResponse;
 import com.trendrr.oss.strest.models.json.StrestJsonBase;
@@ -24,16 +26,25 @@ class CallbackWrapper implements StrestRequestCallback{
 
 	protected static Log log = LogFactory.getLog(CallbackWrapper.class);
 	CheshireApiCallback cb = null;
-	CallbackWrapper(CheshireApiCallback cb) {
+	CheshireClient client;
+	
+	CallbackWrapper(CheshireClient cl, CheshireApiCallback cb) {
 		this.cb = cb;
+		this.client = cl;
 	}
 	
 	/* (non-Javadoc)
 	 * @see com.trendrr.oss.networking.strest.StrestRequestCallback#error(java.lang.Throwable)
 	 */
 	@Override
-	public void error(Throwable arg0) {
-		this.cb.error(arg0);
+	public void error(Throwable err) {
+		if (err instanceof TrendrrDisconnectedException) {
+			if (this.client.attemptReconnect()) {
+				this.cb.error(new TrendrrException("Reqeust possibly not sent.  Disconnected during request.  Please try again"));
+				return;
+			}
+		}
+		this.cb.error(err);
 	}
 
 	/* (non-Javadoc)

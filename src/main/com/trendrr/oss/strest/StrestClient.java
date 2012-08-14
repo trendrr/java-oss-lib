@@ -130,7 +130,8 @@ public class StrestClient {
 	public synchronized void sendRequest(StrestRequest request, StrestRequestCallback callback){
 		try {
 			if (this.socket == null || this.socket.isClosed()) {
-				throw new IOException("Not connected");
+				this.connected.set(false);
+				throw new TrendrrDisconnectedException("Not connected");
 			}
 
 			if (this.maxWaitingForResponse > 0 && this.maxWaitingForResponse <= this.callbacks.size()) {
