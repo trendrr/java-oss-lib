@@ -82,15 +82,12 @@ public class DynMapTests {
 		
 		Set<String> ks = mp.keySetWithDot();
 		Assert.assertEquals(ks.size(), 4);
-		Iterator it = ks.iterator();
-		while(it.hasNext()){
-			Assert.assertNull(mp.get(it.next()));
-			
+		for (String k : ks) {
+			Assert.assertNotNull(mp.get(k));
 		}
-		
-		
-		
 	}
+	
+	
 	@Test
 	public void putNull(){
 		DynMap mp = new DynMap();
@@ -219,4 +216,21 @@ public class DynMapTests {
 		Assert.assertEquals(maps.get(0),mp3);
 	}
 	
+	
+	@Test
+	public void urlEncodingTests() {
+		
+		DynMap mp1 = new DynMap();
+		
+		mp1.put("k1", "v1");
+		mp1.addToList("k2","v2","v3");
+		mp1.putWithDot("k3.sub1", "v5");
+		mp1.putWithDot("k3.sub2", "v5");
+		
+		mp1.putWithDot("k3.sub3.subsub", "v6");
+		DynMap result = DynMapFactory.instanceFromURLEncoded(mp1.toURLString());
+		
+		Assert.assertEquals(result.toJSONString(), mp1.toJSONString());
+		System.out.println(result.toURLString());
+	}
 }

@@ -3,6 +3,7 @@
  */
 package com.trendrr.oss;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -641,14 +643,62 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	}
 	
 	/**
+	 * returns [key,value]
+	 * @param mp
+	 * @return
+	 * @throws UnsupportedEncodingException 
+	 */
+	private Map<String,Object> toUrlMap(String keyStart, Map mp) throws UnsupportedEncodingException {
+		Map<String, Object> ret = new TreeMap<String,Object>();
+		for (Object key : mp.keySet()) {
+			Object val = mp.get(key);
+			String k = keyStart + "[" + URLEncoder.encode(key.toString(), "utf-8") + "]";
+			if (val instanceof Map) {
+				ret.putAll(toUrlMap(k, (Map)val));
+			} else {
+				ret.put(k, val);
+			}
+		}
+		return ret;
+		
+	}
+	
+	/**
+	 * adds an encoded key, not encoded value.
+	 * @param str
+	 * @param k
+	 * @param value
+	 * @throws UnsupportedEncodingException 
+	 */
+	private void addUrlKey(StringBuilder str, String k, Object value) throws UnsupportedEncodingException {
+		if (k == null || value == null)
+			return;
+		
+		if (ListHelper.isCollection(value)) {
+			for (String v : TypeCast.toTypedList(String.class, value)) {
+				this.addUrlKey(str, k, v);
+			}
+		} else {
+			String v = URLEncoder.encode(TypeCast.cast(String.class, value), "utf-8");
+			str.append(k);
+			str.append("=");
+			str.append(v);
+			str.append("&");
+		}
+	}
+	/**
 	 * will return the map as a url encoded string in the form:
 	 * key1=val1&key2=val2& ...
 	 * 
 	 * This can be used as getstring or form-encoded post. 
 	 * Lists are handled as multiple key /value pairs.
 	 * 
+	 * Maps are encoded rails style, so key[key1][key2]=value
+	 * 
 	 * will skip keys that contain null values.
 	 * keys are sorted alphabetically so ordering is consistent
+	 * 
+	 * 
 	 * 
 	 * 
 	 * @return The url encoded string, or empty string.
@@ -656,7 +706,6 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	public String toURLString() {
 		StringBuilder str = new StringBuilder();
 		
-		boolean amp = false;
 		List<String> keys = new ArrayList<String>();
 		keys.addAll(this.keySet());
 		Collections.sort(keys);
@@ -664,29 +713,22 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		for (String key : keys) {
 			try {
 				String k = URLEncoder.encode(key, "utf-8");
-				List<String> vals = this.getList(String.class, key);
-				if (vals == null) {
-					continue;
-				}
-				
-				for (String v : vals) {
-					v = URLEncoder.encode(v, "utf-8");
-					if (v != null) {
-						if (amp)
-							str.append("&");
-						
-						str.append(k);
-						str.append("=");
-						str.append(v);
-						amp = true;
+				Object val = this.get(k);
+				if (val instanceof Map) {
+					Map<String, Object> kv = this.toUrlMap(k, (Map)val);
+					for (String mpkey : kv.keySet()) {
+						this.addUrlKey(str, mpkey, kv.get(mpkey));
 					}
+				} else {
+					this.addUrlKey(str, k, val);
 				}
 			} catch (Exception x) {
 				log.log(Level.INFO, "Caught", x);
 				continue;
 			}
 		}
-		return str.toString();
+		//trim trailing amp?
+		return StringHelper.trim(str.toString(), "&");
 	}
 	
 	private String toXMLStringCollection(java.util.Collection c) {

@@ -7,6 +7,7 @@ import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -172,13 +173,20 @@ public class DynMapFactory {
 			try {
 				String key = URLDecoder.decode(tmp[0], "utf8");
 				String value = URLDecoder.decode(tmp[1], "utf8");
-				
-				if (params.containsKey(key)) {
+				String[] tmpkeys = key.replaceAll("\\]", "").split("\\[");
+				DynMap mp = params;
+				for (int i=0; i < tmpkeys.length-1; i++) {
+					String k = tmpkeys[i];
+					mp.putIfAbsent(k, new DynMap());
+					mp = mp.getMap(k);
+				}
+				key = tmpkeys[tmpkeys.length-1];
+				if (mp.containsKey(key)) {
 					List<String> list = params.getList(String.class, key);
 					list.add(value);
-					params.put(key, list);
+					mp.put(key, list);
 				} else {
-					params.put(key, value);
+					mp.put(key, value);
 				}
 			} catch (Exception x) {
 				log.log(Level.SEVERE, "Caught", x);
