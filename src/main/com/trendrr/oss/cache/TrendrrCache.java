@@ -121,6 +121,12 @@ public abstract class TrendrrCache {
 	 */
 	protected abstract boolean _setIfAbsent(String key, Object value, Date expires);
 	
+	
+	/**
+	 * Shutdown this cache, clean up any resources. 
+	 */
+	public abstract void shutdown();
+	
 	/**
 	 * initialize a new cache.  should be passed any config params that the specific implementation should need.  
 	 * 
