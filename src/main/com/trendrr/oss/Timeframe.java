@@ -168,10 +168,11 @@ public enum Timeframe {
 	}
 	
 	
-	public Date fromTrendrrEpoch(int val) {
+	public Date fromTrendrrEpoch(Number val) {
 		if (this == WEEKS)
-			return this.add(epochWeekStart, val);
-		return this.add(trendrrEpoch, val);		
+			return this.add(epochWeekStart, val.intValue());
+		//TODO: could be a long?
+		return this.add(trendrrEpoch, val.intValue());		
 	}
 	
 
