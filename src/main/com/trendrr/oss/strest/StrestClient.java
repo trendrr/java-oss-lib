@@ -97,7 +97,9 @@ public class StrestClient {
 	public synchronized void close() {
 		this.connected.set(false);
 		try {
-			socket.close();
+			if (socket != null) {
+				socket.close();
+			}
 		} catch (Exception x) {
 			log.info("Caught", x);
 		}
