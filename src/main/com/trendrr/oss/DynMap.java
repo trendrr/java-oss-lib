@@ -54,6 +54,21 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	private ConcurrentHashMap<String, Object> cache = new ConcurrentHashMap<String, Object>();
 	private boolean cacheEnabled = false;
 	
+	
+	public DynMap () {
+		super();
+	}
+	
+	/**
+	 * creates a new DynMap with an initial key, val 
+	 * @param key
+	 * @param val
+	 */
+	public DynMap(String key, Object val) {
+		this();
+		this.put(key, val);
+	}
+	
 	/**
 	 * Creates a new dynMap based on the passed in object.  This is just a wrapper
 	 * around DynMapFactory.instance().
