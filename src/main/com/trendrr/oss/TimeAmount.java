@@ -88,4 +88,8 @@ public class TimeAmount {
 	public String toString() {
 		return this.amount + " " + this.frame.toString();
 	}
+	
+	public String abbreviation() {
+		return this.amount + this.frame.abbreviation();
+	}
 }

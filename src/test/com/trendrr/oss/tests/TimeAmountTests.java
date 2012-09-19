@@ -32,6 +32,36 @@ public class TimeAmountTests {
 		test("24h", Timeframe.HOURS, 24);
 	}
 	
+	
+	@Test 
+	public void testAbbrev() throws TrendrrParseException {
+		
+		TimeAmount amt = TimeAmount.instance("10 min");
+		TimeAmount amt2 = TimeAmount.instance(amt.abbreviation());
+		Assert.assertEquals(amt.toString(), amt2.toString());
+		
+		
+		amt = TimeAmount.instance("10 months");
+		amt2 = TimeAmount.instance(amt.abbreviation());
+		Assert.assertEquals(amt.toString(), amt2.toString());
+		
+		amt = TimeAmount.instance("10 millis");
+		amt2 = TimeAmount.instance(amt.abbreviation());
+		Assert.assertEquals(amt.toString(), amt2.toString());
+		
+		amt = TimeAmount.instance("10 secs");
+		amt2 = TimeAmount.instance(amt.abbreviation());
+		Assert.assertEquals(amt.toString(), amt2.toString());
+		
+		amt = TimeAmount.instance("10 hours");
+		amt2 = TimeAmount.instance(amt.abbreviation());
+		Assert.assertEquals(amt.toString(), amt2.toString());
+		
+		amt = TimeAmount.instance("10 years");
+		amt2 = TimeAmount.instance(amt.abbreviation());
+		Assert.assertEquals(amt.toString(), amt2.toString());
+	}
+	
 	private void test(String str, Timeframe frame, int amount) throws TrendrrParseException {
 		TimeAmount amt = TimeAmount.instance(str);
 		Assert.assertNotNull(amt);

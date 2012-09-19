@@ -26,19 +26,21 @@ import com.trendrr.oss.concurrent.LazyInit;
 public enum Timeframe {
 	
 	
-	MILLISECONDS("milliseconds"),
-	SECONDS("seconds"),
-	MINUTES("minutes"),
-	HOURS("hours"),
-	DAYS("days"),
-	WEEKS("weeks"),
-	MONTHS("months"),
-	YEARS("years");
+	MILLISECONDS("mil"),
+	SECONDS("s"),
+	MINUTES("min"),
+	HOURS("hr"),
+	DAYS("d"),
+	WEEKS("w"),
+	MONTHS("mo"),
+	YEARS("y");
 	
 	protected static Log log = LogFactory.getLog(Timeframe.class);
 	
-	Timeframe(String str) {
-		
+	protected String abbrev;
+	
+	Timeframe(String abbrev) {
+		this.abbrev = abbrev;
 	}
 	
 
@@ -345,22 +347,22 @@ public enum Timeframe {
 		if (s.startsWith("mil")) {
 			return Timeframe.MILLISECONDS;
 		}
-		if (s.startsWith("sec")) {
+		if (s.startsWith("s")) {
 			return Timeframe.SECONDS;
 		}
 		if (s.startsWith("min")) {
 			return Timeframe.MINUTES;
 		}
-		if (s.startsWith("h") || s.startsWith("hr")) {
+		if (s.startsWith("h")) {
 			return Timeframe.HOURS;
 		}
-		if (s.startsWith("da")) {
+		if (s.startsWith("d")) {
 			return Timeframe.DAYS;
 		}
 		if (s.startsWith("w")) {
 			return Timeframe.WEEKS;
 		}
-		if (s.startsWith("month")) {
+		if (s.startsWith("mo")) {
 			return Timeframe.MONTHS;
 		}
 		if (s.startsWith("y")) {
@@ -369,6 +371,14 @@ public enum Timeframe {
 		return null;
 	}
 
+	/**
+	 * returns the shortest string that will parse back into an appropriate timeframe.
+	 * @return
+	 */
+	public String abbreviation() {
+		return this.abbrev;
+	}
+	
 	public int compare(Timeframe frame) {
 		Date tmp = new Date();
 		Date d1 = this.add(tmp, 1);
