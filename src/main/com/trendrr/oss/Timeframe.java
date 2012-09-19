@@ -26,14 +26,14 @@ import com.trendrr.oss.concurrent.LazyInit;
 public enum Timeframe {
 	
 	
-	MILLISECONDS("mil"),
-	SECONDS("s"),
-	MINUTES("min"),
-	HOURS("hr"),
-	DAYS("d"),
-	WEEKS("w"),
-	MONTHS("mo"),
-	YEARS("y");
+	MILLISECONDS("MILLI"),
+	SECONDS("S"),
+	MINUTES("MIN"),
+	HOURS("HR"),
+	DAYS("D"),
+	WEEKS("W"),
+	MONTHS("MO"),
+	YEARS("Y");
 	
 	protected static Log log = LogFactory.getLog(Timeframe.class);
 	
