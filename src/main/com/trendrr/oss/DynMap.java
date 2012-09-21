@@ -156,6 +156,20 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		}
 	}
 	
+	/**
+	 * like the regular putAll but honors dot notation.
+	 * passed in keys
+	 * @param mp
+	 * @param keys
+	 */
+	public void putAllWithDot(Map mp) {
+		if (mp == null)
+			return;
+		for (Object k : mp.keySet()) {
+			this.putWithDot(k.toString(), mp.get(k));
+		}
+	}
+	
 	@Override
 	public Object put(String key, Object val) {
 		this.ejectFromCache(key);
