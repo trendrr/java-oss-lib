@@ -104,6 +104,25 @@ public class PriorityUpdateQueue <T>{
     }
 
     /**
+     * does a (FAST) removal of the specified element.
+     * 
+     * 
+     * @param obj
+     */
+    public synchronized boolean remove(T obj) {
+    	Integer index = this.indexes.get(obj);
+    	if (index == null) {
+    		return false;
+    	}
+    	
+    	T item = heap.remove(heap.size()-1);
+    	this.indexes.put(item, index);
+    	this.heap.set(index, item);
+        this.pushDown(item);
+    	return true;
+    }
+    
+    /**
      * pops the top of the heap and returns it. returns null on empty.
      * @return
      */
