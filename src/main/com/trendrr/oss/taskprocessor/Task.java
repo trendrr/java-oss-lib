@@ -38,6 +38,28 @@ public class Task {
 	protected List<TaskFilter> filters = new LinkedList<TaskFilter>(); //these have not been run.
 	protected List<TaskFilter> filtersExecuted = new LinkedList<TaskFilter>(); //these have been run.
 	protected TaskProcessor processor;
+	protected TaskCallback callback;
+	
+	public TaskCallback getCallback() {
+		return callback;
+	}
+
+	public void setCallback(TaskCallback callback) {
+		this.callback = callback;
+	}
+
+	/**
+	 * is this task set as asynch?  if true this task is currently waiting for some asynch op to complete before it
+	 * continues its execution.
+	 * @return
+	 */
+	public boolean isAsynch() {
+		return asynch;
+	}
+
+	public void setAsynch(boolean asynch) {
+		this.asynch = asynch;
+	}
 
 	protected DynMap content = new DynMap();
 	boolean asynch = false;

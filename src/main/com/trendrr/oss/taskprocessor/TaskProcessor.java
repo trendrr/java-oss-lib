@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -26,7 +27,7 @@ import com.trendrr.oss.taskprocessor.Task.ASYNCH;
  * @created Sep 24, 2012
  * 
  */
-public abstract class TaskProcessor {
+public class TaskProcessor {
 	protected static Log log = LogFactory.getLog(TaskProcessor.class);
 	
 	static LazyInitObject<AsynchTaskRegistery> asynchTasks = new LazyInitObject<AsynchTaskRegistery>() {
@@ -38,7 +39,10 @@ public abstract class TaskProcessor {
 		}
 	};
 	
-	ExecutorService threadPool = null;
+	protected ExecutorService threadPool = null;
+	protected String name;
+	protected TaskCallback callback;
+	
 	
 	//example threadpool, blocks when queue is full. 
 //	ExecutorService threadPool = new ThreadPoolExecutor(
@@ -50,10 +54,23 @@ public abstract class TaskProcessor {
 //		    new ThreadPoolExecutor.CallerRunsPolicy() //if queue is full run in current thread.
 //			);
 	
-	public TaskProcessor(ExecutorService executor) {
+	/**
+	 * creates a new task processor.  
+	 * 
+	 * 
+	 * 
+	 * 
+	 * @param name The name of this processor. used for execution reporting.
+	 * @param callback Methods called for every task execution.  this callback is called before the callback specified in the task. can be null. 
+	 * @param executor the executor
+	 */
+	public TaskProcessor(String name, TaskCallback callback, ExecutorService executor) {
 		this.threadPool = executor;
+		this.name = name;
+		this.callback = callback;
 		
 	}
+	
 	
 	/**
 	 * submits a task for execution.
@@ -73,15 +90,33 @@ public abstract class TaskProcessor {
 		asynchTasks.get().add(t, asynch, timeout);
 	}
 	
+	/**
+	 * submit a future, a separate thread will poll it on interval and 
+	 * call your callback when isDone is set, or cancel once the timeout has.
+	 * 
+	 * callback is executed in one of this processors executor threads.
+	 * @param future
+	 * @param callback
+	 */
+	public void submitFuture(Future future, FuturePollerCallback callback, long timeout) {
+		FuturePollerWrapper wrapper = new FuturePollerWrapper(future, callback, timeout, this);
+		asynchTasks.get().addFuture(wrapper);
+	}
+	
 	public void resumeAsynch(String taskId) {
 		asynchTasks.get().resume(taskId);
 	}
 	
+	public ExecutorService getExecutor() {
+		return this.threadPool;
+	}
 	/**
 	 * A unique name for this processor.  only one instance per name will be allowed.
 	 * @return
 	 */
-	public abstract String getName();
+	public String getName() {
+		return this.name;
+	}
 	
 	public void _taskComplete(Task task) {
 		ExecutionReport report = ExecutionReport.instance("TaskProcessor");
@@ -89,10 +124,22 @@ public abstract class TaskProcessor {
 		this.taskComplete(task);
 	}
 	
-	public abstract void taskComplete(Task task);
+	public void taskComplete(Task task) {
+		if (this.callback != null) {
+			this.callback.taskComplete(task);
+		}
+		if (task.getCallback() != null) {
+			task.getCallback().taskComplete(task);
+		}
+	}
 	
-	
-	public abstract void taskError(Task task, Exception error);
-	
+	public void taskError(Task task, Exception error) {
+		if (this.callback != null) {
+			this.callback.taskError(task, error);
+		}
+		if (task.getCallback() != null) {
+			task.getCallback().taskError(task, error);
+		}
+	}
 	
 }

@@ -3,9 +3,14 @@
  */
 package com.trendrr.oss.taskprocessor;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Future;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,7 +41,11 @@ public class AsynchTaskRegistery implements Runnable{
 		}
 	});
 	
+	protected ConcurrentHashMap<FuturePollerWrapper, Boolean> pollingFutures = new ConcurrentHashMap<FuturePollerWrapper, Boolean>();
+	
 	protected Thread thread = null;
+	
+	
 	
 	public synchronized void start() {
 		if (thread != null) {
@@ -88,7 +97,10 @@ public class AsynchTaskRegistery implements Runnable{
 		} 
 		this.asynchTaskFreeList.push(w);
 	}
-	
+
+	public void addFuture(FuturePollerWrapper wrapper) {
+		this.pollingFutures.put(wrapper, true);
+	}
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Runnable#run()
@@ -104,7 +116,39 @@ public class AsynchTaskRegistery implements Runnable{
 				t = asynchTaskFreeList.peek();
 			}
 			System.out.println("Don expiring, sleep ... size: " + this.asynchTasks.size());
-			Sleep.millis(500);
+			
+			//test the polling futures.
+			
+			List<FuturePollerWrapper> completed = new ArrayList<FuturePollerWrapper>();
+			List<FuturePollerWrapper> expired = new ArrayList<FuturePollerWrapper>();
+			TaskProcessor processor = null;
+			
+			for (FuturePollerWrapper f : this.pollingFutures.keySet()) {
+				if (f.getFuture().isDone()) {
+					if (processor == null) 
+						processor = f.getProcessor();
+					completed.add(f);
+					this.pollingFutures.remove(f);
+				} else if (f.getExpire().before(new Date())) {
+					if (processor == null) 
+						processor = f.getProcessor();
+					
+					expired.add(f);
+					this.pollingFutures.remove(f);
+				}
+			}
+			if (!completed.isEmpty() || !expired.isEmpty()) {
+				//process these in a separate thread.
+				processor.getExecutor().execute(new FuturePollerCallbackThread(completed, expired));
+			}
+			
+			
+			if (this.pollingFutures.isEmpty()) {
+				Sleep.millis(500);
+			} else {
+				//polling futures are considered way more time sensitive
+				Sleep.millis(5);
+			}
 		}
 	}
 	
