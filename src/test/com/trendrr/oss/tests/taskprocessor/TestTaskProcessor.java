@@ -26,7 +26,7 @@ public class TestTaskProcessor extends TaskProcessor {
 	 * @param executor
 	 */
 	public TestTaskProcessor() {
-		super(new ThreadPoolExecutor(
+		super("UNITTEST", null, new ThreadPoolExecutor(
 			1, // core size
 		    30, // max size
 		    130, // idle timeout

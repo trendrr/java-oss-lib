@@ -8,8 +8,10 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,6 +31,34 @@ import com.trendrr.oss.taskprocessor.Task.ASYNCH;
  */
 public class TaskProcessor {
 	protected static Log log = LogFactory.getLog(TaskProcessor.class);
+	
+	
+	static class TaskProcessorThreadFactory implements ThreadFactory {
+        static final AtomicInteger poolNumber = new AtomicInteger(1);
+        final ThreadGroup group;
+        final AtomicInteger threadNumber = new AtomicInteger(1);
+        final String namePrefix;
+
+        TaskProcessorThreadFactory(String name) {
+            SecurityManager s = System.getSecurityManager();
+            group = (s != null)? s.getThreadGroup() :
+                                 Thread.currentThread().getThreadGroup();
+            namePrefix = "TP-" + name +"-" +
+                          poolNumber.getAndIncrement() +
+                         "-thread-";
+        }
+
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(group, r,
+                                  namePrefix + threadNumber.getAndIncrement(),
+                                  0);
+            if (t.isDaemon())
+                t.setDaemon(true);
+            if (t.getPriority() != Thread.NORM_PRIORITY)
+                t.setPriority(Thread.NORM_PRIORITY);
+            return t;
+        }
+    }
 	
 	static LazyInitObject<AsynchTaskRegistery> asynchTasks = new LazyInitObject<AsynchTaskRegistery>() {
 		@Override
@@ -53,6 +83,36 @@ public class TaskProcessor {
 //		    new ArrayBlockingQueue<Runnable>(30), // queue with a size
 //		    new ThreadPoolExecutor.CallerRunsPolicy() //if queue is full run in current thread.
 //			);
+	
+	
+	/**
+	 * creates a new TaskProcessor with a new executorService 
+	 * ExecutorService threadPool = new ThreadPoolExecutor(
+			1, // core size
+		    numThreads, // max size
+		    130, // idle timeout
+		    TimeUnit.SECONDS,
+		    new ArrayBlockingQueue<Runnable>(numThreads), // queue with a size
+		    new ThreadPoolExecutor.CallerRunsPolicy() //if queue is full run in current thread.
+			);
+	 * 
+	 * @param name
+	 * @param callback
+	 * @param numThreads
+	 */
+	public static TaskProcessor defaultInstance(String name, TaskCallback callback, int numThreads) {
+		ThreadPoolExecutor threadPool = new ThreadPoolExecutor(
+				1, // core size
+			    numThreads, // max size
+			    130, // idle timeout
+			    TimeUnit.SECONDS,
+			    new ArrayBlockingQueue<Runnable>(numThreads), // queue with a size
+			    new TaskProcessorThreadFactory(name),
+			    new ThreadPoolExecutor.CallerRunsPolicy() //if queue is full run in current thread.
+				);
+		
+		return new TaskProcessor(name, callback, threadPool);
+	}
 	
 	/**
 	 * creates a new task processor.  
