@@ -5,6 +5,7 @@ package com.trendrr.oss.executionreport;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -105,6 +106,8 @@ public class ExecutionReportTrendrrCacheConnector extends
 	public void saveChildList(String parentFullname,
 			Collection<String> childrenFullnames, Date date, Timeframe timeframe) {
 		String id = "children-" + parentFullname + "-" + timeframe.toString() + "-" + timeframe.toTrendrrEpoch(date);
+		System.out.println("SAVING CHILDREN: " + id + "\n" + childrenFullnames);
+		
 		this.cache.addToSet(this.namespace, id, childrenFullnames, this.getExpire(timeframe, date));
 	}
 
@@ -114,8 +117,15 @@ public class ExecutionReportTrendrrCacheConnector extends
 	@Override
 	public List<String> findChildren(String parentFullname, Date date,
 			Timeframe timeframe) {
-		// TODO Auto-generated method stub
-		return null;
+		String id = "children-" + parentFullname + "-" + timeframe.toString() + "-" + timeframe.toTrendrrEpoch(date);
+		System.out.println("LOADING CHILDREN: " + id);
+		Set<String> res = this.cache.getSet(this.namespace, id);
+		ArrayList<String> children = new ArrayList<String>();
+		if (res != null) {
+			children.addAll(res);
+			Collections.sort(children);
+		}
+		return children;
 	}
 	
 	protected Date getExpire(Timeframe frame, Date date) {
