@@ -36,7 +36,6 @@ class TaskFilterRunner implements Runnable {
 			return;
 		}
 		TaskFilter f = t.popFilter();
-		System.out.println("FIRST FILTER: " + f);
 		Exception error = null;
 		while(f != null && error == null) {
 			Date start = new Date();
