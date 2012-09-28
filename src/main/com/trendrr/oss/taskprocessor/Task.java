@@ -169,8 +169,12 @@ public class Task {
 		return filters;
 	}
 
-	public void setFiltersUnexecuted(List<TaskFilter> filters) {
-		this.filters = filters;
+	/**
+	 * sets the filters
+	 * @param filters
+	 */
+	public void addFilters(List<TaskFilter> filters) {
+		this.filters.addAll(filters);
 	}
 
 	public TaskProcessor getProcessor() {
@@ -189,5 +193,49 @@ public class Task {
 		this.content = content;
 	}
 
+	/**
+	 * shortcut to 
+	 * getContent().get
+	 * 
+	 * @param cls
+	 * @param key
+	 * @return
+	 */
+	public <T> T get(Class<T> cls, String key) {
+		return this.get(cls, key, null);
+	}
+	
+	/**
+	 * shortcut to 
+	 * getContent().get
+	 * 
+	 * @param cls
+	 * @param key
+	 * @param defaultValue
+	 * @return
+	 */
+	public <T> T get(Class<T> cls, String key, T defaultValue) {
+		return this.content.get(cls, key, defaultValue);
+	}
+	
+	/**
+	 * shortcut to 
+	 * getContent().put
+	 * @param key
+	 * @param obj
+	 */
+	public void put(String key, Object obj) {
+		this.content.put(key, obj);
+	}
+	
+	/**
+	 * shortcut to 
+	 * getContent().remove
+	 * @param key
+	 * @return
+	 */
+	public Object remove(String key) {
+		return this.content.remove(key);
+	}
 	
 }
