@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.trendrr.oss.TimeAmount;
 import com.trendrr.oss.Timeframe;
 
 
@@ -29,24 +30,24 @@ public class ExecutionReportConfig {
 	protected AtomicReference<ExecutionReportSerializer> serializer = new AtomicReference<ExecutionReportSerializer>(new DummyExecutionReportDBConnector());
 	protected AtomicLong flushMillis = new AtomicLong(1000*30); //how often to flush 
 	
-	protected Set<Timeframe> timeframes = new HashSet<Timeframe>();
+	protected Set<TimeAmount> timeamounts = new HashSet<TimeAmount>();
 	
 	public ExecutionReportConfig() {
-		timeframes.add(Timeframe.MINUTES);
-		timeframes.add(Timeframe.HOURS);
-		timeframes.add(Timeframe.DAYS);
+		timeamounts.add(TimeAmount.instance(Timeframe.MINUTES, 1));
+		timeamounts.add(TimeAmount.instance(Timeframe.HOURS, 1));
+		timeamounts.add(TimeAmount.instance(Timeframe.DAYS, 1));
 	}
 	
 	/**
 	 * The timeframes that the serializer should use.  this is backed by a set so no dups.
 	 * @return
 	 */
-	public Collection<Timeframe> getTimeframes() {
-		return timeframes;
+	public Collection<TimeAmount> getTimeAmounts() {
+		return timeamounts;
 	}
-	public void setTimeframes(Collection<Timeframe> timeframes) {
-		this.timeframes.clear();
-		this.timeframes.addAll(timeframes);
+	public void setTimeAmounts(Collection<TimeAmount> timeamounts) {
+		this.timeamounts.clear();
+		this.timeamounts.addAll(timeamounts);
 	}
 	
 	public ExecutionReportSerializer getSerializer() {

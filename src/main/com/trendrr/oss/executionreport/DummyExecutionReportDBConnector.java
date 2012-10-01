@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.trendrr.oss.TimeAmount;
 import com.trendrr.oss.Timeframe;
 
 
@@ -43,7 +44,7 @@ public class DummyExecutionReportDBConnector extends
 	 */
 	@Override
 	public void saveChildList(String parentFullname,
-			Collection<String> childrenFullnames, Date date, Timeframe frame) {
+			Collection<String> childrenFullnames, Date date, TimeAmount frame) {
 		
 		System.out.println("SAVING CHILDREN: " + parentFullname + " : " + childrenFullnames);
 
@@ -74,7 +75,7 @@ public class DummyExecutionReportDBConnector extends
 	 */
 	@Override
 	public List<String> findChildren(String parentFullname, Date date,
-			Timeframe timeframe) {
+			TimeAmount timeframe) {
 		// TODO Auto-generated method stub
 		return null;
 	}

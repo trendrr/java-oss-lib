@@ -16,6 +16,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.trendrr.oss.TimeAmount;
 import com.trendrr.oss.Timeframe;
 import com.trendrr.oss.TypeCast;
 import com.trendrr.oss.cache.TrendrrCache;
@@ -48,11 +49,14 @@ public class ExecutionReportTrendrrCacheConnector extends
 	@Override
 	protected void inc(ExecutionReportPointId id, long val, long millis) {
 		
-		Date expire = this.getExpire(id.getTimeframe(), id.getTimestamp());
+		Date expire = this.getExpire(id.getTimeAmount(), id.getTimestamp());
 		
 		try {
-			this.cache.inc(this.namespace, id.toIdString() + ".val", TypeCast.cast(Integer.class, val), expire);
-			this.cache.inc(this.namespace, id.toIdString() + ".millis", TypeCast.cast(Integer.class, millis), expire);
+			System.out.println("SAVIGN: " + id.toString() + ".val");
+			System.out.println("SAVIGN: " + id.toString() + ".millis");
+			
+			this.cache.inc(this.namespace, id.toString() + ".val", TypeCast.cast(Integer.class, val), expire);
+			this.cache.inc(this.namespace, id.toString() + ".millis", TypeCast.cast(Integer.class, millis), expire);
 		} catch (Exception e) {
 			log.error("caught", e);
 		}
@@ -68,32 +72,36 @@ public class ExecutionReportTrendrrCacheConnector extends
 
 		for (ExecutionReportPointId id : ids) {
 			try {
-				String k1 = id.toIdString() + ".val";
-				String k2 = id.toIdString() + ".millis";
+				String k1 = id.toString() + ".val";
+				String k2 = id.toString() + ".millis";
 				idMap.put(k1, id);
 				idMap.put(k2, id);
+				System.out.println(k1 + "\n" + k2);
 			} catch (Exception e) {
 				log.error("caught",e);
 			}
 		}
 		Map<String, Object> vals = cache.getMulti(this.namespace, idMap.keySet());
-		
+		System.out.println("LOADED: " + vals);
 		HashMap<ExecutionReportPointId, ExecutionReportPoint> points = new HashMap<ExecutionReportPointId, ExecutionReportPoint>();
 		
-		for (String id : vals.keySet()) {
+		for (String id : idMap.keySet()) {
+//			System.out.println("GOT ID: " + id);
 			ExecutionReportPointId exId = idMap.get(id);
 			ExecutionReportPoint point = points.get(exId);
 			if (point == null) {
 				point = new ExecutionReportPoint();
-				points.put(exId, point);
 				point.setId(exId);
+				points.put(exId, point);
 			}
-			
+//			System.out.println("GOT POINT: " + point.toString());
 			if (id.endsWith("val")) {
-				point.setVal(TypeCast.cast(Long.class, vals.get(id)));
+				point.setVal(TypeCast.cast(Long.class, vals.get(id), 0l));
 			} else if (id.endsWith("millis")){
-				point.setMillis(TypeCast.cast(Long.class, vals.get(id)));
+				point.setMillis(TypeCast.cast(Long.class, vals.get(id), 0l));
 			}
+//			System.out.println("AFTER VAL SET: " + point.toString());
+			
 		}
 		
 		return new ArrayList<ExecutionReportPoint>(points.values());
@@ -104,11 +112,11 @@ public class ExecutionReportTrendrrCacheConnector extends
 	 */
 	@Override
 	public void saveChildList(String parentFullname,
-			Collection<String> childrenFullnames, Date date, Timeframe timeframe) {
-		String id = "children-" + parentFullname + "-" + timeframe.toString() + "-" + timeframe.toTrendrrEpoch(date);
+			Collection<String> childrenFullnames, Date date, TimeAmount timeamount) {
+		String id = "children-" + parentFullname + "-" + timeamount.abbreviation() + "-" + timeamount.toTrendrrEpoch(date);
 		System.out.println("SAVING CHILDREN: " + id + "\n" + childrenFullnames);
 		
-		this.cache.addToSet(this.namespace, id, childrenFullnames, this.getExpire(timeframe, date));
+		this.cache.addToSet(this.namespace, id, childrenFullnames, this.getExpire(timeamount, date));
 	}
 
 	/* (non-Javadoc)
@@ -116,8 +124,8 @@ public class ExecutionReportTrendrrCacheConnector extends
 	 */
 	@Override
 	public List<String> findChildren(String parentFullname, Date date,
-			Timeframe timeframe) {
-		String id = "children-" + parentFullname + "-" + timeframe.toString() + "-" + timeframe.toTrendrrEpoch(date);
+			TimeAmount timeframe) {
+		String id = "children-" + parentFullname + "-" + timeframe.abbreviation() + "-" + timeframe.toTrendrrEpoch(date);
 		System.out.println("LOADING CHILDREN: " + id);
 		Set<String> res = this.cache.getSet(this.namespace, id);
 		ArrayList<String> children = new ArrayList<String>();
@@ -128,7 +136,7 @@ public class ExecutionReportTrendrrCacheConnector extends
 		return children;
 	}
 	
-	protected Date getExpire(Timeframe frame, Date date) {
+	protected Date getExpire(TimeAmount frame, Date date) {
 		Date expireMin = Timeframe.HOURS.add(date, 24);
 		Date expire = frame.add(date, 25);
 		if (expire.before(expireMin)) {

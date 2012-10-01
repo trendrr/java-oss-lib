@@ -16,6 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.StringHelper;
+import com.trendrr.oss.TimeAmount;
 import com.trendrr.oss.Timeframe;
 import com.trendrr.oss.concurrent.PeriodicLock;
 
@@ -58,7 +59,7 @@ public abstract class AbstractExecutionReportDBConnector implements
 			if (t == null) {
 				t = ts;
 			}
-			for (Timeframe f : report.getConfig().getTimeframes()) {
+			for (TimeAmount f : report.getConfig().getTimeAmounts()) {
 				try {
 					ExecutionReportPointId id = ExecutionReportPointId.instance(
 							p.getFullname(), p.getTimestamp(), f);
@@ -93,14 +94,14 @@ public abstract class AbstractExecutionReportDBConnector implements
 //	protected ConcurrentHashMap<String, Collection<String>> childrenCache = new ConcurrentHashMap<String,Collection<String>>();
 	
 	public abstract void saveChildList(String parentFullname,
-			Collection<String> childrenFullnames,Date date, Timeframe timeframe);
+			Collection<String> childrenFullnames,Date date, TimeAmount timeamount);
 	
 	/* (non-Javadoc)
 	 * @see com.trendrr.oss.executionreport.ExecutionReportConnector#saveChildren(java.lang.String, java.util.Collection)
 	 */
 	@Override
 	public void saveChildren(String parentFullname,
-			Collection<String> childrenFullnames, Date date, Timeframe timeframe) {
+			Collection<String> childrenFullnames, Date date, TimeAmount timeamount) {
 //		//just to avoid a leak
 //		if (childrenCache.size() > this.maxItems) {
 //			childrenCache.clear();
@@ -114,28 +115,28 @@ public abstract class AbstractExecutionReportDBConnector implements
 //			}
 //		}
 //		this.childrenCache.put(parentFullname, childrenFullnames);
-		this.saveChildList(parentFullname, childrenFullnames, date, timeframe);
+		this.saveChildList(parentFullname, childrenFullnames, date, timeamount);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.trendrr.oss.executionreport.ExecutionReportConnector#findChildren(java.lang.String)
 	 */
 	@Override
-	public abstract List<String> findChildren(String parentFullname, Date date, Timeframe timeframe);
+	public abstract List<String> findChildren(String parentFullname, Date date, TimeAmount timeamount);
 
 	/* (non-Javadoc)
 	 * @see com.trendrr.oss.executionreport.ExecutionReportConnector#load(java.lang.String, java.util.Date, java.util.Date, com.trendrr.oss.Timeframe)
 	 */
 	@Override
 	public List<ExecutionReportPoint> load(String fullname, Date start,
-			Date end, Timeframe timeframe) {
-		int startTE = timeframe.toTrendrrEpoch(start).intValue();
-		int endTE = timeframe.toTrendrrEpoch(end).intValue();
+			Date end, TimeAmount timeamount) {
+		int startTE = timeamount.toTrendrrEpoch(start).intValue();
+		int endTE = timeamount.toTrendrrEpoch(end).intValue();
 		List<ExecutionReportPointId> ids = new ArrayList<ExecutionReportPointId> ();
 		for (int te = startTE; te <= endTE; te++) {
-			Date timestamp = timeframe.fromTrendrrEpoch(te);
+			Date timestamp = timeamount.fromTrendrrEpoch(te);
 			try {
-				ExecutionReportPointId id = ExecutionReportPointId.instance(fullname, timestamp, timeframe);
+				ExecutionReportPointId id = ExecutionReportPointId.instance(fullname, timestamp, timeamount);
 				ids.add(id);
 			} catch (Exception x) {
 				log.error("Caught", x);
@@ -146,14 +147,14 @@ public abstract class AbstractExecutionReportDBConnector implements
 	}
 	
 	@Override
-	public List<ExecutionReportChildPoints> loadChildren(String fullname, Date start, Date end, Timeframe timeframe){
+	public List<ExecutionReportChildPoints> loadChildren(String fullname, Date start, Date end, TimeAmount timeframe){
 		try {
 			int startTE = timeframe.toTrendrrEpoch(start).intValue();
 			int endTE = timeframe.toTrendrrEpoch(end).intValue();
 			
 			//load the parents.
 			HashMap<String, ExecutionReportChildPoints> pointsByParentId = new HashMap<String, ExecutionReportChildPoints>();
-			HashMap<String, ExecutionReportChildPoints> pointsByChildId = new HashMap<String, ExecutionReportChildPoints>();
+			HashMap<String, String> childIdToParentId = new HashMap<String, String>();
 			TreeSet<String> childrenNames = new TreeSet<String>();
 			childrenNames.addAll(this.findChildren(fullname, end, timeframe));
 			childrenNames.addAll(this.findChildren(fullname, start, timeframe));
@@ -166,11 +167,13 @@ public abstract class AbstractExecutionReportDBConnector implements
 					ExecutionReportPointId id = ExecutionReportPointId.instance(fullname, timestamp, timeframe);
 					ids.add(id);
 					ExecutionReportChildPoints point = new ExecutionReportChildPoints();
-					pointsByParentId.put(id.toIdString(), point);
+					point.setId(id);
+					
+					pointsByParentId.put(id.toString(), point);
 					for (String n : childrenNames) {
 						ExecutionReportPointId cId = ExecutionReportPointId.instance(n, timestamp, timeframe);
 						ids.add(cId);
-						pointsByChildId.put(cId.toIdString(), point);
+						childIdToParentId.put(cId.toString(), id.toString());
 					}
 				} catch (Exception x) {
 					log.error("Caught", x);
@@ -178,19 +181,32 @@ public abstract class AbstractExecutionReportDBConnector implements
 				
 			}
 			
-			
+			System.out.print("PARENTS: " + pointsByParentId);
 			List<ExecutionReportPoint> points = this.load(ids);
 			for (ExecutionReportPoint p : points) {
-				String id = p.getId().toIdString();
+				System.out.println("POINT: " + p.toString());
+				
+				String id = p.getId().toString();
 				ExecutionReportChildPoints ps = pointsByParentId.get(id);
+				
+				
+				
 				if (ps != null) {
+					
+					//this is the parent val!
+					System.out.println("PS IS NOT NULL");
 					ps.setFullname(p.getFullname());
 					ps.setId(p.getId());
 					ps.setMillis(p.getMillis());
 					ps.setTimestamp(p.getTimestamp());
 					ps.setVal(p.getVal());
+					System.out.println(ps.toString());
 				} else {
-					pointsByChildId.get(id).addChildPoint(p);
+					//this is the child point.
+					ExecutionReportChildPoints parent = pointsByParentId.get(childIdToParentId.get(id));
+					
+					System.out.println("adding child point)");
+					parent.addChildPoint(p);
 				}
 			}
 			

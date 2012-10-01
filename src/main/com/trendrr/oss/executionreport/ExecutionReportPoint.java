@@ -11,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.DynMap;
 import com.trendrr.oss.IsoDateUtil;
+import com.trendrr.oss.TimeAmount;
 import com.trendrr.oss.Timeframe;
 
 
@@ -72,16 +73,16 @@ public class ExecutionReportPoint implements Comparable<ExecutionReportPoint> {
 		this.id.setTimestamp(timestamp);
 	}
 	
-	public Timeframe getTimeframe() {
-		return this.id.getTimeframe();
+	public TimeAmount getTimeAmount() {
+		return this.id.getTimeAmount();
 	}
 	
-	public void setTimeframe(Timeframe frame) {
-		this.id.setTimeframe(frame);
+	public void setTimeAmount(TimeAmount amount) {
+		this.id.setTimeAmount(amount);
 	}
 	@Override
 	public String toString() {
-		return this.id.getFullname() + " | val:" + val + " | millis:" + millis + " | ts:" + IsoDateUtil.getIsoDate(this.id.getTimestamp());
+		return this.id.getFullname() + " | val:" + val + " | millis:" + millis + " | ts:" + this.getTimestamp();//IsoDateUtil.getIsoDate(this.id.getTimestamp());
 	}
 	
 	/**
@@ -103,10 +104,17 @@ public class ExecutionReportPoint implements Comparable<ExecutionReportPoint> {
 	 */
 	@Override
 	public int compareTo(ExecutionReportPoint o) {
+		if (o == null || o.getTimestamp() == null) {
+			return -1;
+		}
+		if (this.getTimestamp() == null) {
+			return 1;
+		}
+		
 		int val = this.getTimestamp().compareTo(o.getTimestamp());
 		if (val == 0) {
 			try {
-				return this.getId().toIdString().compareTo(o.getId().toIdString());
+				return this.getId().toString().compareTo(o.getId().toString());
 			} catch (Exception e) {
 				log.warn("Caught", e);
 			}

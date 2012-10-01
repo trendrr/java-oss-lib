@@ -19,6 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.IncrementMap;
+import com.trendrr.oss.TimeAmount;
 import com.trendrr.oss.Timeframe;
 
 
@@ -177,7 +178,7 @@ public class ExecutionReport extends TimerTask {
 
 		try {
 			Vals v = vals.getAndSet(new Vals());
-			Date end = this.lastSerialization.get();
+			Date end = this.lastSerialization.getAndSet(new Date());
 			
 			ExecutionReportNodeTree tree = new ExecutionReportNodeTree(this.getName());
 			
@@ -237,8 +238,8 @@ public class ExecutionReport extends TimerTask {
 			
 			for (String parent : children.keySet()) {
 				//need to get the date and timeframe of the parent.
-				for (Timeframe frame: this.getConfig().getTimeframes()) {
-					this.getConfig().getSerializer().saveChildren(parent, children.get(parent), end, frame);
+				for (TimeAmount amount: this.getConfig().getTimeAmounts()) {
+					this.getConfig().getSerializer().saveChildren(parent, children.get(parent), end, amount);
 				}
 			}
 			this.getConfig().getSerializer().save(this, points);

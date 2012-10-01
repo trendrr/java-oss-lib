@@ -10,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.StringHelper;
+import com.trendrr.oss.TimeAmount;
 import com.trendrr.oss.Timeframe;
 
 
@@ -24,24 +25,25 @@ public class ExecutionReportPointId {
 	
 	protected String fullname = null;
 	protected Date timestamp = null;
-	protected Timeframe frame = null;
+	protected TimeAmount amount = null;
 	
-	public static ExecutionReportPointId instance(String fullname, Date timestamp, Timeframe frame) {
+	public static ExecutionReportPointId instance(String fullname, Date timestamp, TimeAmount amount) {
 		ExecutionReportPointId id = new ExecutionReportPointId();
 		id.setFullname(fullname);
 		id.setTimestamp(timestamp);
-		id.setTimeframe(frame);
+		id.setTimeAmount(amount);
 		return id;
 	}
 	
-	public byte[] toIdBytes() throws Exception {
+	@Override
+	public String toString() {
 		StringBuilder id = new StringBuilder();
-		id.append(frame.toTrendrrEpoch(timestamp));
+		id.append(amount.toTrendrrEpoch(timestamp));
 		id.append("::"); 
-		id.append(frame);
+		id.append(amount.abbreviation());
 		id.append("::");
 		id.append(this.fullname);
-		return StringHelper.sha1(id.toString().getBytes("utf8"));
+		return id.toString();
 	}
 	
 	/**
@@ -51,10 +53,6 @@ public class ExecutionReportPointId {
 	public String getName() {
 		String[] nm = this.getFullname().split("\\.");
 		return nm[nm.length-1];
-	}
-	
-	public String toIdString() throws Exception {
-		return StringHelper.toHex(this.toIdBytes());
 	}
 	public String getFullname() {
 		return fullname;
@@ -68,13 +66,10 @@ public class ExecutionReportPointId {
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
-	public Timeframe getTimeframe() {
-		return frame;
+	public TimeAmount getTimeAmount() {
+		return amount;
 	}
-	public void setTimeframe(Timeframe frame) {
-		this.frame = frame;
+	public void setTimeAmount(TimeAmount amount) {
+		this.amount = amount;
 	}
-	
-	
-	
 }
