@@ -40,6 +40,10 @@ public class TimeAmount {
 		return new TimeAmount(frame, amount);
 	}
 	
+	public static TimeAmount instance(Timeframe frame) {
+		return new TimeAmount(frame, 1);
+	}
+	
 	/**
 	 * parses a string like":
 	 * 10 minutes
@@ -51,7 +55,7 @@ public class TimeAmount {
 	 */
 	public static TimeAmount instance(String str) throws TrendrrParseException{
 		try {
-			int amount = Integer.parseInt(str.replaceAll("[^0-9]", ""));
+			int amount = TypeCast.cast(Integer.class, str.replaceAll("[^0-9]", ""), 1);
 			String fr = str.replaceAll("[^A-Za-z]", "");
 			if (fr.equalsIgnoreCase("m")) {
 				fr = "minutes";
