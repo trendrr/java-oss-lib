@@ -35,6 +35,7 @@ class TaskFilterRunner implements Runnable {
 			log.error("Task is null, can't run anything..");
 			return;
 		}
+		ExecutionReport report = ExecutionReport.instance("TaskProcessor");
 		TaskFilter f = t.popFilter();
 		Exception error = null;
 		while(f != null && error == null) {
@@ -54,7 +55,6 @@ class TaskFilterRunner implements Runnable {
 				log.error("Caught",x);
 				error = x;
 			} finally {
-				ExecutionReport report = ExecutionReport.instance("TaskProcessor");
 				report.inc(t.getProcessor().getName() + "." + f.getClass().getSimpleName(), start);
 			}
 			
@@ -71,6 +71,7 @@ class TaskFilterRunner implements Runnable {
 			t.getProcessor().taskError(t, error);
 		} else if (!t.asynch) {
 			t.getProcessor().taskComplete(t);
+			report.inc(t.getProcessor().getName(), t.getSubmitted());
 		}
 	}
 }
