@@ -181,10 +181,8 @@ public abstract class AbstractExecutionReportDBConnector implements
 				
 			}
 			
-			System.out.print("PARENTS: " + pointsByParentId);
 			List<ExecutionReportPoint> points = this.load(ids);
 			for (ExecutionReportPoint p : points) {
-				System.out.println("POINT: " + p.toString());
 				
 				String id = p.getId().toString();
 				ExecutionReportChildPoints ps = pointsByParentId.get(id);
@@ -194,18 +192,14 @@ public abstract class AbstractExecutionReportDBConnector implements
 				if (ps != null) {
 					
 					//this is the parent val!
-					System.out.println("PS IS NOT NULL");
 					ps.setFullname(p.getFullname());
 					ps.setId(p.getId());
 					ps.setMillis(p.getMillis());
 					ps.setTimestamp(p.getTimestamp());
 					ps.setVal(p.getVal());
-					System.out.println(ps.toString());
 				} else {
 					//this is the child point.
-					ExecutionReportChildPoints parent = pointsByParentId.get(childIdToParentId.get(id));
-					
-					System.out.println("adding child point)");
+					ExecutionReportChildPoints parent = pointsByParentId.get(childIdToParentId.get(id));		
 					parent.addChildPoint(p);
 				}
 			}

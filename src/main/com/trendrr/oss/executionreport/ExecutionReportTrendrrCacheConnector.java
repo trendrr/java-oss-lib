@@ -52,8 +52,8 @@ public class ExecutionReportTrendrrCacheConnector extends
 		Date expire = this.getExpire(id.getTimeAmount(), id.getTimestamp());
 		
 		try {
-			System.out.println("SAVIGN: " + id.toString() + ".val");
-			System.out.println("SAVIGN: " + id.toString() + ".millis");
+//			System.out.println("SAVIGN: " + id.toString() + ".val");
+//			System.out.println("SAVIGN: " + id.toString() + ".millis");
 			
 			this.cache.inc(this.namespace, id.toString() + ".val", TypeCast.cast(Integer.class, val), expire);
 			this.cache.inc(this.namespace, id.toString() + ".millis", TypeCast.cast(Integer.class, millis), expire);
@@ -76,13 +76,11 @@ public class ExecutionReportTrendrrCacheConnector extends
 				String k2 = id.toString() + ".millis";
 				idMap.put(k1, id);
 				idMap.put(k2, id);
-				System.out.println(k1 + "\n" + k2);
 			} catch (Exception e) {
 				log.error("caught",e);
 			}
 		}
 		Map<String, Object> vals = cache.getMulti(this.namespace, idMap.keySet());
-		System.out.println("LOADED: " + vals);
 		HashMap<ExecutionReportPointId, ExecutionReportPoint> points = new HashMap<ExecutionReportPointId, ExecutionReportPoint>();
 		
 		for (String id : idMap.keySet()) {
@@ -114,7 +112,7 @@ public class ExecutionReportTrendrrCacheConnector extends
 	public void saveChildList(String parentFullname,
 			Collection<String> childrenFullnames, Date date, TimeAmount timeamount) {
 		String id = "children-" + parentFullname + "-" + timeamount.abbreviation() + "-" + timeamount.toTrendrrEpoch(date);
-		System.out.println("SAVING CHILDREN: " + id + "\n" + childrenFullnames);
+//		System.out.println("SAVING CHILDREN: " + id + "\n" + childrenFullnames);
 		
 		this.cache.addToSet(this.namespace, id, childrenFullnames, this.getExpire(timeamount, date));
 	}
@@ -126,7 +124,7 @@ public class ExecutionReportTrendrrCacheConnector extends
 	public List<String> findChildren(String parentFullname, Date date,
 			TimeAmount timeframe) {
 		String id = "children-" + parentFullname + "-" + timeframe.abbreviation() + "-" + timeframe.toTrendrrEpoch(date);
-		System.out.println("LOADING CHILDREN: " + id);
+//		System.out.println("LOADING CHILDREN: " + id);
 		Set<String> res = this.cache.getSet(this.namespace, id);
 		ArrayList<String> children = new ArrayList<String>();
 		if (res != null) {
