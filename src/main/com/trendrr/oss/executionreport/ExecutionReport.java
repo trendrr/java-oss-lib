@@ -24,6 +24,12 @@ import com.trendrr.oss.Timeframe;
 
 
 /**
+ * 
+ * Increments keys for display in an execution report.
+ * 
+ * inc empty string for top level
+ * inc with . for nested keys.
+ * 
  * @author Dustin Norlander
  * @created Sep 20, 2011
  * 
@@ -182,6 +188,8 @@ public class ExecutionReport extends TimerTask {
 			
 			ExecutionReportNodeTree tree = new ExecutionReportNodeTree(this.getName());
 			
+			List<ExecutionReportPoint> points = new ArrayList<ExecutionReportPoint>();
+			
 			for (String k : v.vals.keySet()) {
 				Long val = v.vals.get(k);
 				if (val == null)
@@ -189,10 +197,22 @@ public class ExecutionReport extends TimerTask {
 				Long millis = v.millis.get(k);
 				if (millis == null)
 					millis = 0l;
-				tree.addNode(k, val, millis);
+				
+				if (k.isEmpty()) {
+					//increment self
+					ExecutionReportPoint point = new ExecutionReportPoint();
+					point.setFullname(this.getName());
+					point.setTimestamp(end);
+					point.setMillis(millis);
+					point.setVal(val);
+					points.add(point);
+				} else {
+					tree.addNode(k, val, millis);
+				}
+				
 			}
 	
-			List<ExecutionReportPoint> points = new ArrayList<ExecutionReportPoint>();
+			
 			HashMap<String, Set<String>> children = new HashMap<String, Set<String>>();
 			
 			for (ExecutionReportNode node: tree.getNodes()) {
