@@ -54,7 +54,6 @@ public abstract class AbstractExecutionReportDBConnector implements
 		System.out.println("**** SAVING: " + report.getName());
 		Date ts = new Date();
 		for (ExecutionReportPoint p : points) {
-			System.out.println(p);
 			Date t = p.getTimestamp();
 			if (t == null) {
 				t = ts;
@@ -69,8 +68,6 @@ public abstract class AbstractExecutionReportDBConnector implements
 					log.error("Caught", x);
 				}
 			}
-			
-			
 		}
 		System.out.println("**** DONE SAVING: " + report.getName());
 	}
