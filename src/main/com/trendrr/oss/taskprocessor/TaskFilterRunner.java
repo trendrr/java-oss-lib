@@ -46,6 +46,7 @@ class TaskFilterRunner implements Runnable {
 				if (newT == null) {
 					if (!t.asynch) {
 						t.getProcessor().taskComplete(t);
+						report.inc(t.getProcessor().getName(), t.getSubmitted());
 					}
 					return;
 				}
