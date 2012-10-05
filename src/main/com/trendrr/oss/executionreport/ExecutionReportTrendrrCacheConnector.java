@@ -111,7 +111,9 @@ public class ExecutionReportTrendrrCacheConnector extends
 	@Override
 	public void saveChildList(String parentFullname,
 			Collection<String> childrenFullnames, Date date, TimeAmount timeamount) {
-		String id = "children-" + parentFullname + "-" + timeamount.abbreviation() + "-" + timeamount.toTrendrrEpoch(date);
+		TimeAmount ta = TimeAmount.instance(timeamount.getTimeframe(), timeamount.getAmount()*20);
+		
+		String id = "children-" + parentFullname + "-" + ta.abbreviation() + "-" + ta.toTrendrrEpoch(date);
 //		System.out.println("SAVING CHILDREN: " + id + "\n" + childrenFullnames);
 		
 		this.cache.addToSet(this.namespace, id, childrenFullnames, this.getExpire(timeamount, date));
@@ -122,8 +124,10 @@ public class ExecutionReportTrendrrCacheConnector extends
 	 */
 	@Override
 	public List<String> findChildren(String parentFullname, Date date,
-			TimeAmount timeframe) {
-		String id = "children-" + parentFullname + "-" + timeframe.abbreviation() + "-" + timeframe.toTrendrrEpoch(date);
+			TimeAmount timeamount) {
+		TimeAmount ta = TimeAmount.instance(timeamount.getTimeframe(), timeamount.getAmount()*20);
+		
+		String id = "children-" + parentFullname + "-" + ta.abbreviation() + "-" + ta.toTrendrrEpoch(date);
 //		System.out.println("LOADING CHILDREN: " + id);
 		Set<String> res = this.cache.getSet(this.namespace, id);
 		ArrayList<String> children = new ArrayList<String>();
