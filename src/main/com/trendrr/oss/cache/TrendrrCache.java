@@ -216,20 +216,19 @@ public abstract class TrendrrCache {
 		this.set(null, key, obj, expires);
 	}
 	
+	protected TrendrrCacheKeyMaker keyMaker = new DefaultTrendrrCacheKeyMaker();
+	
 	protected String getKey(String namespace, String key){
 //		log.info("Getting key from: " + namespace + " " + key );
-		if (namespace != null) {
-			key = namespace + key;
-		}
-		if (key.length() > 24) {
-			try {
-				key = StringHelper.sha1Hex(key.getBytes("utf8"));
-			} catch (UnsupportedEncodingException e) {
-				log.warn("Invalid key: " + key, e);
-			}
-		} 
-//		log.info("key: " + key);
-		return key;
+		return keyMaker.toKey(namespace, key);
+	}
+	
+	public void setKeyMaker(TrendrrCacheKeyMaker keyMaker) {
+		this.keyMaker = keyMaker;
+	}
+	
+	public TrendrrCacheKeyMaker getKeyMaker() {
+		return this.keyMaker;
 	}
 	
 	/**
