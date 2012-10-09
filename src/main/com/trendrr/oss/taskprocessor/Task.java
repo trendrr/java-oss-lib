@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.logging.Log;
@@ -55,10 +56,6 @@ public class Task {
 	 */
 	public boolean isAsynch() {
 		return asynch;
-	}
-
-	public void setAsynch(boolean asynch) {
-		this.asynch = asynch;
 	}
 
 	protected DynMap content = new DynMap();
@@ -134,7 +131,7 @@ public class Task {
 	/**
 	 * This would be set in the TaskFilter.  sets this task to be asynchronous.
 	 * 
-	 * After the current filter returns execution of filters will stop until processor.resume(id) is called, or
+	 * After the current filter returns execution of filters will stop until task.asynchResume() is called, or
 	 * the timeout happens.
 	 * @param timeout
 	 */
@@ -143,10 +140,24 @@ public class Task {
 		this.getProcessor().setAsynch(this, asynch, timeout);
 	}
 	
-	public void resume() {
+	/**
+	 * call this once the asynch call returns, then the 
+	 */
+	public void asynchResume() {
 		//resume from asynch call. 
 		this.getProcessor().resumeAsynch(this.getId());
 	}
+	
+	/**
+	 * asynchronously listens for the future to return.  on return the callback is called. 
+	 * @param future
+	 * @param callback
+	 * @param timeout
+	 */
+	public void asynchFuture(Future future, FuturePollerCallback callback, long timeout) {
+		this.getProcessor().submitFuture(future, callback, timeout);
+	}
+	
 	
 	/**
 	 * returns the next filter to be run. it is moved from the 
