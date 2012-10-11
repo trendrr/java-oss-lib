@@ -9,12 +9,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.DynMap;
 import com.trendrr.oss.Reflection;
+import com.trendrr.oss.Regex;
 
 
 /**
@@ -29,7 +32,8 @@ public class Task {
 	
 	public static enum ASYNCH {
 		FAIL_ON_TIMEOUNT,
-		CONTINUE_ON_TIMEOUT
+		CONTINUE_ON_TIMEOUT,
+		DO_NOTHING_ON_TIMEOUT 
 	}
 	
 	//date when it was submitted to process.
@@ -111,6 +115,36 @@ public class Task {
 		this.filters.add(filter);
 	}
 	
+	public void removeFilter(Class cls) {
+		List<TaskFilter> tmp = new LinkedList<TaskFilter>();
+		for (TaskFilter f : this.filters) {
+			if (!cls.isInstance(f)) {
+				tmp.add(f);
+			}
+		}
+		this.filters = tmp;
+	}
+	
+	/**
+	 * removes any filters that match the supplied regex
+	 * @param regex
+	 */
+	public void removeFiltersRegex(String regex) {
+		Pattern pattern = Pattern.compile(regex);
+		this.removeFiltersRegex(pattern);
+	}
+	
+	public void removeFiltersRegex(Pattern pattern) {
+		List<TaskFilter> tmp = new LinkedList<TaskFilter>();
+		for (TaskFilter f : this.filters) {
+			Matcher matcher = pattern.matcher(f.getName());
+			if (!matcher.find()) {
+				tmp.add(f);
+			}
+		}
+		this.filters = tmp;
+	}
+	
 	
 	/**
 	 * called when the task is first submitted. this is called when 
@@ -155,7 +189,8 @@ public class Task {
 	 * @param timeout
 	 */
 	public void asynchFuture(Future future, FuturePollerCallback callback, long timeout) {
-		this.getProcessor().submitFuture(future, callback, timeout);
+		this.asynch = true;
+		this.getProcessor().submitFuture(this, future, callback, timeout);
 	}
 	
 	
@@ -248,5 +283,4 @@ public class Task {
 	public Object remove(String key) {
 		return this.content.remove(key);
 	}
-	
 }
