@@ -100,6 +100,7 @@ public class AsynchTaskRegistery implements Runnable{
 
 	public void addFuture(FuturePollerWrapper wrapper) {
 		this.pollingFutures.put(wrapper, true);
+		this.add(wrapper.getTask(), ASYNCH.DO_NOTHING_ON_TIMEOUT,  wrapper.getExpire().getTime() - new Date().getTime());
 	}
 	
 	/* (non-Javadoc)
@@ -163,6 +164,8 @@ public class AsynchTaskRegistery implements Runnable{
 			
 		} else if (t.getAsynch() == ASYNCH.FAIL_ON_TIMEOUNT) {
 			t.getTask().getProcessor().taskError(t.getTask(), new TrendrrTimeoutException("Asynch Task with id: " + t.getTask().getId() + " timed out!"));
+		} else if (t.getAsynch() == ASYNCH.DO_NOTHING_ON_TIMEOUT) {
+			//do nothing..
 		}
 	}
 }
