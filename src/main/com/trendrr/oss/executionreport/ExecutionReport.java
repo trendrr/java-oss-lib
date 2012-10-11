@@ -34,7 +34,7 @@ import com.trendrr.oss.Timeframe;
  * @created Sep 20, 2011
  * 
  */
-public class ExecutionReport extends TimerTask {
+public class ExecutionReport extends TimerTask implements ExecutionReportIncrementor {
 
 	protected static Log log = LogFactory.getLog(ExecutionReport.class);
 	
@@ -170,6 +170,43 @@ public class ExecutionReport extends TimerTask {
 	public void inc(String key) {
 		inc(key, 1l, 0l);
 	}
+	
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.executionreport.ExecutionReportIncrementor#inc(long, java.util.Date)
+	 */
+	@Override
+	public void inc(long amount, Date start) {
+		this.inc("", amount, start);
+	}
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.executionreport.ExecutionReportIncrementor#inc(long, long)
+	 */
+	@Override
+	public void inc(long amount, long millis) {
+		this.inc("", amount, millis);
+	}
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.executionreport.ExecutionReportIncrementor#inc(long)
+	 */
+	@Override
+	public void inc(long amount) {
+		this.inc("", amount);
+	}
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.executionreport.ExecutionReportIncrementor#inc(java.util.Date)
+	 */
+	@Override
+	public void inc(Date start) {
+		this.inc("", start);
+	}
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.executionreport.ExecutionReportIncrementor#inc()
+	 */
+	@Override
+	public void inc() {
+		this.inc("");
+	}
+	
 	/**
 	 * clears any values
 	 */
@@ -314,4 +351,21 @@ public class ExecutionReport extends TimerTask {
 			return;
 		timer.get().schedule(this, millis, millis);
 	}
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.executionreport.ExecutionReportIncrementor#getParent()
+	 */
+	@Override
+	public ExecutionReportIncrementor getParent() {
+		//should this always be null?  I think so.. 
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.executionreport.ExecutionReportIncrementor#getChild(java.lang.String)
+	 */
+	@Override
+	public ExecutionReportIncrementor getChild(String key) {
+		return new ExecutionSubReport(key, this);
+	}
+
 }
