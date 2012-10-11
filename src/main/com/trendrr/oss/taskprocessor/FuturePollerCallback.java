@@ -19,7 +19,7 @@ public interface FuturePollerCallback {
 	 * this is called once the future returns isDone or isCancelled. 
 	 * @param f
 	 */
-	public void futureComplete(Future f);
+	public void futureComplete(Future f, Object result);
 	
 	
 	/**

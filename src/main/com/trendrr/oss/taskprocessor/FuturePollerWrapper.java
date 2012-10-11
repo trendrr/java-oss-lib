@@ -22,14 +22,14 @@ public class FuturePollerWrapper {
 	protected Future future;
 	protected Date expire;
 	protected FuturePollerCallback callback;
-	protected TaskProcessor processor;
+	protected Task task;
 	
 	
-	public FuturePollerWrapper(Future f, FuturePollerCallback callback, long timeout, TaskProcessor processor) {
+	public FuturePollerWrapper(Future f, FuturePollerCallback callback, long timeout, Task task) {
 		this.future = f;
 		this.callback = callback;
 		this.expire = new Date(new Date().getTime() + timeout);
-		this.processor = processor;
+		this.task = task;
 	}
 
 	public Future getFuture() {
@@ -45,6 +45,10 @@ public class FuturePollerWrapper {
 	}
 	
 	public TaskProcessor getProcessor() {
-		return this.processor;
+		return this.task.getProcessor();
+	}
+	
+	public Task getTask() {
+		return this.task;
 	}
 }
