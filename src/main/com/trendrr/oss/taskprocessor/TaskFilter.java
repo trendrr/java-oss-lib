@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.executionreport.ExecutionReport;
+import com.trendrr.oss.executionreport.ExecutionReportIncrementor;
 
 
 /**
@@ -32,16 +33,16 @@ public abstract class TaskFilter {
 	 */
 	public abstract Task doFilter(Task task) throws Exception;
 	
-//	/**
-//	 * increments a key as a child of this filter.
-//	 * @param task
-//	 * @param key
-//	 * @param amount
-//	 * @param start
-//	 */
-//	public void executionReportInc(Task task, String key, long amount, Date start) {
-//		ExecutionReport.instance("TaskProcessor").inc(task.getProcessor().getName() + "." + this.getName() + "." + key, amount, start);
-//	}
+	/**
+	 * gets a filter level execution report incrementor.
+	 * 
+	 * 
+	 * @param task
+	 * @return
+	 */
+	public ExecutionReportIncrementor getExecutionReport(Task task) {
+		return task.getProcessor().getExecutionReport().getChild(this.getName());
+	}
 	
 	public String getName() {
 		return this.getClass().getSimpleName();

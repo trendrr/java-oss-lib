@@ -20,6 +20,8 @@ import com.trendrr.oss.FileCache;
 import com.trendrr.oss.PriorityUpdateQueue;
 import com.trendrr.oss.concurrent.LazyInitObject;
 import com.trendrr.oss.executionreport.ExecutionReport;
+import com.trendrr.oss.executionreport.ExecutionReportIncrementor;
+import com.trendrr.oss.executionreport.ExecutionSubReport;
 import com.trendrr.oss.taskprocessor.Task.ASYNCH;
 
 
@@ -72,7 +74,7 @@ public class TaskProcessor {
 	protected ExecutorService threadPool = null;
 	protected String name;
 	protected TaskCallback callback;
-	
+	protected ExecutionReportIncrementor exreport;
 	
 	//example threadpool, blocks when queue is full. 
 //	ExecutorService threadPool = new ThreadPoolExecutor(
@@ -128,7 +130,7 @@ public class TaskProcessor {
 		this.threadPool = executor;
 		this.name = name;
 		this.callback = callback;
-		
+		this.exreport = new ExecutionSubReport(this.getName(), ExecutionReport.instance("TaskProcessor"));
 	}
 	
 	
@@ -196,4 +198,12 @@ public class TaskProcessor {
 		}
 	}
 	
+	/**
+	 * gets the execution report incrementor for TaskProcessor.{this.getName}
+	 * 
+	 * @return
+	 */
+	public ExecutionReportIncrementor getExecutionReport() {
+		return exreport;
+	}
 }
