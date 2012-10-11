@@ -158,8 +158,8 @@ public class TaskProcessor {
 	 * @param future
 	 * @param callback
 	 */
-	public void submitFuture(Future future, FuturePollerCallback callback, long timeout) {
-		FuturePollerWrapper wrapper = new FuturePollerWrapper(future, callback, timeout, this);
+	public void submitFuture(Task task, Future future, FuturePollerCallback callback, long timeout) {
+		FuturePollerWrapper wrapper = new FuturePollerWrapper(future, callback, timeout, task);
 		asynchTasks.get().addFuture(wrapper);
 	}
 	
@@ -176,12 +176,6 @@ public class TaskProcessor {
 	 */
 	public String getName() {
 		return this.name;
-	}
-	
-	public void _taskComplete(Task task) {
-		ExecutionReport report = ExecutionReport.instance("TaskProcessor");
-		report.inc(this.getName() + ".FILTER_CHAIN", task.getSubmitted());
-		this.taskComplete(task);
 	}
 	
 	public void taskComplete(Task task) {
