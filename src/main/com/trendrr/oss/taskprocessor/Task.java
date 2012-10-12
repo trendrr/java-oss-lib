@@ -179,7 +179,7 @@ public class Task {
 	 */
 	public void asynchResume() {
 		//resume from asynch call. 
-		this.getProcessor().resumeAsynch(this.getId());
+		this.getProcessor().resumeAsynch(this);
 	}
 	
 	/**

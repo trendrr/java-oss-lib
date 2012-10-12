@@ -57,18 +57,22 @@ public class AsynchTaskRegistery implements Runnable{
 		thread.start();
 	}
 	
-	/**
-	 * Resumes the execution of the task
-	 * @param id
-	 * @return
-	 */
-	public Task resume(String id) {
-		Task t = this.remove(id);
-		if (t == null)
-			return null;
-		t.asynch = false;
-		t.getProcessor().submitTask(t);
-		return t;
+//	/**
+//	 * Resumes the execution of the task
+//	 * @param id
+//	 * @return
+//	 */
+//	public Task resume(String id) {
+//		Task t = this.remove(id);
+//		if (t == null)
+//			return null;
+//		return resume(t);
+//	}
+	
+	public Task resume(Task task) {
+		this.remove(task.getId());
+		task.getProcessor().submitTask(task);
+		return task;
 	}
 	
 	/**

@@ -163,8 +163,12 @@ public class TaskProcessor {
 		asynchTasks.get().addFuture(wrapper);
 	}
 	
-	public void resumeAsynch(String taskId) {
-		asynchTasks.get().resume(taskId);
+//	public void resumeAsynch(String taskId) {
+//		asynchTasks.get().resume(taskId);
+//	}
+	
+	public void resumeAsynch(Task task) {
+		asynchTasks.get().resume(task);
 	}
 	
 	public ExecutorService getExecutor() {

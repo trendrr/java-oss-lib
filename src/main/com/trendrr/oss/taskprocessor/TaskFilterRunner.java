@@ -37,6 +37,13 @@ class TaskFilterRunner implements Runnable {
 		}
 		
 		TaskFilter f = t.popFilter();
+		
+		if (f == null && t.isAsynch()) {
+			//still increment firehose on the end of an asynch task.
+			this.taskComplete(t);
+			return;
+		}
+		t.asynch = false;
 		Exception error = null;
 		while(f != null && error == null) {
 			Date start = new Date();
@@ -45,8 +52,7 @@ class TaskFilterRunner implements Runnable {
 				Task newT = f.doFilter(t);
 				if (newT == null) {
 					if (!t.asynch) {
-						t.getProcessor().taskComplete(t);
-						t.getProcessor().getExecutionReport().inc(t.getSubmitted());
+						this.taskComplete(t);
 					}
 					return;
 				}
@@ -71,8 +77,12 @@ class TaskFilterRunner implements Runnable {
 		if (error != null) {
 			t.getProcessor().taskError(t, error);
 		} else if (!t.asynch) {
-			t.getProcessor().taskComplete(t);
-			t.getProcessor().getExecutionReport().inc(t.getSubmitted());
+			this.taskComplete(t);
 		}
+	}
+	
+	private void taskComplete(Task t) {
+		t.getProcessor().taskComplete(t);
+		t.getProcessor().getExecutionReport().inc(t.getSubmitted());
 	}
 }
