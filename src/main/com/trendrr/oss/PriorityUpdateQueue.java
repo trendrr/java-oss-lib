@@ -110,12 +110,18 @@ public class PriorityUpdateQueue <T>{
      * @param obj
      */
     public synchronized boolean remove(T obj) {
-    	Integer index = this.indexes.get(obj);
+    	Integer index = this.indexes.remove(obj);
     	if (index == null) {
     		return false;
     	}
+    	if (index == heap.size()-1) {
+    		//removing the last element
+    		heap.remove((int)index); //cast is necessary here
+    		return true;
+    	}
     	
     	T item = heap.remove(heap.size()-1);
+    	
     	this.indexes.put(item, index);
     	this.heap.set(index, item);
         this.pushDown(item);
