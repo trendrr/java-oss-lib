@@ -74,7 +74,6 @@ public class TaskProcessor {
 	protected ExecutorService threadPool = null;
 	protected String name;
 	protected TaskCallback callback;
-	protected ExecutionReportIncrementor exreport;
 	
 	//example threadpool, blocks when queue is full. 
 //	ExecutorService threadPool = new ThreadPoolExecutor(
@@ -130,7 +129,6 @@ public class TaskProcessor {
 		this.threadPool = executor;
 		this.name = name;
 		this.callback = callback;
-		this.exreport = new ExecutionSubReport(this.getName(), ExecutionReport.instance("TaskProcessor"));
 	}
 	
 	
@@ -204,6 +202,6 @@ public class TaskProcessor {
 	 * @return
 	 */
 	public ExecutionReportIncrementor getExecutionReport() {
-		return exreport;
+		return new ExecutionSubReport(this.getName(), ExecutionReport.instance("TaskProcessor"));
 	}
 }
