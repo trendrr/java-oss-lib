@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.apache.commons.logging.Log;
@@ -100,7 +101,7 @@ public class AsynchTaskRegistery implements Runnable{
 
 	public void addFuture(FuturePollerWrapper wrapper) {
 		this.pollingFutures.put(wrapper, true);
-		this.add(wrapper.getTask(), ASYNCH.DO_NOTHING_ON_TIMEOUT,  wrapper.getExpire().getTime() - new Date().getTime());
+//		this.add(wrapper.getTask(), ASYNCH.DO_NOTHING_ON_TIMEOUT,  wrapper.getExpire().getTime() - new Date().getTime());
 	}
 	
 	/* (non-Javadoc)
@@ -110,8 +111,11 @@ public class AsynchTaskRegistery implements Runnable{
 	public void run() {
 		//free thread.
 		while(true) {
+			
+			Date now = new Date();
+			
 			AsynchTaskWrapper t = asynchTaskFreeList.peek();
-			while(t != null && t.getExpire().before(new Date())) {
+			while(t != null && t.getExpire().before(now)) {
 				t = asynchTaskFreeList.pop();
 				this.expired(t);
 				t = asynchTaskFreeList.peek();
@@ -125,12 +129,13 @@ public class AsynchTaskRegistery implements Runnable{
 			TaskProcessor processor = null;
 			
 			for (FuturePollerWrapper f : this.pollingFutures.keySet()) {
+				
 				if (f.getFuture().isDone()) {
 					if (processor == null) 
 						processor = f.getProcessor();
 					completed.add(f);
 					this.pollingFutures.remove(f);
-				} else if (f.getExpire().before(new Date())) {
+				} else if (f.getExpire().before(now)) {
 					if (processor == null) 
 						processor = f.getProcessor();
 					
@@ -154,7 +159,7 @@ public class AsynchTaskRegistery implements Runnable{
 	}
 	
 	protected void expired(AsynchTaskWrapper t) {
-		System.out.println("Expiring: " + t.getTask().getId());
+//		System.out.println("Expiring: " + t.getTask().getId());
 		if (this.asynchTasks.remove(t.getTask().getId()) == null) {
 			return; //already processed somewhere else
 		}
