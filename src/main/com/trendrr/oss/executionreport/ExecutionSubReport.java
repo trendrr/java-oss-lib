@@ -43,6 +43,9 @@ public class ExecutionSubReport implements ExecutionReportIncrementor {
 	}
 	
 	protected String getKey(String key) {
+		if (key == null || key.isEmpty()) {
+			return this.namespace;
+		}
 		return this.namespace + "." + key;
 	}
 	/* (non-Javadoc)
