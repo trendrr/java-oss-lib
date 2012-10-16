@@ -45,7 +45,9 @@ public abstract class ReinitObject<T> implements Initializer<T>{
 			//we block if the object is unitialized.  otherwise we skip while initia
 			if (lock.lockOrWait()) {
 				try {
-					ref.set(this.init());	
+					if (ref.get() == null) { //check again
+						ref.set(this.init());	
+					}
 				} finally {
 					lock.unlock();
 				}
@@ -53,9 +55,12 @@ public abstract class ReinitObject<T> implements Initializer<T>{
 		} else {
 			// else we return the old results while the new ones are being initialized
 			if (lock.lockOrSkip()) {
+				T old = null;
 				try {
+					
 					T val = this.init();
 					if (val != null || !this.usePreviousIfNull) {
+						old = this.ref.get();
 						ref.set(val);	
 					} else {
 //						log.info("Skipping cause this init is null");
@@ -63,10 +68,23 @@ public abstract class ReinitObject<T> implements Initializer<T>{
 				} finally {
 					lock.unlock();
 				}
+				
+				//cleanup outside the lock.
+				if (old != null) {
+					this.cleanup(old);
+				}
 			}
 			
 		}
 		return ref.get();
+	}
+	
+	/**
+	 * This is called when the object is reinitialized.  allows to cleanup any resources.
+	 * @param object
+	 */
+	public void cleanup(T object) {
+		
 	}
 	
 	/**
