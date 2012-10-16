@@ -9,9 +9,12 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,6 +47,7 @@ public class AsynchTaskRegistery implements Runnable{
 	
 	protected ConcurrentHashMap<FuturePollerWrapper, Boolean> pollingFutures = new ConcurrentHashMap<FuturePollerWrapper, Boolean>();
 	
+	protected LinkedBlockingQueue<FuturePollerWrapper> pollingFuturesQueue = new LinkedBlockingQueue<FuturePollerWrapper>();
 	protected Thread thread = null;
 	
 	
@@ -105,7 +109,7 @@ public class AsynchTaskRegistery implements Runnable{
 
 	public void addFuture(FuturePollerWrapper wrapper) {
 		this.pollingFutures.put(wrapper, true);
-//		this.add(wrapper.getTask(), ASYNCH.DO_NOTHING_ON_TIMEOUT,  wrapper.getExpire().getTime() - new Date().getTime());
+		this.pollingFuturesQueue.add(wrapper);//trigger a wakup.
 	}
 	
 	/* (non-Javadoc)
@@ -117,48 +121,48 @@ public class AsynchTaskRegistery implements Runnable{
 		while(true) {
 			
 			Date now = new Date();
+			this.pollingFuturesQueue.clear();
 			
+			int numFinished = 0;
 			AsynchTaskWrapper t = asynchTaskFreeList.peek();
 			while(t != null && t.getExpire().before(now)) {
 				t = asynchTaskFreeList.pop();
 				this.expired(t);
 				t = asynchTaskFreeList.peek();
+				numFinished++;
 			}
 //			System.out.println("Don expiring, sleep ... size: " + this.asynchTasks.size());
 			
 			//test the polling futures.
 			
-			List<FuturePollerWrapper> completed = new ArrayList<FuturePollerWrapper>();
-			List<FuturePollerWrapper> expired = new ArrayList<FuturePollerWrapper>();
-			TaskProcessor processor = null;
 			
 			for (FuturePollerWrapper f : this.pollingFutures.keySet()) {
-				
 				if (f.getFuture().isDone()) {
-					if (processor == null) 
-						processor = f.getProcessor();
-					completed.add(f);
 					this.pollingFutures.remove(f);
+					f.getTask().getProcessor().getExecutor().execute(new FuturePollerCallbackThread(f, true));
+					numFinished++;
 				} else if (f.getExpire().before(now)) {
-					if (processor == null) 
-						processor = f.getProcessor();
-					
-					expired.add(f);
 					this.pollingFutures.remove(f);
+					f.getTask().getProcessor().getExecutor().execute(new FuturePollerCallbackThread(f, false));
+					numFinished++;
 				}
 			}
-			if (!completed.isEmpty() || !expired.isEmpty()) {
-				//process these in a separate thread.
-				processor.getExecutor().execute(new FuturePollerCallbackThread(completed, expired));
+			
+			if (numFinished == 0) {
+				//only sleep if we ran and nothing was finished...
+				//randomize the sleep times
+				if (this.pollingFutures.isEmpty()) {
+					try {
+						this.pollingFuturesQueue.poll((int)(250d * Math.random()), TimeUnit.MILLISECONDS);
+					} catch (InterruptedException e) {
+						log.error("Caught", e);
+					}
+				} else {
+					//polling futures are considered way more time sensitive
+					Sleep.millis((int)(5d * Math.random()));
+				}
 			}
 			
-			
-			if (this.pollingFutures.isEmpty()) {
-				Sleep.millis(500);
-			} else {
-				//polling futures are considered way more time sensitive
-				Sleep.millis(5);
-			}
 		}
 	}
 	
