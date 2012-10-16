@@ -23,15 +23,12 @@ public class FuturePollerCallbackThread implements Runnable {
 	protected static Log log = LogFactory
 			.getLog(FuturePollerCallbackThread.class);
 
-	List<FuturePollerWrapper> completed;
-	List<FuturePollerWrapper> expired;
+	FuturePollerWrapper wrapper;
+	boolean completed;
 	
-	public FuturePollerCallbackThread(List<FuturePollerWrapper> completed, List<FuturePollerWrapper> expired) {
-		
+	public FuturePollerCallbackThread(FuturePollerWrapper wrapper, boolean completed) {
+		this.wrapper = wrapper;
 		this.completed = completed;
-		this.expired = expired;
-		
-		
 	}
 	
 	/* (non-Javadoc)
@@ -39,25 +36,23 @@ public class FuturePollerCallbackThread implements Runnable {
 	 */
 	@Override
 	public void run() {
-		for (FuturePollerWrapper w : completed) {
-			try {
-				w.getCallback().futureComplete(w.getFuture(), w.getFuture().get(10, TimeUnit.MILLISECONDS));
-			} catch (TimeoutException e) {
-				w.getFuture().cancel(true);
-				w.getCallback().futureExpired(w.getFuture());
-			} catch (InterruptedException e) {
-				log.error("Caught", e);
-				w.getFuture().cancel(true);
-				w.getCallback().futureExpired(w.getFuture());
-			} catch (ExecutionException e) {
-				log.error("Caught", e);
-				w.getFuture().cancel(true);
-				w.getCallback().futureExpired(w.getFuture());
+		try {
+			if (completed) {
+				wrapper.getCallback().futureComplete(wrapper.getFuture(), wrapper.getFuture().get(10, TimeUnit.MILLISECONDS));
+			} else {
+				wrapper.getCallback().futureExpired(wrapper.getFuture());
 			}
-		}
-		for (FuturePollerWrapper w : expired) {
-			w.getFuture().cancel(true);
-			w.getCallback().futureExpired(w.getFuture());
+		} catch (TimeoutException e) {
+			wrapper.getFuture().cancel(true);
+			wrapper.getCallback().futureExpired(wrapper.getFuture());
+		} catch (InterruptedException e) {
+			log.error("Caught", e);
+			wrapper.getFuture().cancel(true);
+			wrapper.getCallback().futureExpired(wrapper.getFuture());
+		} catch (ExecutionException e) {
+			log.error("Caught", e);
+			wrapper.getFuture().cancel(true);
+			wrapper.getCallback().futureExpired(wrapper.getFuture());
 		}
 	}
 }
