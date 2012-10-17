@@ -159,7 +159,20 @@ public class CheshireClient implements CheshireApiCaller{
 		}
 		this.host = host;
 		this.port = port;
+		
+		StrestClient old = null;
+		if (this.strest != null) {
+			old = this.strest;
+		}
+		
 		this.strest = new StrestClient(host, port);
+		if (old != null) {
+			this.strest.setMaxQueuedWrites(old.getMaxQueuedWrites());
+			this.strest.setMaxWaitingForResponse(old.getMaxWaitingForResponse());
+			this.strest.setWaitOnMaxQueuedWrites(old.isWaitOnMaxQueuedWrites());
+		}
+		
+		
 	}
 	public void close() {
 		this.strest.close();
@@ -244,7 +257,7 @@ public class CheshireClient implements CheshireApiCaller{
 
 		while(true) {
 			try {
-				log.warn("Attempting to reconnect to trendrr api");
+				log.warn("Attempting to reconnect to trendrr api: " + this.host);
 				this.connect();
 				//if we get to this point then we have succeeded??
 				return true;
