@@ -4,6 +4,7 @@
 package com.trendrr.oss.strest.models;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,4 +43,6 @@ public interface StrestPacketBase {
 	public void cleanup();
 	
 	public byte[] toByteArray();
+	
+	public Map<String, Object> toMap();
 }

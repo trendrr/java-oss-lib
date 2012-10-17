@@ -4,6 +4,7 @@
 package com.trendrr.oss.strest.models.json;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -113,5 +114,13 @@ public class StrestJsonRequest extends StrestJsonBase implements StrestRequest {
 	@Override
 	public void cleanup() {
 		super.cleanup();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#toMap()
+	 */
+	@Override
+	public Map<String, Object> toMap() {
+		return this.map;
 	}
 }

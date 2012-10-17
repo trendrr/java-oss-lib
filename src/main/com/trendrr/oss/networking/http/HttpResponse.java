@@ -207,4 +207,13 @@ public class HttpResponse implements StrestPacketBase {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#toMap()
+	 */
+	@Override
+	public Map<String, Object> toMap() {
+		log.warn("toMap not implemented: " + this);
+		return null;
+	}
 }

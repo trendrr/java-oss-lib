@@ -272,4 +272,12 @@ public class HttpRequest implements StrestPacketBase {
 	
 //	public void addHeader(String
 	
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#toMap()
+	 */
+	@Override
+	public Map<String, Object> toMap() {
+		log.warn("toMap not implemented: " + this);
+		return null;
+	}
 }

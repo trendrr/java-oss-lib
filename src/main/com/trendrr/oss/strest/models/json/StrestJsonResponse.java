@@ -3,6 +3,8 @@
  */
 package com.trendrr.oss.strest.models.json;
 
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -74,5 +76,11 @@ public class StrestJsonResponse extends StrestJsonBase implements StrestResponse
 		return TxnStatus.instance(this.getHeader(StrestHeader.Name.TXN_STATUS));
 	}
 	
-	
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#toMap()
+	 */
+	@Override
+	public Map<String, Object> toMap() {
+		return this.map;
+	}
 }
