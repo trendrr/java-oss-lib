@@ -141,11 +141,17 @@ public class StrestClient {
 				throw new TrendrrIOException(this.maxWaitingForResponse + " waiting for response, me thinks theres a network problem, or you need to slow down! (" + this.host + ")");
 			}
 			
+			if (!this.isWaitOnMaxQueuedWrites() && this.socket.getWriteQueueSize() >= this.maxQueuedWrites) {
+				throw new TrendrrIOException(this.socket.getWriteQueueSize() + " queued writes. me thinks theres a network problem, or you need to slow down! (" + this.host + ")");
+			}
+			
 			while (this.isWaitOnMaxQueuedWrites() && this.socket.getWriteQueueSize() >= this.maxQueuedWrites) {
 				//wait for space.
 				log.warn("Write queue is full, waiting for space... (" + this.host + ")");
 				Sleep.millis(25);
 			}
+			
+			
  			
 			if (request.getHeader(StrestHeader.Name.TXN_ACCEPT) == null) {
 				request.setTxnAccept(TxnAccept.MULTI);
