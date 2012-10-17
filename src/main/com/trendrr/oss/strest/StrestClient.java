@@ -138,12 +138,12 @@ public class StrestClient {
 
 			if (this.maxWaitingForResponse > 0 && this.maxWaitingForResponse <= this.callbacks.size()) {
 
-				throw new TrendrrIOException(this.maxWaitingForResponse + " waiting for response, me thinks theres a network problem, or you need to slow down!");
+				throw new TrendrrIOException(this.maxWaitingForResponse + " waiting for response, me thinks theres a network problem, or you need to slow down! (" + this.host + ")");
 			}
 			
 			while (this.isWaitOnMaxQueuedWrites() && this.socket.getWriteQueueSize() >= this.maxQueuedWrites) {
 				//wait for space.
-//				log.warn("Write queue is full, waiting for space...");
+				log.warn("Write queue is full, waiting for space... (" + this.host + ")");
 				Sleep.millis(25);
 			}
  			
