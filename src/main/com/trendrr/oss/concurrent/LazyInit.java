@@ -67,4 +67,20 @@ public class LazyInit {
 	public void reset() {
 		once.set(false);
 	}
+	
+	/**
+	 * passively checks if this lock has been initialized.
+	 * Will return true if the lock is currently held.
+	 * 
+	 * @return
+	 */
+	public boolean isInited() {
+		if (once.get()) {
+			return true;
+		}
+		if (lock.isLocked()) {
+			return true;
+		}
+		return once.get();
+	}
 }
