@@ -140,7 +140,7 @@ public class ExecutionReportTrendrrCacheConnector extends
 	
 	protected Date getExpire(TimeAmount frame, Date date) {
 		Date expireMin = Timeframe.HOURS.add(date, 24);
-		Date expire = frame.add(date, 25);
+		Date expire = frame.add(date, 100);
 		if (expire.before(expireMin)) {
 			expire = expireMin;
 		}
