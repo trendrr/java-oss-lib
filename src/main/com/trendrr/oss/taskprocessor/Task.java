@@ -4,6 +4,7 @@
 package com.trendrr.oss.taskprocessor;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -88,6 +89,15 @@ public class Task {
 		}
 		return t;
 	}
+	
+	public static Task instance(Collection<TaskFilter> filters) {
+		Task t = new Task();
+		for (TaskFilter c : filters) {
+			t.addFilter(c);
+		}
+		return t;
+	}
+	
 	
 	public String getId() {
 		return this.id;
