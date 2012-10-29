@@ -662,6 +662,9 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	public static boolean isMap(Object obj) {
 		if (obj instanceof Map) 
 			return true;
+		if (obj instanceof DynMapConvertable)
+			return true;
+		
 		if (Reflection.hasMethod(obj, "toMap"))
 			return true;
 		return false;
