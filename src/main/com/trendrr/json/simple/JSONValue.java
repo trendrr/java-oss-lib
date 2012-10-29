@@ -15,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.trendrr.json.simple.parser.JSONParser;
 import com.trendrr.json.simple.parser.ParseException;
+import com.trendrr.oss.DynMapConvertable;
 
 
 
@@ -180,6 +181,11 @@ public class JSONValue {
 			return;
 		}
 		
+		if (value instanceof DynMapConvertable) {
+			JSONObject.writeJSONString(((DynMapConvertable)value).toDynMap(), out);
+			return;
+		}
+		
 		if(value instanceof Collection){
 			JSONArray.writeJSONString((Collection)value, out);
             return;
@@ -240,6 +246,9 @@ public class JSONValue {
 		
 		if(value instanceof Map)
 			return JSONObject.toJSONString((Map)value);
+		
+		if(value instanceof DynMapConvertable)
+			return JSONObject.toJSONString(((DynMapConvertable)value).toDynMap());
 		
 		if(value instanceof Collection)
 			return JSONArray.toJSONString((Collection)value);
