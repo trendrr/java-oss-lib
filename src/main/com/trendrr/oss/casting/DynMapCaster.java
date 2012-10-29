@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import com.trendrr.json.simple.JSONValue;
 
 import com.trendrr.oss.DynMap;
+import com.trendrr.oss.DynMapConvertable;
 
 
 /**
@@ -27,6 +28,10 @@ public class DynMapCaster extends TypeCaster<DynMap> {
 		
 		if (object instanceof Map) {
 			return toDynMap((Map)object);
+		}
+		
+		if (object instanceof DynMapConvertable) {
+			return ((DynMapConvertable)object).toDynMap();
 		}
 		
 		if (object instanceof String) {
