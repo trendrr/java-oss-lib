@@ -13,7 +13,10 @@ import com.trendrr.oss.executionreport.ExecutionReportIncrementor;
 
 
 /**
- * static ExecutionReportIncrementer. 
+ * static ExecutionReportIncrementer. This is meant as an easy way to have a simple to use top level execution report available to all classes.
+ * 
+ * you must call setExecutionReport before it is usable, if not, the methods don't do anything.  
+ * 
  * 
  * @author Dustin Norlander
  * @created Nov 1, 2012
