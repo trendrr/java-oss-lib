@@ -45,7 +45,11 @@ public class DateCaster extends TypeCaster<Date> {
 		
 		//convert joda DateTimezx
 		if (Reflection.hasMethod(obj, "toDate")) {
-			return (Date)Reflection.execute(obj, "toDate");
+			try {
+				return (Date)Reflection.execute(obj, "toDate");
+			} catch (Exception x) {
+				//swallow
+			}
 		}
 		String str = TypeCast.cast(String.class, obj);
 		try {

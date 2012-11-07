@@ -45,19 +45,18 @@ public class Reflection {
 	 * @param method
 	 * @param input
 	 */
-	public static void exec(Object obj, String method, Object input) {
+	public static void exec(Object obj, String method, Object input) throws Exception{
 		Class cls = input.getClass();
+		Exception lastException = null;
 		while (cls != null) {
 			try {
 				obj.getClass().getMethod(method, cls).invoke(obj, input);
 //				log.info("Found: " + method);
 				return;
 			} catch (java.lang.NoSuchMethodException x) {
-//				log.info("Caught", x);
-				
+				lastException = x;
 			} catch (Exception x) {
-//				log.info("Caught", x);
-				return;
+				throw x;
 			}
 			//try the interfaces
 			for (Class c : cls.getInterfaces()) {
@@ -66,15 +65,17 @@ public class Reflection {
 //					log.info("Found: " + method);
 					return;
 				} catch (Exception x) {
-//					log.info("Caught", x);
+					lastException = x;
 				}
 			}
 			cls = cls.getSuperclass();
 		}
-//		log.warn("No method " + method + " found");
+		if (lastException != null)
+			throw lastException;
+		throw new java.lang.NoSuchMethodException("No method found with name: " + method);
 	}
 	
-	public static Object execute(Object obj, String method, Object ... inputs) {
+	public static Object execute(Object obj, String method, Object ... inputs) throws Exception{
 		if (inputs.length == 1)  {
 			exec(obj, method, inputs[0]);
 			return null;
@@ -89,10 +90,8 @@ public class Reflection {
 			}
 			return obj.getClass().getMethod(method, classes).invoke(obj, inputs);
 		} catch (Exception x) {
-//			log.info("Caught", x);
+			throw x;
 		}
-		return null;
-		
 	}
 	
 	/**
