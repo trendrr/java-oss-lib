@@ -55,6 +55,11 @@ public class Reflection {
 				return;
 			} catch (java.lang.NoSuchMethodException x) {
 				lastException = x;
+			} catch (java.lang.reflect.InvocationTargetException ex) { 
+				if (ex.getCause() != null && ex.getCause() instanceof Exception) {
+					throw (Exception)ex.getCause();
+				}
+				throw ex;
 			} catch (Exception x) {
 				throw x;
 			}
@@ -89,6 +94,11 @@ public class Reflection {
 				i++;
 			}
 			return obj.getClass().getMethod(method, classes).invoke(obj, inputs);
+		} catch (java.lang.reflect.InvocationTargetException ex) { 
+			if (ex.getCause() != null && ex.getCause() instanceof Exception) {
+				throw (Exception)ex.getCause();
+			}
+			throw ex;
 		} catch (Exception x) {
 			throw x;
 		}
