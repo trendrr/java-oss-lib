@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.JarURLConnection;
 import java.net.URL;
@@ -39,47 +40,42 @@ public class Reflection {
 	}
 	
 	/**
-	 * this does a massive attempt to find the method you are looking for, so be careful
-	 * it searches all the superclasses, interfaces for a match.
+	 * this does a attempt to find the method you are looking for, it will look at every
+	 * method in the class and run any that match the name against the inputs.  This approach is 
+	 * slightly slower then the execute method, which suffers from requiring the inputs to match the class 
+	 * of the inputs exactly.
+	 * 
+	 * 
 	 * @param obj
 	 * @param method
 	 * @param input
 	 */
-	public static void exec(Object obj, String method, Object input) throws Exception{
-		Class cls = input.getClass();
+	public static Object exec(Object obj, String method, Object ... inputs) throws Exception{
 		Exception lastException = null;
-		while (cls != null) {
-			try {
-				obj.getClass().getMethod(method, cls).invoke(obj, input);
-//				log.info("Found: " + method);
-				return;
-			} catch (java.lang.NoSuchMethodException x) {
-				lastException = x;
-			} catch (java.lang.reflect.InvocationTargetException ex) { 
-				if (ex.getCause() != null && ex.getCause() instanceof Exception) {
-					throw (Exception)ex.getCause();
-				}
-				throw ex;
-			} catch (Exception x) {
-				throw x;
-			}
-			//try the interfaces
-			for (Class c : cls.getInterfaces()) {
+		
+		for (Method m : obj.getClass().getMethods()) {
+			if (m.getName().equals(method)) {
 				try {
-					obj.getClass().getMethod(method, c).invoke(obj, input);
-//					log.info("Found: " + method);
-					return;
+					return m.invoke(obj, inputs);
 				} catch (Exception x) {
 					lastException = x;
 				}
 			}
-			cls = cls.getSuperclass();
 		}
+		
 		if (lastException != null)
 			throw lastException;
 		throw new java.lang.NoSuchMethodException("No method found with name: " + method);
 	}
 	
+	/**
+	 * This will execute the requested method on the specified object.  note, this does not search superclasses
+	 * @param obj
+	 * @param method
+	 * @param inputs
+	 * @return
+	 * @throws Exception
+	 */
 	public static Object execute(Object obj, String method, Object ... inputs) throws Exception{
 		if (inputs.length == 1)  {
 			exec(obj, method, inputs[0]);
