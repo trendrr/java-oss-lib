@@ -108,7 +108,7 @@ public class Reflection {
 	 * @return
 	 */
 	public static Object getter(Object obj, String name) {
-		log.warn("Trying to get getter: " + name + " for " + obj);
+//		log.warn("Trying to get getter: " + name + " for " + obj);
 		try {
 			if (!name.startsWith("get")) {
 				name =  "get" + StringHelper.capitalize(name);
