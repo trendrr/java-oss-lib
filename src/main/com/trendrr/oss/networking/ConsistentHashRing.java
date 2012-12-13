@@ -51,6 +51,14 @@ public class ConsistentHashRing<T> {
 		this.hashFunction = hashFunction;
 	}
 	
+	public synchronized int size() {
+		return this.connections.size();
+	}
+	
+	public synchronized boolean isEmpty() {
+		return this.connections.isEmpty();
+	}
+	
 	/**
 	 * gets all the items in the ring.  this returns a copy.
 	 * @return
