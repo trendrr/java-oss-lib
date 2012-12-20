@@ -501,23 +501,25 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	}
 	
 	public <T> List<T> getListForKey(Class<T> cls, String key, String... delimiters) {
-		String topKey = key.split("\\.",2)[0];
-		String remainKey = (key.split("\\.",2).length >1) ? key.split("\\.",2)[1] : key;
+		String[] keyArray = key.split("\\.",2);
+		String topKey = keyArray[0];
+		String remainKey = (keyArray.length >1) ? keyArray[1] : key;
 		List<T> retList = new ArrayList<T>(); 
 				
-		System.out.println("topkey: "+topKey);
-		System.out.println("map: "+this+" get:"+this.get(topKey));
+//		System.out.println("topkey: "+topKey);
+//		System.out.println("map: "+this+" get:"+this.get(topKey));
 		List<DynMap> dynMapList = TypeCast.toTypedList(DynMap.class, this.get(topKey), delimiters);
-		if(dynMapList==null){
+		if(dynMapList==null || (cls==DynMap.class && keyArray.length==1)){
+			//if we're looking for a dynmap and we got to the bottom search key, stop and take the dynmap
 			List<T> val = TypeCast.toTypedList(cls, this.get(topKey), delimiters);
 			if(val!=null){
 				retList.addAll(val);
 			}
-			System.out.println(topKey+" got: "+retList);
+//			System.out.println(topKey+" got: "+retList);
 		}else{
 			for(DynMap map : dynMapList){
-				System.out.println(topKey+": "+retList);
-				System.out.println("remain: "+remainKey+"\n");
+//				System.out.println(topKey+": "+retList);
+//				System.out.println("remain: "+remainKey+"\n");
 				retList.addAll(map.getListForKey(cls, remainKey, delimiters));
 			}
 		}

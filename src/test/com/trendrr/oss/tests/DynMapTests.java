@@ -75,8 +75,8 @@ public class DynMapTests {
 		mapList.add(b);
 		
 		top.put("key1", mapList);
-		System.out.println(top);
-		System.out.println(top.getListForKey(String.class, "key1.key3"));
+		System.out.println("top: "+top);
+		System.out.println("final: "+top.getListForKey(DynMap.class, "key1.key2"));
 	}
 	
 	@Test
