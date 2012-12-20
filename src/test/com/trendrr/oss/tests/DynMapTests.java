@@ -56,6 +56,30 @@ public class DynMapTests {
 	}
 	
 	@Test
+	public void getListNewTest(){
+		DynMap top = new DynMap();
+		List<DynMap> mapList = new ArrayList<DynMap>();
+		
+		DynMap a = new DynMap();
+		a.put("key2", "one");
+		
+		DynMap c = new DynMap();
+		c.put("key3", "five");
+		a.put("key3", "two");
+		a.put("key2", c);
+		mapList.add(a);
+		
+		DynMap b = new DynMap();
+		b.put("key2", "three");
+		b.put("key4", "four");
+		mapList.add(b);
+		
+		top.put("key1", mapList);
+		System.out.println(top);
+		System.out.println(top.getListForKey(String.class, "key1.key3"));
+	}
+	
+	@Test
 	public void getDotTest() {
 		DynMap mp = new DynMap();
 		mp.putWithDot("facebook.val", 12);

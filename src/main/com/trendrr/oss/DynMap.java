@@ -492,12 +492,36 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 				//null is an acceptable cache result.
 				return (List<T>)this.cache.get(cacheKey);
 			} else {
-				List<T> val = TypeCast.toTypedList(cls, this.get(key), delimiters);
+				List<T> val = this.getListForKey(cls, cacheKey, delimiters);
 				this.cache.put(cacheKey, val);
 				return val;
 			}
 		} 
-		return TypeCast.toTypedList(cls, this.get(key), delimiters);
+		return this.getListForKey(cls, key, delimiters);
+	}
+	
+	public <T> List<T> getListForKey(Class<T> cls, String key, String... delimiters) {
+		String topKey = key.split("\\.",2)[0];
+		String remainKey = (key.split("\\.",2).length >1) ? key.split("\\.",2)[1] : key;
+		List<T> retList = new ArrayList<T>(); 
+				
+		System.out.println("topkey: "+topKey);
+		System.out.println("map: "+this+" get:"+this.get(topKey));
+		List<DynMap> dynMapList = TypeCast.toTypedList(DynMap.class, this.get(topKey), delimiters);
+		if(dynMapList==null){
+			List<T> val = TypeCast.toTypedList(cls, this.get(topKey), delimiters);
+			if(val!=null){
+				retList.addAll(val);
+			}
+			System.out.println(topKey+" got: "+retList);
+		}else{
+			for(DynMap map : dynMapList){
+				System.out.println(topKey+": "+retList);
+				System.out.println("remain: "+remainKey+"\n");
+				retList.addAll(map.getListForKey(cls, remainKey, delimiters));
+			}
+		}
+		return retList;
 	}
 	
 	/**
