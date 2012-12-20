@@ -492,7 +492,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 				//null is an acceptable cache result.
 				return (List<T>)this.cache.get(cacheKey);
 			} else {
-				List<T> val = this.getListForKey(cls, cacheKey, delimiters);
+				List<T> val = this.getListForKey(cls, key, delimiters);
 				this.cache.put(cacheKey, val);
 				return val;
 			}
