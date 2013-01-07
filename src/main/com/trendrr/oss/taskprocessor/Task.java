@@ -46,6 +46,13 @@ public class Task {
 	protected TaskProcessor processor;
 	protected TaskCallback callback;
 	
+	/**
+	 * protected constuctor.  use the instance methods.
+	 */
+	protected Task() {
+		//constructor is protected. 
+	}
+	
 	public TaskCallback getCallback() {
 		return callback;
 	}
