@@ -103,7 +103,7 @@ public class TaskProcessor {
 	 */
 	public static TaskProcessor defaultInstance(String name, TaskCallback callback, int numThreads) {
 		ThreadPoolExecutor threadPool = new ThreadPoolExecutor(
-				1, // core size
+				numThreads, // core size
 			    numThreads, // max size
 			    130, // idle timeout
 			    TimeUnit.SECONDS,
