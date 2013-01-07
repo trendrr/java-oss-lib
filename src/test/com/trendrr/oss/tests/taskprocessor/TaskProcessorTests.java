@@ -27,9 +27,26 @@ public class TaskProcessorTests {
 		proc = new TestTaskProcessor();
 	}
 	
+	
+	@Test 
+	public void fewTaskTest() {
+		try {
+			TaskFilterSleep.sleepMillis = 10000;
+			for (int i=0; i < 3; i++) {
+				Task t = Task.instance(TaskFilterSleep.class);
+				proc.submitTask(t);
+			}
+			Sleep.seconds(100);
+			
+		} catch (Exception e) {
+			log.error("Caught", e);
+		}
+	}
+	
 	@Test
 	public void test() {
 		try {
+			TaskFilterSleep.sleepMillis = 100;
 			for (int i=0; i < 100; i++) {
 				Task t = Task.instance(TaskFilterSleep.class, TaskFilterAsynch.class);
 				proc.submitTask(t);
