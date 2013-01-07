@@ -20,13 +20,16 @@ public class TaskFilterSleep extends TaskFilter {
 
 	protected static Log log = LogFactory.getLog(TaskFilterSleep.class);
 
+	static long sleepMillis = 10000;
+	
 	/* (non-Javadoc)
 	 * @see com.trendrr.oss.taskprocessor.TaskFilter#doFilter(com.trendrr.oss.taskprocessor.Task)
 	 */
 	@Override
 	public Task doFilter(Task task) throws Exception {
-		System.out.println("sleeping for 100 millis");
-		Sleep.millis(100);
+		log.warn("sleep for " + sleepMillis + " millis");
+		Sleep.millis(sleepMillis);
+		log.warn("Wake up!");
 		return task;
 	}
 }
