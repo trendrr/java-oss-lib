@@ -19,6 +19,8 @@ import org.junit.Test;
 import com.trendrr.oss.DynMap;
 import com.trendrr.oss.Timeframe;
 import com.trendrr.oss.concurrent.Sleep;
+import com.trendrr.oss.exceptions.TrendrrException;
+import com.trendrr.oss.exceptions.TrendrrTimeoutException;
 
 
 /**
@@ -39,8 +41,10 @@ public class TrendrrCacheTests {
 	/**
 	 * runs all the unit tests on the passed in cache.
 	 * @param cache
+	 * @throws TrendrrException 
+	 * @throws TrendrrTimeoutException 
 	 */
-	public void runTests(TrendrrCache cache) {
+	public void runTests(TrendrrCache cache) throws TrendrrTimeoutException, TrendrrException {
 		this.testDelete(cache);
 		this.testGetSet(cache);
 		this.testSetIfAbsent(cache);
@@ -51,14 +55,14 @@ public class TrendrrCacheTests {
 		
 	}
 	
-	public void testDelete(TrendrrCache cache) {
+	public void testDelete(TrendrrCache cache)  throws TrendrrTimeoutException, TrendrrException{
 		Date expire = Timeframe.SECONDS.add(new Date(), this.timeoutSeconds);
 		cache.set("tests", "testDeleteKey", "testing", expire);
 		cache.delete("tests", "testDeleteKey");
 		Assert.assertTrue(cache.get("tests", "testDeleteKey") == null);
 	}
 	
-	public void testGetSet(TrendrrCache cache) {
+	public void testGetSet(TrendrrCache cache)  throws TrendrrTimeoutException, TrendrrException{
 		Date expire = Timeframe.SECONDS.add(new Date(), this.timeoutSeconds);
 		try {
 			cache.set("tests", "testGetSet", "String Object", expire);
@@ -68,7 +72,7 @@ public class TrendrrCacheTests {
 		}
 	}
 	
-	public void testSetIfAbsent(TrendrrCache cache) {
+	public void testSetIfAbsent(TrendrrCache cache)  throws TrendrrTimeoutException, TrendrrException{
 		Date expire = Timeframe.SECONDS.add(new Date(), this.timeoutSeconds);
 		try {
 			cache.set("tests", "testSetIfAbsent", "String Object", expire);
@@ -81,7 +85,7 @@ public class TrendrrCacheTests {
 		}
 	}
 	
-	public void testInc(TrendrrCache cache) {
+	public void testInc(TrendrrCache cache)  throws TrendrrTimeoutException, TrendrrException{
 		Date expire = Timeframe.SECONDS.add(new Date(), this.timeoutSeconds);
 		
 		try {
@@ -103,7 +107,7 @@ public class TrendrrCacheTests {
 		}
 	}
 	
-	public void testAddToSet(TrendrrCache cache) {
+	public void testAddToSet(TrendrrCache cache)  throws TrendrrTimeoutException, TrendrrException{
 		Date expire = Timeframe.SECONDS.add(new Date(), this.timeoutSeconds);
 		
 		try {
@@ -128,7 +132,7 @@ public class TrendrrCacheTests {
 		}
 	}
 	
-	public void testGetMulti(TrendrrCache cache) {
+	public void testGetMulti(TrendrrCache cache) throws TrendrrTimeoutException, TrendrrException {
 		Date expire = Timeframe.SECONDS.add(new Date(), this.timeoutSeconds);
 		
 		try {
@@ -149,7 +153,7 @@ public class TrendrrCacheTests {
 		}
 	}
 	
-	public void testIncMulti(TrendrrCache cache) {
+	public void testIncMulti(TrendrrCache cache) throws TrendrrTimeoutException, TrendrrException {
 		Date expire = Timeframe.SECONDS.add(new Date(), this.timeoutSeconds);
 		
 		try {

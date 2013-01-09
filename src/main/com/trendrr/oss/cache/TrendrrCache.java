@@ -19,7 +19,9 @@ import com.trendrr.oss.DynMap;
 import com.trendrr.oss.StringHelper;
 import com.trendrr.oss.TypeCast;
 import com.trendrr.oss.concurrent.LazyInit;
+import com.trendrr.oss.exceptions.TrendrrException;
 import com.trendrr.oss.exceptions.TrendrrParseException;
+import com.trendrr.oss.exceptions.TrendrrTimeoutException;
 
 
 /**
@@ -47,27 +49,27 @@ public abstract class TrendrrCache {
 	 * @param obj
 	 * @param expires
 	 */
-	protected abstract void _set(String key, Object obj, Date expires);
+	protected abstract void _set(String key, Object obj, Date expires) throws TrendrrTimeoutException, TrendrrException;
 	
 	/**
 	 * Deletes the key value pair
 	 * @param key
 	 */
-	protected abstract void _del(String key);
+	protected abstract void _del(String key) throws TrendrrTimeoutException, TrendrrException;
 	
 	/**
 	 * get the value at a key
 	 * @param key
 	 * @return
 	 */
-	protected abstract Object _get(String key);
+	protected abstract Object _get(String key) throws TrendrrTimeoutException, TrendrrException;
 	
 	/**
 	 * returns the values at the given set of keys
 	 * @param keys
 	 * @return
 	 */
-	protected abstract Map<String, Object> _getMulti(Set<String> keys);
+	protected abstract Map<String, Object> _getMulti(Set<String> keys) throws TrendrrTimeoutException, TrendrrException;
 	
 	/**
 	 * increment a key.
@@ -75,7 +77,7 @@ public abstract class TrendrrCache {
 	 * @param value
 	 * @param expire when this key should expire.  null for forever (if available)
 	 */
-	protected abstract long _inc(String key, int value, Date expire);
+	protected abstract long _inc(String key, int value, Date expire) throws TrendrrTimeoutException, TrendrrException;
 	
 	/**
 	 * increments multiple keys in a map.  
@@ -83,35 +85,35 @@ public abstract class TrendrrCache {
 	 * @param values
 	 * @param expire
 	 */
-	protected abstract void _incMulti(String key, Map<String, Integer> values, Date expire);
+	protected abstract void _incMulti(String key, Map<String, Integer> values, Date expire) throws TrendrrTimeoutException, TrendrrException;
 	
 	/**
 	 * gets the map from an incMulti call.
 	 * @param key
 	 * @return
 	 */
-	protected abstract Map<String,Long> _getIncMulti(String key);
+	protected abstract Map<String,Long> _getIncMulti(String key) throws TrendrrTimeoutException, TrendrrException;
 	
 	/**
 	 * Add these items into a set add the given key.
 	 * @param str
 	 * @return
 	 */
-	protected abstract Set<String> _addToSet(String key, Collection<String> str, Date expire);
+	protected abstract Set<String> _addToSet(String key, Collection<String> str, Date expire) throws TrendrrTimeoutException, TrendrrException;
 	
 	/**
 	 * loads a previous created set.
 	 * @param key
 	 * @return
 	 */
-	protected abstract Set<String> _getSet(String key);
+	protected abstract Set<String> _getSet(String key) throws TrendrrTimeoutException, TrendrrException;
 	
 	/**
 	 * Remove from a set
 	 * @param str
 	 * @return
 	 */
-	protected abstract Set<String> _removeFromSet(String key, Collection<String> str);
+	protected abstract Set<String> _removeFromSet(String key, Collection<String> str) throws TrendrrTimeoutException, TrendrrException;
 	
 	/**
 	 * should set the key if and only if the value doesn't already exist. Should return whether the item was inserted or not.
@@ -119,7 +121,7 @@ public abstract class TrendrrCache {
 	 * @param value
 	 * @param expires
 	 */
-	protected abstract boolean _setIfAbsent(String key, Object value, Date expires);
+	protected abstract boolean _setIfAbsent(String key, Object value, Date expires) throws TrendrrTimeoutException, TrendrrException;
 	
 	
 	/**
@@ -168,7 +170,7 @@ public abstract class TrendrrCache {
 	 * @param obj
 	 * @param expires
 	 */
-	public void set(String namespace, String key, Object obj, Date expires) {
+	public void set(String namespace, String key, Object obj, Date expires)  throws TrendrrTimeoutException, TrendrrException{
 		this.init();
 		this._set(this.getKey(namespace, key), obj, expires);
 		
@@ -185,7 +187,7 @@ public abstract class TrendrrCache {
 	 * @param values
 	 * @param expires
 	 */
-	public void addToSet(String namespace, String key, Collection<String> values, Date expire) {
+	public void addToSet(String namespace, String key, Collection<String> values, Date expire) throws TrendrrTimeoutException, TrendrrException {
 		this.init();
 		this._addToSet(this.getKey(namespace, key), values, expire);
 	}
@@ -196,11 +198,11 @@ public abstract class TrendrrCache {
 	 * @param key
 	 * @return
 	 */
-	public Set<String> getSet(String namespace, String key) {
+	public Set<String> getSet(String namespace, String key)  throws TrendrrTimeoutException, TrendrrException{
 		this.init();
 		return this._getSet(this.getKey(namespace, key));
 	}
-	public Set<String> getSet(String key) {
+	public Set<String> getSet(String key)  throws TrendrrTimeoutException, TrendrrException{
 		return this.getSet(null, key);
 	}
 	
@@ -212,7 +214,7 @@ public abstract class TrendrrCache {
 	 * @param obj
 	 * @param expires
 	 */
-	public void set(String key, Object obj, Date expires) {
+	public void set(String key, Object obj, Date expires)  throws TrendrrTimeoutException, TrendrrException{
 		this.set(null, key, obj, expires);
 	}
 	
@@ -239,7 +241,7 @@ public abstract class TrendrrCache {
 	 * @param expires
 	 * @return
 	 */
-	public boolean setIfAbsent(String namespace, String key, Object value, Date expires) {
+	public boolean setIfAbsent(String namespace, String key, Object value, Date expires)  throws TrendrrTimeoutException, TrendrrException{
 		this.init();
 		return this._setIfAbsent(this.getKey(namespace, key), value, expires);
 	}
@@ -251,7 +253,7 @@ public abstract class TrendrrCache {
 	 * @param expires
 	 * @return
 	 */
-	public boolean setIfAbsent(String key, Object value, Date expires) {
+	public boolean setIfAbsent(String key, Object value, Date expires)  throws TrendrrTimeoutException, TrendrrException{
 		return this.setIfAbsent(null, key, value, expires);
 	}
 	
@@ -261,7 +263,7 @@ public abstract class TrendrrCache {
 	 * @param key
 	 * @return
 	 */
-	public Object get(String namespace, String key) {
+	public Object get(String namespace, String key) throws TrendrrTimeoutException, TrendrrException {
 		this.init();
 		return this._get(this.getKey(namespace, key));
 	}
@@ -271,7 +273,7 @@ public abstract class TrendrrCache {
 	 * @param key
 	 * @return
 	 */
-	public Object get(String key) {
+	public Object get(String key) throws TrendrrTimeoutException, TrendrrException {
 		return this.get(null, key);
 	}
 	
@@ -282,16 +284,16 @@ public abstract class TrendrrCache {
 	 * @param key
 	 * @return
 	 */
-	public <T> T get(Class<T> cls, String namespace, String key) {
+	public <T> T get(Class<T> cls, String namespace, String key)  throws TrendrrTimeoutException, TrendrrException {
 		return TypeCast.cast(cls, this.get(namespace, key));
 	}
 	
-	public Map<String, Long> getIncMulti(String namespace, String key) {
+	public Map<String, Long> getIncMulti(String namespace, String key)  throws TrendrrTimeoutException, TrendrrException{
 		this.init();
 		return this._getIncMulti(this.getKey(namespace, key));
 	}
 	
-	public Map<String, Long> getIncMulti(String key) {
+	public Map<String, Long> getIncMulti(String key)  throws TrendrrTimeoutException, TrendrrException{
 		return this.getIncMulti(null, key);
 	}
 	/**
@@ -300,7 +302,7 @@ public abstract class TrendrrCache {
 	 * @param keys
 	 * @return
 	 */
-	public DynMap getMulti(String namespace, Collection<String> keys) {
+	public DynMap getMulti(String namespace, Collection<String> keys) throws TrendrrTimeoutException, TrendrrException{
 		this.init();
 		
 		/*
@@ -326,7 +328,7 @@ public abstract class TrendrrCache {
 		return newResults;
 	}
 	
-	public Map<String, Object> getMulti(Collection<String> keys) {
+	public Map<String, Object> getMulti(Collection<String> keys) throws TrendrrTimeoutException, TrendrrException{
 		return this.getMulti(null, keys);
 	}
 	
@@ -335,7 +337,7 @@ public abstract class TrendrrCache {
 	 * @param namespace
 	 * @param key
 	 */
-	public void delete(String namespace, String key) {
+	public void delete(String namespace, String key) throws TrendrrTimeoutException, TrendrrException{
 		this.init();
 		this._del(this.getKey(namespace, key));
 	}
@@ -344,7 +346,7 @@ public abstract class TrendrrCache {
 	 * 
 	 * @param key
 	 */
-	public void delete(String key) {
+	public void delete(String key) throws TrendrrTimeoutException, TrendrrException{
 		this.delete(null, key);
 	}
 	
@@ -354,7 +356,7 @@ public abstract class TrendrrCache {
 	 * @param key
 	 * @param value
 	 */
-	public long inc(String namespace, String key, int value, Date expire) {
+	public long inc(String namespace, String key, int value, Date expire) throws TrendrrTimeoutException, TrendrrException {
 		this.init();
 		return this._inc(this.getKey(namespace, key), value, expire);
 	}
@@ -365,7 +367,7 @@ public abstract class TrendrrCache {
 	 * @param key
 	 * @param value
 	 */
-	public long inc(String key, int value, Date expire) {
+	public long inc(String key, int value, Date expire) throws TrendrrTimeoutException, TrendrrException {
 		return this.inc(null, key, value, expire);
 	}
 	
@@ -376,7 +378,7 @@ public abstract class TrendrrCache {
 	 * @param values
 	 * @param expire
 	 */
-	public void incMulti(String namespace, String key, Map<String, Integer> values, Date expire) {
+	public void incMulti(String namespace, String key, Map<String, Integer> values, Date expire) throws TrendrrTimeoutException, TrendrrException {
 		this.init();
 		this._incMulti(this.getKey(namespace, key), values, expire);
 	}
@@ -388,7 +390,7 @@ public abstract class TrendrrCache {
 	 * @param values
 	 * @param expire
 	 */
-	public void incMulti(String key, Map<String, Integer> values, Date expire) {
+	public void incMulti(String key, Map<String, Integer> values, Date expire) throws TrendrrTimeoutException, TrendrrException {
 		this.incMulti(null, key, values, expire);
 	}
 }

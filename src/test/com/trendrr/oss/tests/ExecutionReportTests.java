@@ -32,13 +32,13 @@ public class ExecutionReportTests {
 			report.inc("this.key", 1, start);
 			report.inc("this", 1, start);
 		}
-		Sleep.seconds(30);
+		Sleep.seconds(3);
 		
 		for (int i=0 ;  i < 150; i++) {
 			report.inc("this.key", 1, 1);
 			report.inc("this", 1, 1);
 		}
-		Sleep.seconds(30);
+		Sleep.seconds(3);
 		
 	}
 }
