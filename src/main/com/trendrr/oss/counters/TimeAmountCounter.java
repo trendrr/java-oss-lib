@@ -48,7 +48,7 @@ public class TimeAmountCounter {
 			previousEpoch.set(oldepoch);
 			//rolled over
 			if (callback != null) {
-				callback.onRollover(this.timeframe, oldepoch, previous.get());
+				callback.onRollover(this, this.timeframe.fromTrendrrEpoch(oldepoch), previous.get());
 			}
 		}
 		return current.addAndGet(val);
@@ -82,5 +82,9 @@ public class TimeAmountCounter {
 			return 0l;
 		}
 		return this.previous.get();
+	}
+	
+	public TimeAmount getTimeAmount() {
+		return this.timeframe;
 	}
 }

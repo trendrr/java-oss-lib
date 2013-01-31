@@ -3,7 +3,8 @@
  */
 package com.trendrr.oss.counters;
 
-import com.trendrr.oss.TimeAmount;
+import java.util.Date;
+
 
 
 /**
@@ -12,5 +13,5 @@ import com.trendrr.oss.TimeAmount;
  * 
  */
 public interface TimeAmountCounterCallback {
-	public void onRollover(TimeAmount timeamount, long epoch, long value);
+	public void onRollover(TimeAmountCounter counter, Date date, long value);
 }
