@@ -20,6 +20,8 @@ import com.trendrr.oss.TimeAmount;
 import com.trendrr.oss.Timeframe;
 import com.trendrr.oss.TypeCast;
 import com.trendrr.oss.cache.TrendrrCache;
+import com.trendrr.oss.exceptions.TrendrrException;
+import com.trendrr.oss.exceptions.TrendrrTimeoutException;
 
 
 /**
@@ -80,7 +82,14 @@ public class ExecutionReportTrendrrCacheConnector extends
 				log.error("caught",e);
 			}
 		}
-		Map<String, Object> vals = cache.getMulti(this.namespace, idMap.keySet());
+		Map<String, Object> vals =new HashMap<String,Object>();
+		try {
+			vals = cache.getMulti(this.namespace, idMap.keySet());
+		} catch (TrendrrTimeoutException e) {
+			log.error("Caught", e);
+		} catch (TrendrrException e) {
+			log.error("Caught", e);
+		}
 		HashMap<ExecutionReportPointId, ExecutionReportPoint> points = new HashMap<ExecutionReportPointId, ExecutionReportPoint>();
 		
 		for (String id : idMap.keySet()) {
@@ -115,8 +124,14 @@ public class ExecutionReportTrendrrCacheConnector extends
 		
 		String id = "children-" + parentFullname + "-" + ta.abbreviation() + "-" + ta.toTrendrrEpoch(date);
 //		System.out.println("SAVING CHILDREN: " + id + "\n" + childrenFullnames);
-		
-		this.cache.addToSet(this.namespace, id, childrenFullnames, this.getExpire(timeamount, date));
+	
+		 try {
+			this.cache.addToSet(this.namespace, id, childrenFullnames, this.getExpire(timeamount, date));
+		} catch (TrendrrTimeoutException e) {
+			log.error("Caught", e);
+		} catch (TrendrrException e) {
+			log.error("Caught", e);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -129,13 +144,21 @@ public class ExecutionReportTrendrrCacheConnector extends
 		
 		String id = "children-" + parentFullname + "-" + ta.abbreviation() + "-" + ta.toTrendrrEpoch(date);
 //		System.out.println("LOADING CHILDREN: " + id);
-		Set<String> res = this.cache.getSet(this.namespace, id);
+		Set<String> res = null;
+		try {
+			res = this.cache.getSet(this.namespace, id);
+		} catch (TrendrrTimeoutException e) {
+			log.error("Caught", e);
+		} catch (TrendrrException e) {
+			log.error("Caught", e);
+		}
 		ArrayList<String> children = new ArrayList<String>();
 		if (res != null) {
 			children.addAll(res);
 			Collections.sort(children);
 		}
 		return children;
+
 	}
 	
 	protected Date getExpire(TimeAmount frame, Date date) {
