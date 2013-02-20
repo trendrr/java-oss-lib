@@ -475,7 +475,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	}
 	
 	/**
-	 * Returns a typed list.  See TypeCast.getTypedList
+	 * Returns a typed list.  See TypeCast.getTypedList 
 	 * 
 	 * returns the typed list, or null, never empty.
 	 * @param <T>
@@ -500,14 +500,21 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		return this.getListForKey(cls, key, delimiters);
 	}
 	
+	/**
+	 * Recursively searches through a dynmap to return a list of values that match the input key. 
+	 * If "key1.key2.key3" is the key 
+	 * @param <T>
+	 * @param cls
+	 * @param key
+	 * @param delimiters
+	 * @return
+	 */
 	public <T> List<T> getListForKey(Class<T> cls, String key, String... delimiters) {
 		String[] keyArray = key.split("\\.",2);
 		String topKey = keyArray[0];
 		String remainKey = (keyArray.length >1) ? keyArray[1] : key;
 		List<T> retList = new ArrayList<T>(); 
 				
-//		System.out.println("topkey: "+topKey);
-//		System.out.println("map: "+this+" get:"+this.get(topKey));
 		List<DynMap> dynMapList = TypeCast.toTypedList(DynMap.class, this.get(topKey), delimiters);
 		if(dynMapList==null || (cls==DynMap.class && keyArray.length==1)){
 			//if we're looking for a dynmap and we got to the bottom search key, stop and take the dynmap
@@ -515,11 +522,8 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 			if(val!=null){
 				retList.addAll(val);
 			}
-//			System.out.println(topKey+" got: "+retList);
 		}else{
 			for(DynMap map : dynMapList){
-//				System.out.println(topKey+": "+retList);
-//				System.out.println("remain: "+remainKey+"\n");
 				retList.addAll(map.getListForKey(cls, remainKey, delimiters));
 			}
 		}

@@ -157,8 +157,8 @@ public class RollingFileAppender {
 						continue;
 					
 					if (te < this.minTE()) {
-//						System.out.println("Current TE: " + this.currentTE + " min:  " + this.minTE());
-//						System.out.println("DELETE: " + fn);
+						log.warn("Current TE: " + this.currentTE + " min:  " + this.minTE());
+						log.warn("DELETE: " + fn);
 						this.delete(f);
 					}
 				}
