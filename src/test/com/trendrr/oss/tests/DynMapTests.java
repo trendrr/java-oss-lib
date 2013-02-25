@@ -4,6 +4,7 @@
 package com.trendrr.oss.tests;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -61,8 +62,6 @@ public class DynMapTests {
 		List<DynMap> mapList = new ArrayList<DynMap>();
 		
 		DynMap a = new DynMap();
-		a.put("key2", "one");
-		
 		DynMap c = new DynMap();
 		c.put("key3", "five");
 		a.put("key3", "two");
@@ -71,12 +70,24 @@ public class DynMapTests {
 		
 		DynMap b = new DynMap();
 		b.put("key2", "three");
-		b.put("key4", "four");
+		b.put("key3", "four");
 		mapList.add(b);
 		
 		top.put("key1", mapList);
 		System.out.println("top: "+top);
-		System.out.println("final: "+top.getListForKey(DynMap.class, "key1.key2"));
+//		System.out.println("final: "+top.getListForKey(String.class, "key1.key2.key3"));
+
+		List<DynMap> result1 = new ArrayList<DynMap>(); 
+		result1.add(c);
+		Assert.assertEquals(result1, top.getListForKey(DynMap.class, "key1.key2"));
+		System.out.println("\n");
+		
+		List<String> result2 = Arrays.asList(new String[]{"{key3=five}", "three"});
+		Assert.assertEquals(result2, top.getListForKey(String.class, "key1.key2"));
+		System.out.println("\n");
+		
+		List<String> result3 = Arrays.asList(new String[]{"five"});
+		Assert.assertEquals(result3, top.getListForKey(String.class, "key1.key2.key3"));
 	}
 	
 	@Test

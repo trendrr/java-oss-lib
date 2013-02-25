@@ -516,17 +516,57 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		List<T> retList = new ArrayList<T>(); 
 				
 		List<DynMap> dynMapList = TypeCast.toTypedList(DynMap.class, this.get(topKey), delimiters);
-		if(dynMapList==null || (cls==DynMap.class && keyArray.length==1)){
-			//if we're looking for a dynmap and we got to the bottom search key, stop and take the dynmap
+		System.out.println("dynlist for "+topKey+" : "+dynMapList);
+		
+		if(keyArray.length < 2){//down to the last subkey, take whatever we have there
 			List<T> val = TypeCast.toTypedList(cls, this.get(topKey), delimiters);
 			if(val!=null){
+				System.out.println("adding val: "+val);
 				retList.addAll(val);
 			}
 		}else{
-			for(DynMap map : dynMapList){
-				retList.addAll(map.getListForKey(cls, remainKey, delimiters));
+			if(dynMapList != null){
+				for(DynMap map : dynMapList){
+					retList.addAll(map.getListForKey(cls, remainKey, delimiters));
+				}
 			}
 		}
+		
+		
+//		if(dynMapList==null){
+//			if(keyArray.length==1){
+//				List<T> val = TypeCast.toTypedList(cls, this.get(topKey), delimiters);
+//				if(val!=null){
+//					System.out.println("adding val nullist: "+val);
+//					retList.addAll(val);
+//				}
+//			}
+//
+//		}else if(keyArray.length==1){
+//			List<T> val = TypeCast.toTypedList(cls, this.get(topKey), delimiters);
+//			if(val!=null){
+//				System.out.println("adding val: "+val);
+//				retList.addAll(val);
+//			}
+//		}else{
+//			for(DynMap map : dynMapList){
+//				retList.addAll(map.getListForKey(cls, remainKey, delimiters));
+//			}
+//		}
+		
+		
+//		if(dynMapList==null || (cls.equals(DynMap.class) && keyArray.length==1)){
+//			//if we're looking for a dynmap and we got to the bottom search key, stop and take the dynmap
+//			List<T> val = TypeCast.toTypedList(cls, this.get(topKey), delimiters);
+//			if(val!=null){
+//				System.out.println("adding val: "+val);
+//				retList.addAll(val);
+//			}
+//		}else{
+//			for(DynMap map : dynMapList){
+//				retList.addAll(map.getListForKey(cls, remainKey, delimiters));
+//			}
+//		}
 		return retList;
 	}
 	
