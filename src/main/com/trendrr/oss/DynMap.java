@@ -514,17 +514,16 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		String topKey = keyArray[0];
 		String remainKey = (keyArray.length >1) ? keyArray[1] : key;
 		List<T> retList = new ArrayList<T>(); 
-				
-		List<DynMap> dynMapList = TypeCast.toTypedList(DynMap.class, this.get(topKey), delimiters);
-		System.out.println("dynlist for "+topKey+" : "+dynMapList);
 		
 		if(keyArray.length < 2){//down to the last subkey, take whatever we have there
 			List<T> val = TypeCast.toTypedList(cls, this.get(topKey), delimiters);
 			if(val!=null){
-				System.out.println("adding val: "+val);
+//				System.out.println("adding val: "+val);
 				retList.addAll(val);
 			}
 		}else{
+			List<DynMap> dynMapList = TypeCast.toTypedList(DynMap.class, this.get(topKey), delimiters);
+//			System.out.println("dynlist for "+topKey+" : "+dynMapList);
 			if(dynMapList != null){
 				for(DynMap map : dynMapList){
 					retList.addAll(map.getListForKey(cls, remainKey, delimiters));
