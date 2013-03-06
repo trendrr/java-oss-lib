@@ -32,9 +32,11 @@ public class TimeAmountCounter {
 	protected AtomicLong epoch = new AtomicLong(0);
 	protected TimeAmountCounterCallback callback = null;
 			
-			
+	
+	
 	public TimeAmountCounter(TimeAmount timeamount, TimeAmountCounterCallback callback) {
 		this.timeframe = timeamount;
+		this.callback = callback;
 	}
 
 	public long inc() {
