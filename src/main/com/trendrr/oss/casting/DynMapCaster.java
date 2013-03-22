@@ -34,6 +34,14 @@ public class DynMapCaster extends TypeCaster<DynMap> {
 			return ((DynMapConvertable)object).toDynMap();
 		}
 		
+		if (object instanceof byte[]) {
+			try {
+				object = new String((byte[])object, "utf8");
+			} catch (Exception x) {
+				
+			}
+		}
+		
 		if (object instanceof String) {
 			//try the json simple here. 
 			try {
