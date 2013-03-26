@@ -49,6 +49,11 @@ public class ChannelMethodRequestHandler implements ChannelRequestHandler {
 	public Object handleRequest(String endpoint, Object... inputs)
 			throws Exception {
 		
+		if (this.object == null) {
+			throw new Exception("Object is null! (" + this + ") enpoint: " + endpoint + " inputs: " + inputs + "");
+		}
+		
+		
 		Method m = this.methods.get(endpoint+ "_" + inputs.length);
 		if (m == null) {
 			//search for the method to add to our map.
