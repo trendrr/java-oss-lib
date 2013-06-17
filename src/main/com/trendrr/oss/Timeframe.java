@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -87,6 +88,26 @@ public enum Timeframe {
 
 	public static final Date trendrrEpoch = IsoDateUtil.parse("2000-01-01T05:00:00Z");
 	private static final Date epochWeekStart = IsoDateUtil.parse("1999-12-26T05:00:00.00Z");
+	
+	/**
+	 * Returns the java TimeUnit.  Returns null for Weeks, months, years.
+	 * @return
+	 */
+	public TimeUnit getTimeUnit() {
+		switch (this) {
+		case MILLISECONDS :
+			return TimeUnit.MILLISECONDS;
+		case SECONDS:
+			return TimeUnit.SECONDS;
+		case MINUTES:
+			return TimeUnit.MINUTES;
+		case HOURS:
+			return TimeUnit.HOURS;
+		case DAYS:
+			return TimeUnit.DAYS;
+		}
+		return null;
+	}
 	
 	/**
 	 * trendrr epoch is the number of elements since jan 1 2000.  
