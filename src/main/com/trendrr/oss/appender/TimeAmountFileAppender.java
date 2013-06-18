@@ -17,6 +17,7 @@ import com.google.common.cache.RemovalNotification;
 import com.trendrr.oss.TimeAmount;
 import com.trendrr.oss.Timeframe;
 import com.trendrr.oss.appender.exceptions.FileClosedException;
+import com.trendrr.oss.exceptions.TrendrrIOException;
 
 
 /**
@@ -63,6 +64,7 @@ public class TimeAmountFileAppender {
 		this.amount = amount;
 		this.callback = callback;
 		this.directory = dir;
+		this.maxBytes = maxBytes;
 		
 		this.cache = CacheBuilder.newBuilder()
 	       .maximumSize(1000)
@@ -77,6 +79,7 @@ public class TimeAmountFileAppender {
 	       .build(
 	    		   new CacheLoader<Long, TimeAmountFile>() {
 	    			   public TimeAmountFile load(Long epoch) throws Exception {
+	    				   System.out.println("LOADIGN EPOCH: " + epoch);
 	    				   return newFile(epoch);
 	    			   }
 	    		   });
@@ -109,16 +112,19 @@ public class TimeAmountFileAppender {
 		
 	public synchronized void append(Date date, String str) throws Exception {
 		long epoch = this.amount.toTrendrrEpoch(date).longValue();
-		TimeAmountFile file = null;
-		try {
-			file = this.cache.get(epoch);
-			file.append(str);
-		} catch (FileClosedException x) {
-			this.staleFile(file);
-			this.cache.invalidate(epoch);
-			//try again..
-			this.append(date, str);
-			return;
+		//Try to get the file max 5 times.
+		for (int i=0; i < 5; i++) {
+			TimeAmountFile file = null;
+			try {
+				file = this.cache.get(epoch);
+				file.append(str);
+				return;
+			} catch (FileClosedException x) {
+				this.staleFile(file);
+				this.cache.invalidate(epoch);
+				//try again..
+			}
 		}
+		throw new TrendrrIOException("Unable to get file for epoch: " + epoch);
 	}
 }
