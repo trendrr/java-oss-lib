@@ -53,7 +53,7 @@ public class TimeAmountFile {
 			filename = FileHelper.toSystemDependantFilename(filename);
 			FileHelper.createDirectories(filename);
 			this.file = new File(filename);
-			exists = file.createNewFile();
+			exists = !file.createNewFile();
 		}
 		this.writer = new FileWriter(this.file, true);
 	}
@@ -110,12 +110,13 @@ public class TimeAmountFile {
 			throw new FileClosedException();
 		}
 		//check that we havent gone over the max bytes
-		if (curBytes >= maxBytes) {
+		if (maxBytes > 0 && curBytes >= maxBytes) {
 			this.setStale();
 			throw new FileClosedException();
 		}
 		this.lastWrite = new Date();
 		this.writer.append(str);
+		this.writer.flush();
 	}
 	
 	public synchronized void setStale() {
