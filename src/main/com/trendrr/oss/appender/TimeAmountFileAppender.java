@@ -73,6 +73,7 @@ public class TimeAmountFileAppender {
 	    		   new RemovalListener<Long, TimeAmountFile>() {
 						@Override
 						public void onRemoval(RemovalNotification<Long, TimeAmountFile> rn) {
+							//log.warn("Making it staleeee");
 							staleFile(rn.getValue());
 						}
 	    		   })
@@ -98,7 +99,8 @@ public class TimeAmountFileAppender {
 		}	
 	}
 	
-	protected void staleFile(TimeAmountFile f) {
+	public void staleFile(TimeAmountFile f) {
+	
 		f.stale(callback);
 	}
 
@@ -120,6 +122,7 @@ public class TimeAmountFileAppender {
 				file.append(str);
 				return;
 			} catch (FileClosedException x) {
+				log.warn("Calling the appender from here .... in catch");
 				this.staleFile(file);
 				this.cache.invalidate(epoch);
 				//try again..

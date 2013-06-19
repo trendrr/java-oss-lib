@@ -86,17 +86,17 @@ public class TimeAmountFile {
 	public synchronized void stale(TimeAmountFileCallback callback) {
 		if (this.deleted)
 			return; //do nothing..
-		
-		this.deleted = true;
+		log.warn("I am dieeeing hereee");
+	//	this.deleted = true;
 		callback.staleFile(this);
-		try {
+		/*try {
 			boolean deleted = this.file.delete();
 			if (!deleted) {
 				throw new TrendrrIOException("Unable to delete TimeAmountFile: " + this.file);
 			}
 		} catch (Exception x) {
 			callback.onError(x);
-		}
+		}*/
 	}
 	
 	/**
@@ -135,6 +135,10 @@ public class TimeAmountFile {
 
 	public synchronized long getEpoch() {
 		return epoch;
+	}
+	
+	public synchronized void setDeleted(boolean deleted){
+		this.deleted = deleted;
 	}
 
 	public synchronized TimeAmount getTimeAmount() {
