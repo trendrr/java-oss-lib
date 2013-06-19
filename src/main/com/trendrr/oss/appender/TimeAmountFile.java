@@ -33,7 +33,7 @@ public class TimeAmountFile {
 	private TimeAmount timeAmount;
 	
 	private boolean stale = false;
-	private boolean deleted = false;
+	private boolean callbackreturn = false;
 	private long maxBytes;
 	private long curBytes = 0;
 	private FileWriter writer = null;
@@ -83,13 +83,14 @@ public class TimeAmountFile {
 	 * @param callback
 	 * @return
 	 */
+	// Moved The delete code to callback level for deleting after the uploading
 	public synchronized void stale(TimeAmountFileCallback callback) {
-		if (this.deleted)
+		if (this.callbackreturn)
 			return; //do nothing..
 		callback.staleFile(this);
 		
 	//	this.deleted = true;
-		// Moved The delete code to callback level for deleting after the uploading
+		
 		/*try {
 			boolean deleted = this.file.delete();
 			if (!deleted) {
@@ -138,8 +139,8 @@ public class TimeAmountFile {
 		return epoch;
 	}
 	
-	public synchronized void setDeleted(boolean deleted){
-		this.deleted = deleted;
+	public synchronized void setCallbackReturn(boolean callbackret){
+		this.callbackreturn = callbackret;
 	}
 
 	public synchronized TimeAmount getTimeAmount() {
