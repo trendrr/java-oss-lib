@@ -88,7 +88,7 @@ public class TimeAmountFile {
 		if (this.callbackreturn)
 			return; //do nothing..
 		callback.staleFile(this);
-		
+		this.callbackreturn = true;
 	//	this.deleted = true;
 		
 		/*try {
@@ -139,10 +139,6 @@ public class TimeAmountFile {
 		return epoch;
 	}
 	
-	public synchronized void setCallbackReturn(boolean callbackret){
-		this.callbackreturn = callbackret;
-	}
-
 	public synchronized TimeAmount getTimeAmount() {
 		return timeAmount;
 	}
