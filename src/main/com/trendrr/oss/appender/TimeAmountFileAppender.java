@@ -48,13 +48,6 @@ public class TimeAmountFileAppender {
 	
 	LoadingCache<Long, TimeAmountFile> cache;
 	
-	
-	/**
-	 * If the timeamount of the file has not been updated in 
-	 * this amount of time, we stale the file.
-	 */
-	TimeAmount staleFileCheck = TimeAmount.instance(Timeframe.MINUTES, 5);
-	
 	TimeAmountFileCallback callback;
 	
 	long maxBytes;
@@ -68,7 +61,7 @@ public class TimeAmountFileAppender {
 		
 		this.cache = CacheBuilder.newBuilder()
 	       .maximumSize(1000)
-	       .expireAfterWrite(staleFileCheck.getAmount(), staleFileCheck.getTimeframe().getTimeUnit())
+	       .expireAfterAccess(staleFileCheck.getAmount(), staleFileCheck.getTimeframe().getTimeUnit())
 	       .removalListener(
 	    		   new RemovalListener<Long, TimeAmountFile>() {
 						@Override
