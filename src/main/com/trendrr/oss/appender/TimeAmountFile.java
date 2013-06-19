@@ -87,8 +87,9 @@ public class TimeAmountFile {
 	public synchronized void stale(TimeAmountFileCallback callback) {
 		if (this.callbackreturn)
 			return; //do nothing..
-		callback.staleFile(this);
 		this.callbackreturn = true;
+		callback.staleFile(this);
+		
 	//	this.deleted = true;
 		
 		/*try {
