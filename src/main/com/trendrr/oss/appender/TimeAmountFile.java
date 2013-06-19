@@ -33,7 +33,7 @@ public class TimeAmountFile {
 	private TimeAmount timeAmount;
 	
 	private boolean stale = false;
-	private boolean deleted = false;
+	private boolean callbackreturn = false;
 	private long maxBytes;
 	private long curBytes = 0;
 	private FileWriter writer = null;
@@ -83,20 +83,12 @@ public class TimeAmountFile {
 	 * @param callback
 	 * @return
 	 */
-	public synchronized void stale(TimeAmountFileCallback callback) {
-		if (this.deleted)
+	// Moved The delete code to callback level for deleting after the uploading
+	protected synchronized void stale(TimeAmountFileCallback callback) {
+		if (this.callbackreturn)
 			return; //do nothing..
-		
-		this.deleted = true;
+		this.callbackreturn = true;
 		callback.staleFile(this);
-		try {
-			boolean deleted = this.file.delete();
-			if (!deleted) {
-				throw new TrendrrIOException("Unable to delete TimeAmountFile: " + this.file);
-			}
-		} catch (Exception x) {
-			callback.onError(x);
-		}
 	}
 	
 	/**
@@ -136,7 +128,7 @@ public class TimeAmountFile {
 	public synchronized long getEpoch() {
 		return epoch;
 	}
-
+	
 	public synchronized TimeAmount getTimeAmount() {
 		return timeAmount;
 	}

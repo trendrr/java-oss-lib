@@ -98,7 +98,8 @@ public class TimeAmountFileAppender {
 		}	
 	}
 	
-	protected void staleFile(TimeAmountFile f) {
+	public void staleFile(TimeAmountFile f) {
+	
 		f.stale(callback);
 	}
 
@@ -120,6 +121,7 @@ public class TimeAmountFileAppender {
 				file.append(str);
 				return;
 			} catch (FileClosedException x) {
+			
 				this.staleFile(file);
 				this.cache.invalidate(epoch);
 				//try again..
