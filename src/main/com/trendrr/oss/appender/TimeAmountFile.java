@@ -84,22 +84,11 @@ public class TimeAmountFile {
 	 * @return
 	 */
 	// Moved The delete code to callback level for deleting after the uploading
-	public synchronized void stale(TimeAmountFileCallback callback) {
+	protected synchronized void stale(TimeAmountFileCallback callback) {
 		if (this.callbackreturn)
 			return; //do nothing..
 		this.callbackreturn = true;
 		callback.staleFile(this);
-		
-	//	this.deleted = true;
-		
-		/*try {
-			boolean deleted = this.file.delete();
-			if (!deleted) {
-				throw new TrendrrIOException("Unable to delete TimeAmountFile: " + this.file);
-			}
-		} catch (Exception x) {
-			callback.onError(x);
-		}*/
 	}
 	
 	/**
