@@ -86,9 +86,10 @@ public class TimeAmountFile {
 	public synchronized void stale(TimeAmountFileCallback callback) {
 		if (this.deleted)
 			return; //do nothing..
-		log.warn("I am dieeeing hereee");
-	//	this.deleted = true;
 		callback.staleFile(this);
+		
+	//	this.deleted = true;
+		// Moved The delete code to callback level for deleting after the uploading
 		/*try {
 			boolean deleted = this.file.delete();
 			if (!deleted) {
