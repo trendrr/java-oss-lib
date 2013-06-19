@@ -106,6 +106,9 @@ public class TimeAmountFile {
 			this.setStale();
 			throw new FileClosedException();
 		}
+		
+		//Just count the chars for speed.  
+		this.curBytes += str.length();
 		this.lastWrite = new Date();
 		this.writer.append(str);
 		this.writer.flush();
