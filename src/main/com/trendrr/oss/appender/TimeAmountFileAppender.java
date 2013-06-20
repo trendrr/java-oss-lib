@@ -101,7 +101,7 @@ public class TimeAmountFileAppender {
 	}
 	
 	public void appendLine(Date date, String str) throws Exception {
-		this.append(new Date(), str + "\n");
+		this.append(date, str + "\n");
 	}
 		
 	public synchronized void append(Date date, String str) throws Exception {
