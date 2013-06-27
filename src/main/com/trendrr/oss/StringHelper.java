@@ -208,6 +208,15 @@ public class StringHelper {
 	}
 	
 	/**
+	 * removes all bad characters not suitable for UTF-8 encoding
+	 */
+	public static String toUTF8String(String str){
+		if(str==null)
+			return null;
+		return str.replaceAll( "([\\ud800-\\udbff\\udc00-\\udfff])", "");
+	}
+	
+	/**
 	 * randomizes a string ordering.  probably could be faster
 	 * @param str
 	 * @return
