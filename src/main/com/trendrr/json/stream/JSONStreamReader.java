@@ -16,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import com.trendrr.oss.DynMap;
 import com.trendrr.oss.DynMapFactory;
 import com.trendrr.oss.FileHelper;
+import com.trendrr.oss.concurrent.Sleep;
 import com.trendrr.oss.exceptions.TrendrrException;
 import com.trendrr.oss.exceptions.TrendrrIOException;
 import com.trendrr.oss.exceptions.TrendrrParseException;
@@ -54,6 +55,13 @@ public class JSONStreamReader {
 	
 	public static void main(String ...strings) throws TrendrrException {
 		String json = "blah blah{ \"key\" : \"value\"}{ \"key1\" : \"valu\\\"e1}\"}";
+		
+		try {
+			json = FileHelper.loadString("tweetparse.json");
+		} catch (Exception e) {
+			log.error("Caught", e);
+		}
+		
 		JSONStreamReader reader = new JSONStreamReader(new StringReader(json));
 		DynMap mp;
 		while((mp = reader.readNext()) != null) {
@@ -74,14 +82,14 @@ public class JSONStreamReader {
 			long numRead = 0;
 			int openBrackets = 1;
 			boolean isQuote = false;
-			char previous = '{';
+			boolean isEscape = false;
 			
 			//read until the first open bracket
 			int current = this.reader.read();
 			while(current != '{' && current != -1) {
 				numRead++;
 				if (numRead > this.maxBufferedChars) {
-					throw new TrendrrParseException("Read " + this.maxBufferedChars + " chars without a valid json dict");
+					throw new TrendrrParseException("Read " + this.maxBufferedChars + " chars without a valid json dict.  Beginning with: " + json.substring(0, 256));
 				}
 				current = this.reader.read();
 			}
@@ -100,14 +108,19 @@ public class JSONStreamReader {
 						openBrackets--;
 					}
 				}
-				if (c == '"' && previous != '\\') {
+				if (c == '"' && !isEscape) {
 					isQuote = !isQuote;
 				}
 				
-				previous = c;
+				if (isQuote && !isEscape && c == '\\') {
+					isEscape = true;
+				} else {
+					isEscape = false;
+				}
+				
 				numRead++;
 				if (numRead > this.maxBufferedChars) {
-					throw new TrendrrParseException("Read " + this.maxBufferedChars + " chars without a valid json dict");
+					throw new TrendrrParseException("Read " + this.maxBufferedChars + " chars without a valid json dict.  Beginning with: " + json.substring(0, 256));
 				}
 			} while(openBrackets != 0);
 			
