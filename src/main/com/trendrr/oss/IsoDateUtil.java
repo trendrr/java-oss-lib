@@ -76,7 +76,7 @@ public class IsoDateUtil {
 //		test("2011-05-16T23:10:44.420000+00:00");
 //		test("2011-05-18T18:43:30.834000 00:00");
 //		System.out.println(getCurrentUTCTimestamp());
-		System.out.println(IsoDateUtil.parse("2012-03-11T00:00:00Z"));
+		System.out.println(IsoDateUtil.parse("2013-05-19T06:00:00-0400 "));
 	}
 
 
@@ -141,6 +141,8 @@ public class IsoDateUtil {
 	private static Calendar getCalendar(String isodate)
 	throws IllegalArgumentException
 	{
+		
+		isodate = isodate.trim();
 		// YYYY-MM-DDThh:mm:ss.sTZD
 		// Marcel: Added ' ' to T replacement (ISO allows blanks)
 		int index = isodate.indexOf(' ');
