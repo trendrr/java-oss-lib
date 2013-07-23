@@ -34,7 +34,9 @@ import com.trendrr.oss.exceptions.TrendrrIOException;
  * 
  * 1. files get uploaded if they have not been written to for five minutes
  * 2. files have a maxbytes param, will upload once that file size is achieved.
- * 3. filename in the form {epoch}_{timeamount}__{randomstring}
+ * 3. filename in the form {epoch}_{timeamount}__{randomstring}(.gz)
+ * 
+ * Note the gzip appendar seems to be slightly touchy.
  * 
  * @author Dustin Norlander
  * @created Jun 17, 2013
@@ -53,11 +55,14 @@ public class TimeAmountFileAppender {
 	long maxBytes;
 	String directory;
 	
-	public TimeAmountFileAppender(TimeAmountFileCallback callback, TimeAmount amount, TimeAmount staleFileCheck, String dir, long maxBytes) {
+	boolean gzip = false;
+	
+	public TimeAmountFileAppender(TimeAmountFileCallback callback, TimeAmount amount, TimeAmount staleFileCheck, String dir, long maxBytes, boolean gzip) {
 		this.amount = amount;
 		this.callback = callback;
 		this.directory = dir;
 		this.maxBytes = maxBytes;
+		this.gzip = gzip;
 		
 		this.cache = CacheBuilder.newBuilder()
 	       .maximumSize(1000)
@@ -97,7 +102,7 @@ public class TimeAmountFileAppender {
 	}
 
 	protected TimeAmountFile newFile(Long epoch) throws Exception {
-		return new TimeAmountFile(this.amount, epoch, this.directory, this.maxBytes);
+		return new TimeAmountFile(this.amount, epoch, this.directory, this.maxBytes, this.gzip);
 	}
 	
 	public void appendLine(Date date, String str) throws Exception {

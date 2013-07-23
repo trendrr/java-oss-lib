@@ -3,6 +3,7 @@
  */
 package com.trendrr.oss.appender;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.UUID;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,19 +42,22 @@ public class TimeAmountFile {
 	private boolean callbackreturn = false;
 	private long maxBytes;
 	private long curBytes = 0;
+	private boolean gzip = false;
 	
 	private OutputStream os = null;
 	
 //	private FileWriter writer = null;
 	private Date lastWrite = new Date();
 	
-	public TimeAmountFile(TimeAmount ta, long epoch, String dir, long maxBytes) throws Exception {
+	public TimeAmountFile(TimeAmount ta, long epoch, String dir, long maxBytes, boolean gzip) throws Exception {
 		if (!dir.endsWith(File.separator)) {
 			dir = dir + File.separator;
 		}
 		this.epoch = epoch;
 		this.timeAmount = ta;
 		this.maxBytes = maxBytes;
+		this.gzip = gzip;
+		
 		boolean exists = true;
 		while(exists) {
 			//guarentee uniqueness.
@@ -61,14 +66,19 @@ public class TimeAmountFile {
 			Date start = ta.fromTrendrrEpoch(ta.toTrendrrEpoch(new Date()));
 			long millis = new Date().getTime()-start.getTime();
 			String filename = dir + epoch +"_" + ta.abbreviation() + "__" + millis + StringHelper.getRandomString(5);
+			if (this.gzip) {
+				filename += ".gz";
+			}
 			filename = FileHelper.toSystemDependantFilename(filename);
 			FileHelper.createDirectories(filename);
 			this.file = new File(filename);
 			exists = !file.createNewFile();
 		}
+		this.os = new BufferedOutputStream(new FileOutputStream(file, true));
 		
-		this.os = new FileOutputStream(this.file, true);
-//		this.writer = new FileWriter(this.file, true);
+		if (this.gzip) {
+			this.os = new GZIPOutputStream(this.os);
+		}
 	}
 	
 	/**
@@ -83,10 +93,20 @@ public class TimeAmountFile {
 		if (tmp.length < 3) {
 			throw new TrendrrIOException("File : " + filename + " is not a TimeAmountFile");
 		}
+		
+		if (filename.endsWith(".gz")) {
+			this.gzip = true;
+		}
 		this.epoch = TypeCast.cast(Long.class, tmp[0]);
 		this.timeAmount = TimeAmount.instance(tmp[1]);
 		this.file = file;
-		this.os = new FileOutputStream(file, true);
+		
+		
+		this.os = new BufferedOutputStream(new FileOutputStream(file, true));
+		if (this.gzip) {
+			this.os = new GZIPOutputStream(this.os);
+		}
+		
 		
 //		this.writer = new FileWriter(this.file, true);
 		this.maxBytes = maxBytes;
@@ -128,12 +148,14 @@ public class TimeAmountFile {
 		}
 		//check that we havent gone over the max bytes
 		if (maxBytes > 0 && curBytes >= maxBytes) {
+			
 			this.setStale();
 			throw new FileClosedException();
 		}
 		
 		//Just count the chars for speed.  
 		this.curBytes += bytes.length;
+//		System.out.println(this.curBytes + " " + maxBytes);
 		this.lastWrite = new Date();
 		this.os.write(bytes);
 		this.os.flush();
