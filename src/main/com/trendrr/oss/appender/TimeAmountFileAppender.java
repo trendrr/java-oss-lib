@@ -58,6 +58,10 @@ public class TimeAmountFileAppender {
 	
 	boolean gzip = false;
 	
+	public TimeAmountFileAppender(TimeAmountFileCallback callback, TimeAmount amount, TimeAmount staleFileCheck, String dir, long maxBytes) {
+		this(callback, amount, staleFileCheck, dir, maxBytes, false);
+	}
+	
 	public TimeAmountFileAppender(TimeAmountFileCallback callback, TimeAmount amount, TimeAmount staleFileCheck, String dir, long maxBytes, boolean gzip) {
 		this.amount = amount;
 		this.callback = callback;
