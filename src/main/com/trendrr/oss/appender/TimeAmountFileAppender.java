@@ -14,6 +14,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
+import com.trendrr.oss.StringHelper;
 import com.trendrr.oss.TimeAmount;
 import com.trendrr.oss.Timeframe;
 import com.trendrr.oss.appender.exceptions.FileClosedException;
@@ -84,10 +85,21 @@ public class TimeAmountFileAppender {
 		
 		//now load any files already in the directory.
 		File f[] = new File(dir).listFiles();
+		
 		if (f != null) {
 			for (File file : f) {
 				try {
 					TimeAmountFile taf = new TimeAmountFile(file, maxBytes);
+					
+					//make sure we dont upload both a gz and non-gz file with the same name
+					if (file.getName().endsWith(".gz")) {
+						if (new File(StringHelper.trim(file.getAbsolutePath(), ".gz")).exists()) {
+							log.warn("Deleting gz file, keeping original. " + file.getAbsolutePath());
+							file.delete();
+							continue;
+						}
+					}
+					
 					this.cache.put(taf.getEpoch(), taf);
 				} catch (Exception x) {
 					log.error("Caught", x);
