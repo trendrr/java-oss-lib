@@ -14,6 +14,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
+import com.trendrr.oss.StringHelper;
 import com.trendrr.oss.TimeAmount;
 import com.trendrr.oss.Timeframe;
 import com.trendrr.oss.appender.exceptions.FileClosedException;
@@ -34,7 +35,9 @@ import com.trendrr.oss.exceptions.TrendrrIOException;
  * 
  * 1. files get uploaded if they have not been written to for five minutes
  * 2. files have a maxbytes param, will upload once that file size is achieved.
- * 3. filename in the form {epoch}_{timeamount}__{randomstring}
+ * 3. filename in the form {epoch}_{timeamount}__{randomstring}(.gz)
+ * 
+ * Note the gzip appendar seems to be slightly touchy.
  * 
  * @author Dustin Norlander
  * @created Jun 17, 2013
@@ -53,11 +56,18 @@ public class TimeAmountFileAppender {
 	long maxBytes;
 	String directory;
 	
+	boolean gzip = false;
+	
 	public TimeAmountFileAppender(TimeAmountFileCallback callback, TimeAmount amount, TimeAmount staleFileCheck, String dir, long maxBytes) {
+		this(callback, amount, staleFileCheck, dir, maxBytes, false);
+	}
+	
+	public TimeAmountFileAppender(TimeAmountFileCallback callback, TimeAmount amount, TimeAmount staleFileCheck, String dir, long maxBytes, boolean gzip) {
 		this.amount = amount;
 		this.callback = callback;
 		this.directory = dir;
 		this.maxBytes = maxBytes;
+		this.gzip = gzip;
 		
 		this.cache = CacheBuilder.newBuilder()
 	       .maximumSize(1000)
@@ -79,10 +89,21 @@ public class TimeAmountFileAppender {
 		
 		//now load any files already in the directory.
 		File f[] = new File(dir).listFiles();
+		
 		if (f != null) {
 			for (File file : f) {
 				try {
 					TimeAmountFile taf = new TimeAmountFile(file, maxBytes);
+					
+					//make sure we dont upload both a gz and non-gz file with the same name
+					if (file.getName().endsWith(".gz")) {
+						if (new File(StringHelper.trim(file.getAbsolutePath(), ".gz")).exists()) {
+							log.warn("Deleting gz file, keeping original. " + file.getAbsolutePath());
+							file.delete();
+							continue;
+						}
+					}
+					
 					this.cache.put(taf.getEpoch(), taf);
 				} catch (Exception x) {
 					log.error("Caught", x);
@@ -97,7 +118,7 @@ public class TimeAmountFileAppender {
 	}
 
 	protected TimeAmountFile newFile(Long epoch) throws Exception {
-		return new TimeAmountFile(this.amount, epoch, this.directory, this.maxBytes);
+		return new TimeAmountFile(this.amount, epoch, this.directory, this.maxBytes, this.gzip);
 	}
 	
 	public void appendLine(Date date, String str) throws Exception {
