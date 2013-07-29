@@ -3,13 +3,7 @@
  */
 package com.trendrr.oss.strest.models;
 
-import java.util.Collection;
-import java.util.Map;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import com.trendrr.oss.DynMap;
+import java.io.InputStream;
 
 
 /**
@@ -19,12 +13,6 @@ import com.trendrr.oss.DynMap;
  */
 public interface StrestPacketBase {
 
-//	public void addHeader(String header, String value);
-//	public void addHeader(StrestHeader.Name header, String value);
-//	public String getHeader(StrestHeader.Name header);
-//	public String getHeader(String header);
-//	public Collection<String> getHeaderNames();
-	
 	
 	public void setProtocol(String protocolName, float version);
 	public float getProtocolVersion();
@@ -33,16 +21,19 @@ public interface StrestPacketBase {
 	public void setTxnId(String id);
 	public String getTxnId();
 	
-	public void setContent(DynMap content);
-	public void setContent(String contentType, byte[] bytes);
-	public Object getContent();
+	public void setContent(String contentEncoding, long contentLength, InputStream stream) throws Exception;
+	public InputStream getContent() throws Exception;
+	public String getContentEncoding();
+	public long getContentLength();
+	
 	
 	/**
 	 * this packet is done with, clean up anything that needs it.
 	 */
 	public void cleanup();
 	
+	@Deprecated
 	public byte[] toByteArray();
-	
-	public Map<String, Object> toMap();
+//	
+//	public Map<String, Object> toMap();
 }

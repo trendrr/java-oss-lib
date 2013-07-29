@@ -3,6 +3,8 @@
  */
 package com.trendrr.oss.strest.models;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -37,6 +39,11 @@ public class DefaultStrestRequest implements StrestRequest {
 	protected TxnAccept accept = TxnAccept.SINGLE; 
 
 	protected DynMap params = new DynMap();
+	
+	protected InputStream content;
+	protected long contentLength = 0l;
+	protected String contentEncoding;
+	
 	
 	/* (non-Javadoc)
 	 * @see com.trendrr.oss.strest.models.StrestPacketBase#setProtocol(java.lang.String, float)
@@ -79,33 +86,7 @@ public class DefaultStrestRequest implements StrestRequest {
 		return this.txnId;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.trendrr.oss.strest.models.StrestPacketBase#setContent(com.trendrr.oss.DynMap)
-	 */
-	@Override
-	public void setContent(DynMap content) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
-	 * @see com.trendrr.oss.strest.models.StrestPacketBase#setContent(java.lang.String, byte[])
-	 */
-	@Override
-	public void setContent(String contentType, byte[] bytes) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
-	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getContent()
-	 */
-	@Override
-	public Object getContent() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	/* (non-Javadoc)
 	 * @see com.trendrr.oss.strest.models.StrestPacketBase#cleanup()
 	 */
@@ -120,15 +101,6 @@ public class DefaultStrestRequest implements StrestRequest {
 	 */
 	@Override
 	public byte[] toByteArray() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.trendrr.oss.strest.models.StrestPacketBase#toMap()
-	 */
-	@Override
-	public Map<String, Object> toMap() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -211,5 +183,41 @@ public class DefaultStrestRequest implements StrestRequest {
 	@Override
 	public DynMap getParams() {
 		return this.params;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#setContent(java.lang.String, long, java.io.InputStream)
+	 */
+	@Override
+	public void setContent(String contentEncoding, long contentLength,
+			InputStream content) throws Exception {
+		this.content = content;
+		this.contentEncoding = contentEncoding;
+		this.contentLength = contentLength;
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getContent()
+	 */
+	@Override
+	public InputStream getContent() {
+		return this.content;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getContentEncoding()
+	 */
+	@Override
+	public String getContentEncoding() {
+		return this.contentEncoding;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getContentLength()
+	 */
+	@Override
+	public long getContentLength() {
+		return this.contentLength;
 	}
 }

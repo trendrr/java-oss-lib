@@ -3,6 +3,8 @@
  */
 package com.trendrr.oss.strest.models.json;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
@@ -118,13 +120,13 @@ public class StrestJsonRequest extends StrestJsonBase implements StrestRequest {
 		super.cleanup();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.trendrr.oss.strest.models.StrestPacketBase#toMap()
-	 */
-	@Override
-	public Map<String, Object> toMap() {
-		return this.map;
-	}
+//	/* (non-Javadoc)
+//	 * @see com.trendrr.oss.strest.models.StrestPacketBase#toMap()
+//	 */
+//	@Override
+//	public Map<String, Object> toMap() {
+//		return this.map;
+//	}
 
 	/* (non-Javadoc)
 	 * @see com.trendrr.oss.strest.models.StrestRequest#setShardRequest(com.trendrr.oss.strest.models.ShardRequest)
