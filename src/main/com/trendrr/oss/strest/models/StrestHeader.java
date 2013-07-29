@@ -56,10 +56,11 @@ public class StrestHeader {
 	}
 	
 	public enum TxnStatus {
-		CONTINUE("continue", "continue"),
-		COMPLETED("completed", "completed");
+		CONTINUE("continue", "continue", (byte)1),
+		COMPLETED("completed", "completed", (byte)0);
 		protected String http;
 		protected String json;
+		protected byte binary;
 		
 		public static TxnStatus instance(String str) {
 			if (str == null)
@@ -67,9 +68,10 @@ public class StrestHeader {
 			return TxnStatus.valueOf(str.toUpperCase());
 		}
 		
-		TxnStatus(String http, String json) {
+		TxnStatus(String http, String json, byte binary) {
 			this.http = http;
 			this.json = json;
+			this.binary = binary;
 		}
 		
 		public String getHttp() {
@@ -80,15 +82,20 @@ public class StrestHeader {
 			return this.json;
 		}
 		
+		public byte getBinary() {
+			return this.binary;
+		}
 		
 	}
 	
 	
 	public enum TxnAccept {
-		MULTI("multi", "multi"),
-		SINGLE("single", "single");
+		MULTI("multi", "multi", (byte)1),
+		SINGLE("single", "single", (byte)0);
 		protected String http;
 		protected String json;
+		protected byte binary;
+		
 		
 		public static TxnAccept instance(String str) {
 			if (str == null)
@@ -96,9 +103,10 @@ public class StrestHeader {
 			return TxnAccept.valueOf(str.toUpperCase());
 		}
 		
-		TxnAccept(String http, String json) {
+		TxnAccept(String http, String json, byte binary) {
 			this.http = http;
 			this.json = json;
+			this.binary = binary;
 		}
 		
 		public String getHttp() {
@@ -108,18 +116,28 @@ public class StrestHeader {
 		public String getJson() {
 			return this.json;
 		}
+		
+		public byte getBinary() {
+			return this.binary;
+		}
 	}
 	
 	public enum Method {
-		GET,
-		POST,
-		PUT,
-		DELETE;
+		GET((byte)0),
+		POST((byte)1),
+		PUT((byte)2),
+		DELETE((byte)3);
+		
+		protected byte binary;
 		
 		public static Method instance(String method) {
 			if (method == null)
 				return null;
 			return Method.valueOf(method.toUpperCase());
+		}
+		
+		private Method(byte binary) {
+			this.binary = binary;
 		}
 		
 		public String getHttp() {
@@ -130,5 +148,35 @@ public class StrestHeader {
 			return this.toString();
 		}
 		
+		public byte getBinary() {
+			return this.binary;
+		}
 	}
+	
+	public enum ParamEncoding {
+		JSON((byte)0),
+		MSGPACK((byte)1);
+		protected byte binary;
+		private ParamEncoding(byte binary) {
+			this.binary = binary;
+		}
+		
+		public byte getBinary() {
+			return this.binary;
+		}
+	}
+	
+	public enum ContentEncoding {
+		STRING((byte)0),
+		BYTES((byte)1);
+		protected byte binary;
+		private ContentEncoding(byte binary) {
+			this.binary = binary;
+		}
+		
+		public byte getBinary() {
+			return this.binary;
+		}
+	}
+	
 }
