@@ -19,10 +19,10 @@ import com.trendrr.oss.DynMap;
  */
 public interface StrestPacketBase {
 
-	public void addHeader(String header, String value);
-	public void addHeader(StrestHeader.Name header, String value);
-	public String getHeader(StrestHeader.Name header);
-	public String getHeader(String header);
+//	public void addHeader(String header, String value);
+//	public void addHeader(StrestHeader.Name header, String value);
+//	public String getHeader(StrestHeader.Name header);
+//	public String getHeader(String header);
 //	public Collection<String> getHeaderNames();
 	
 	

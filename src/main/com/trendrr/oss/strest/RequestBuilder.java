@@ -152,10 +152,10 @@ public class RequestBuilder {
 		return this;
 	}
 	
-	public RequestBuilder header(String header, String value) {
-		request.addHeader(header, value);
-		return this;
-	}
+//	public RequestBuilder header(String header, String value) {
+//		request.addHeader(header, value);
+//		return this;
+//	}
 		
 	public StrestRequest getRequest() {
 		return this.request;

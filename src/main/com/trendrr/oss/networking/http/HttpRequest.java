@@ -104,34 +104,18 @@ public class HttpRequest implements StrestPacketBase {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see com.trendrr.oss.networking.strest.v2.models.StrestPacketBase#addHeader(java.lang.String, java.lang.String)
-	 */
-	@Override
 	public void addHeader(String header, String value) {
 		headers.put(header, value);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.trendrr.oss.networking.strest.v2.models.StrestPacketBase#addHeader(com.trendrr.oss.networking.strest.v2.models.StrestHeader.Name, java.lang.String)
-	 */
-	@Override
 	public void addHeader(Name header, String value) {
 		this.addHeader(header.getHttpName(), value);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.trendrr.oss.networking.strest.v2.models.StrestPacketBase#getHeader(com.trendrr.oss.networking.strest.v2.models.StrestHeader.Name)
-	 */
-	@Override
 	public String getHeader(Name header) {
 		return this.getHeader(header.getHttpName());
 	}
 
-	/* (non-Javadoc)
-	 * @see com.trendrr.oss.networking.strest.v2.models.StrestPacketBase#getHeader(java.lang.String)
-	 */
-	@Override
 	public String getHeader(String header) {
 		return this.headers.get(header);
 	}

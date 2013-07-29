@@ -42,38 +42,19 @@ public abstract class StrestJsonBase implements StrestPacketBase {
 	public DynMap getMap() {
 		return this.map;
 	}
-	/* (non-Javadoc)
-	 * @see com.trendrr.strest.server.v2.models.StrestPacketBase#addHeader(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void addHeader(String header, String value) {
-		this.map.putWithDot("strest." + header.toLowerCase(), value);
-		
-	}
-	/* (non-Javadoc)
-	 * @see com.trendrr.strest.server.v2.StrestRequest#addHeader(com.trendrr.strest.server.v2.StrestHeaders, java.lang.String)
-	 */
-	@Override
+
+	
+//	public void addHeader(String header, String value) {
+//		this.map.putWithDot("strest." + header.toLowerCase(), value);
+//		
+//	}
+	
 	public void addHeader(StrestHeader.Name header, String value) {
 		this.map.putWithDot("strest." + header.getJsonName(), value);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.trendrr.strest.server.v2.StrestRequest#getHeader(com.trendrr.strest.server.v2.StrestHeaders)
-	 */
-	@Override
 	public String getHeader(StrestHeader.Name header) {
-//		System.out.println("MAP: " + this.map);
-//		System.out.println("header: " + header);
 		return this.map.getString("strest." + header.getJsonName());
-	}
-
-	/* (non-Javadoc)
-	 * @see com.trendrr.strest.server.v2.StrestRequest#getHeader(com.trendrr.strest.server.v2.StrestHeaders)
-	 */
-	@Override
-	public String getHeader(String header) {
-		return this.map.getString("strest." + header.toLowerCase());
 	}
 		
 	/* (non-Javadoc)
