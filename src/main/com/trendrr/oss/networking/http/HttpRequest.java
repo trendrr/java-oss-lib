@@ -3,6 +3,7 @@
  */
 package com.trendrr.oss.networking.http;
 
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.ByteBuffer;
@@ -71,7 +72,7 @@ public class HttpRequest implements StrestPacketBase {
 		HttpRequest test = new HttpRequest();
 		test.setUrl("http://strest.trendrr.com?test=test2");
 		test.addHeader("Etag", "3f80f-1b6-3e1cb03b");
-		test.setContent("text", "THIS IS SOME CONTENT".getBytes());
+//		test.setContent("text", "THIS IS SOME CONTENT".getBytes());
 		System.out.println(new String(test.toByteArray(), "utf8"));
 		
 		
@@ -162,35 +163,6 @@ public class HttpRequest implements StrestPacketBase {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.trendrr.oss.networking.strest.v2.models.StrestPacketBase#setContent(com.trendrr.oss.DynMap)
-	 */
-	@Override
-	public void setContent(DynMap content) {
-		try {
-			this.setContent("application/json", content.toJSONString().getBytes("utf8"));
-		} catch (UnsupportedEncodingException e) {
-			log.error("Caught", e);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see com.trendrr.oss.networking.strest.v2.models.StrestPacketBase#setContent(java.lang.String, byte[])
-	 */
-	@Override
-	public void setContent(String contentType, byte[] bytes) {
-		this.addHeader("Content-Type", contentType);
-		this.content = bytes;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.trendrr.oss.networking.strest.v2.models.StrestPacketBase#getContent()
-	 */
-	@Override
-	public byte[] getContent() {
-		return this.content;
-	}
-
-	/* (non-Javadoc)
 	 * @see com.trendrr.oss.networking.strest.v2.models.StrestPacketBase#cleanup()
 	 */
 	@Override
@@ -254,14 +226,38 @@ public class HttpRequest implements StrestPacketBase {
 		return null;
 	}
 	
-//	public void addHeader(String
-	
+
 	/* (non-Javadoc)
-	 * @see com.trendrr.oss.strest.models.StrestPacketBase#toMap()
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#setContent(java.lang.String, long, java.io.InputStream)
 	 */
 	@Override
-	public Map<String, Object> toMap() {
-		log.warn("toMap not implemented: " + this);
+	public void setContent(String contentEncoding, long contentLength,
+			InputStream stream) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getContentEncoding()
+	 */
+	@Override
+	public String getContentEncoding() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getContentLength()
+	 */
+	@Override
+	public long getContentLength() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getContent()
+	 */
+	@Override
+	public InputStream getContent() throws Exception {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }

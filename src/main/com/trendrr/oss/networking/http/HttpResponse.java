@@ -3,6 +3,7 @@
  */
 package com.trendrr.oss.networking.http;
 
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
@@ -144,10 +145,9 @@ public class HttpResponse implements StrestPacketBase {
 	public String getTxnId() {
 		return this.getHeader(Name.TXN_ID);
 	}
-	/* (non-Javadoc)
-	 * @see com.trendrr.oss.networking.strest.v2.models.StrestPacketBase#setContent(com.trendrr.oss.DynMap)
-	 */
-	@Override
+	
+	
+
 	public void setContent(DynMap content) {
 		try {
 			this.setContent("application/json", content.toJSONString().getBytes("utf8"));
@@ -157,20 +157,12 @@ public class HttpResponse implements StrestPacketBase {
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see com.trendrr.oss.networking.strest.v2.models.StrestPacketBase#setContent(java.lang.String, byte[])
-	 */
-	@Override
 	public void setContent(String contentType, byte[] bytes) {
 		this.addHeader("Content-Type", contentType);
 		this.content = bytes;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.trendrr.oss.networking.strest.v2.models.StrestPacketBase#getContent()
-	 */
-	@Override
-	public byte[] getContent() {
+	public byte[] getContentBytes() {
 		return content;
 	}
 
@@ -191,13 +183,42 @@ public class HttpResponse implements StrestPacketBase {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see com.trendrr.oss.strest.models.StrestPacketBase#toMap()
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#setContent(java.lang.String, long, java.io.InputStream)
 	 */
 	@Override
-	public Map<String, Object> toMap() {
-		log.warn("toMap not implemented: " + this);
+	public void setContent(String contentEncoding, long contentLength,
+			InputStream stream) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getContent()
+	 */
+	@Override
+	public InputStream getContent() throws Exception {
+		// TODO Auto-generated method stub
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getContentEncoding()
+	 */
+	@Override
+	public String getContentEncoding() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getContentLength()
+	 */
+	@Override
+	public long getContentLength() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
 }

@@ -71,7 +71,7 @@ public class Http {
 //		request.setContent("application/json", "this is a test".getBytes());
 
 		HttpResponse response = request(request);
-		System.out.println(new String(response.getContent()));
+//		System.out.println(new String(response.getContent()));
 		
 	}
 	
@@ -256,7 +256,7 @@ public class Http {
 			HttpResponse response = request(request);
 			
 			if (response.getStatusCode() == 200) {
-				return new String(response.getContent(), "utf8");
+				return new String(response.getContentBytes(), "utf8");
 			}
 			//TODO: some kind of http exception.
 			throw new TrendrrNetworkingException("Error from response") {
