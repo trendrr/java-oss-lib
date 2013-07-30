@@ -14,6 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.DynMap;
+import com.trendrr.oss.DynMapConvertable;
 import com.trendrr.oss.exceptions.TrendrrException;
 import com.trendrr.oss.strest.models.StrestHeader;
 import com.trendrr.oss.strest.models.StrestHeader.ContentEncoding;
@@ -28,7 +29,7 @@ import com.trendrr.oss.strest.models.StrestHeader.TxnAccept;
  * @created May 1, 2012
  * 
  */
-public abstract class StrestJsonBase implements StrestPacketBase {
+public abstract class StrestJsonBase implements StrestPacketBase, DynMapConvertable {
 
 	protected static Log log = LogFactory.getLog(StrestJsonBase.class);
 
@@ -49,6 +50,13 @@ public abstract class StrestJsonBase implements StrestPacketBase {
 		return this.map;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.DynMapConvertable#toDynMap()
+	 */
+	@Override
+	public DynMap toDynMap() {
+		return this.map;
+	}
 	
 //	public void addHeader(String header, String value) {
 //		this.map.putWithDot("strest." + header.toLowerCase(), value);
@@ -132,6 +140,10 @@ public abstract class StrestJsonBase implements StrestPacketBase {
 	@Override
 	public void setContent(ContentEncoding contentEncoding, int contentLength,
 			InputStream stream) throws Exception {
+		if (contentLength < 1) {
+			return; //do nothing..
+		}
+		System.out.println(contentEncoding);
 		this.map.putWithDot("content_encoding", contentEncoding);
 		
 		byte[] bytes = new byte[(int)contentLength];

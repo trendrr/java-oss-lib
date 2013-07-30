@@ -232,4 +232,13 @@ public class DefaultStrestRequest implements StrestRequest {
 	public int getContentLength() {
 		return this.contentLength;
 	}
+
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.DynMapConvertable#toDynMap()
+	 */
+	@Override
+	public DynMap toDynMap() {
+		log.warn("ToDynMap in DefaultStrestRequest not implimented. todo");
+		return null;
+	}
 }

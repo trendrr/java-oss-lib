@@ -166,6 +166,15 @@ public class StrestHeader {
 		JSON((byte)0),
 		MSGPACK((byte)1);
 		protected byte binary;
+		public static ParamEncoding instance (byte binary) {
+			for (ParamEncoding t : ParamEncoding.values()) {
+				if (t.getBinary() == binary) {
+					return t;
+				}
+			}
+			return null;
+		}
+		
 		private ParamEncoding(byte binary) {
 			this.binary = binary;
 		}
@@ -177,7 +186,10 @@ public class StrestHeader {
 	
 	public enum ContentEncoding {
 		STRING((byte)0),
-		BYTES((byte)1);
+		BYTES((byte)1),
+		JSON((byte)2),
+		MSGPACK((byte)3);
+		
 		protected byte binary;
 		
 		public static ContentEncoding instance (byte binary) {

@@ -5,6 +5,7 @@ package com.trendrr.oss.strest.models;
 
 import java.io.InputStream;
 
+import com.trendrr.oss.DynMapConvertable;
 import com.trendrr.oss.strest.models.StrestHeader.ContentEncoding;
 
 
@@ -13,7 +14,7 @@ import com.trendrr.oss.strest.models.StrestHeader.ContentEncoding;
  * @created May 1, 2012
  * 
  */
-public interface StrestPacketBase {
+public interface StrestPacketBase extends DynMapConvertable {
 
 	
 	public void setProtocol(String protocolName, float version);

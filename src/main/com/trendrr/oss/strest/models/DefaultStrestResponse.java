@@ -13,6 +13,7 @@ import com.trendrr.oss.strest.models.StrestHeader.ContentEncoding;
 import com.trendrr.oss.strest.models.StrestHeader.Method;
 import com.trendrr.oss.strest.models.StrestHeader.TxnAccept;
 import com.trendrr.oss.strest.models.StrestHeader.TxnStatus;
+import com.trendrr.oss.strest.models.json.StrestJsonResponse;
 
 
 
@@ -40,6 +41,16 @@ public class DefaultStrestResponse implements StrestResponse {
 	protected int contentLength = 0;
 	protected StrestHeader.ContentEncoding contentEncoding;
 	
+	protected DynMap params = new DynMap();
+	
+	public synchronized DynMap getParams() {
+		return params;
+	}
+
+	public synchronized void setParams(DynMap params) {
+		this.params = params;
+	}
+
 	/* (non-Javadoc)
 	 * @see com.trendrr.oss.strest.models.StrestPacketBase#setProtocol(java.lang.String, float)
 	 */
@@ -175,5 +186,23 @@ public class DefaultStrestResponse implements StrestResponse {
 	@Override
 	public TxnStatus getTxnStatus() {
 		return this.txnStatus;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.DynMapConvertable#toDynMap()
+	 */
+	@Override
+	public DynMap toDynMap() {
+		try {
+			StrestJsonResponse response = new StrestJsonResponse(this);
+			DynMap mp = response.toDynMap();
+			if (this.params != null) {
+				mp.putAll(this.getParams());
+			}
+			return mp;
+		} catch (Exception x) {
+			log.error("caught", x);
+		}
+		return null;
 	}
 }
