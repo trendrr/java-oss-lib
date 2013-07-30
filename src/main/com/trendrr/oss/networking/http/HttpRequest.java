@@ -15,6 +15,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.DynMap;
 import com.trendrr.oss.strest.models.StrestHeader;
+import com.trendrr.oss.strest.models.StrestHeader.ContentEncoding;
 import com.trendrr.oss.strest.models.StrestPacketBase;
 import com.trendrr.oss.strest.models.StrestHeader.Method;
 import com.trendrr.oss.strest.models.StrestHeader.Name;
@@ -231,7 +232,7 @@ public class HttpRequest implements StrestPacketBase {
 	 * @see com.trendrr.oss.strest.models.StrestPacketBase#setContent(java.lang.String, long, java.io.InputStream)
 	 */
 	@Override
-	public void setContent(String contentEncoding, long contentLength,
+	public void setContent(ContentEncoding contentEncoding, int contentLength,
 			InputStream stream) throws Exception {
 		// TODO Auto-generated method stub
 		
@@ -240,7 +241,7 @@ public class HttpRequest implements StrestPacketBase {
 	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getContentEncoding()
 	 */
 	@Override
-	public String getContentEncoding() {
+	public ContentEncoding getContentEncoding() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -248,7 +249,7 @@ public class HttpRequest implements StrestPacketBase {
 	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getContentLength()
 	 */
 	@Override
-	public long getContentLength() {
+	public int getContentLength() {
 		// TODO Auto-generated method stub
 		return 0;
 	}

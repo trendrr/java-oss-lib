@@ -3,6 +3,7 @@
  */
 package com.trendrr.oss.strest.models;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
@@ -11,6 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.DynMap;
+import com.trendrr.oss.strest.models.StrestHeader.ContentEncoding;
 import com.trendrr.oss.strest.models.StrestHeader.Method;
 import com.trendrr.oss.strest.models.StrestHeader.Name;
 import com.trendrr.oss.strest.models.StrestHeader.TxnAccept;
@@ -25,8 +27,8 @@ public class DefaultStrestRequest implements StrestRequest {
 
 	protected static Log log = LogFactory.getLog(DefaultStrestRequest.class);
 
-	protected float protocolVersion = 0f;
-	protected String protocolName;
+	protected float protocolVersion = StrestHeader.STREST_VERSION;
+	protected String protocolName = StrestHeader.STREST_PROTOCOL;
 	
 	protected String txnId;
 	
@@ -41,8 +43,8 @@ public class DefaultStrestRequest implements StrestRequest {
 	protected DynMap params = new DynMap();
 	
 	protected InputStream content;
-	protected long contentLength = 0l;
-	protected String contentEncoding;
+	protected int contentLength = 0;
+	protected StrestHeader.ContentEncoding contentEncoding = StrestHeader.ContentEncoding.STRING;
 	
 	
 	/* (non-Javadoc)
@@ -189,13 +191,23 @@ public class DefaultStrestRequest implements StrestRequest {
 	 * @see com.trendrr.oss.strest.models.StrestPacketBase#setContent(java.lang.String, long, java.io.InputStream)
 	 */
 	@Override
-	public void setContent(String contentEncoding, long contentLength,
+	public void setContent(ContentEncoding contentEncoding, int contentLength,
 			InputStream content) throws Exception {
 		this.content = content;
 		this.contentEncoding = contentEncoding;
 		this.contentLength = contentLength;
-		
 	}
+	
+	public void setContent(String content) throws Exception {
+		this.setContent(ContentEncoding.STRING, content.getBytes("utf8"));
+	}
+	
+	public void setContent(ContentEncoding contentEncoding, byte[] content) throws Exception {
+		this.content = new ByteArrayInputStream(content);
+		this.contentEncoding = contentEncoding;
+		this.contentLength = content.length;
+	}
+	
 
 	/* (non-Javadoc)
 	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getContent()
@@ -209,7 +221,7 @@ public class DefaultStrestRequest implements StrestRequest {
 	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getContentEncoding()
 	 */
 	@Override
-	public String getContentEncoding() {
+	public ContentEncoding getContentEncoding() {
 		return this.contentEncoding;
 	}
 
@@ -217,7 +229,7 @@ public class DefaultStrestRequest implements StrestRequest {
 	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getContentLength()
 	 */
 	@Override
-	public long getContentLength() {
+	public int getContentLength() {
 		return this.contentLength;
 	}
 }

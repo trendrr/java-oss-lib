@@ -5,6 +5,8 @@ package com.trendrr.oss.strest.models;
 
 import java.io.InputStream;
 
+import com.trendrr.oss.strest.models.StrestHeader.ContentEncoding;
+
 
 /**
  * @author Dustin Norlander
@@ -21,10 +23,11 @@ public interface StrestPacketBase {
 	public void setTxnId(String id);
 	public String getTxnId();
 	
-	public void setContent(String contentEncoding, long contentLength, InputStream stream) throws Exception;
+	public void setContent(StrestHeader.ContentEncoding contentEncoding, int contentLength, InputStream stream) throws Exception;
+	
 	public InputStream getContent() throws Exception;
-	public String getContentEncoding();
-	public long getContentLength();
+	public ContentEncoding getContentEncoding();
+	public int getContentLength();
 	
 	
 	/**

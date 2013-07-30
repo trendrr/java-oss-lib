@@ -68,6 +68,15 @@ public class StrestHeader {
 			return TxnStatus.valueOf(str.toUpperCase());
 		}
 		
+		public static TxnStatus instance (byte binary) {
+			for (TxnStatus t : TxnStatus.values()) {
+				if (t.getBinary() == binary) {
+					return t;
+				}
+			}
+			return null;
+		}
+		
 		TxnStatus(String http, String json, byte binary) {
 			this.http = http;
 			this.json = json;
@@ -170,6 +179,16 @@ public class StrestHeader {
 		STRING((byte)0),
 		BYTES((byte)1);
 		protected byte binary;
+		
+		public static ContentEncoding instance (byte binary) {
+			for (ContentEncoding t : ContentEncoding.values()) {
+				if (t.getBinary() == binary) {
+					return t;
+				}
+			}
+			return null;
+		}
+		
 		private ContentEncoding(byte binary) {
 			this.binary = binary;
 		}

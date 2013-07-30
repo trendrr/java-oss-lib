@@ -16,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import com.trendrr.oss.DynMap;
 import com.trendrr.oss.exceptions.TrendrrException;
 import com.trendrr.oss.strest.models.StrestHeader;
+import com.trendrr.oss.strest.models.StrestHeader.ContentEncoding;
 import com.trendrr.oss.strest.models.StrestPacketBase;
 import com.trendrr.oss.strest.models.StrestHeader.Method;
 import com.trendrr.oss.strest.models.StrestHeader.Name;
@@ -129,14 +130,14 @@ public abstract class StrestJsonBase implements StrestPacketBase {
 	 * @see com.trendrr.oss.strest.models.StrestPacketBase#setContent(java.lang.String, long, java.io.InputStream)
 	 */
 	@Override
-	public void setContent(String contentEncoding, long contentLength,
+	public void setContent(ContentEncoding contentEncoding, int contentLength,
 			InputStream stream) throws Exception {
 		this.map.putWithDot("content_encoding", contentEncoding);
 		
 		byte[] bytes = new byte[(int)contentLength];
 		DataInputStream dataIs = new DataInputStream(stream);
 		dataIs.readFully(bytes);
-		if (contentEncoding.equals("string")) {
+		if (contentEncoding == ContentEncoding.STRING) {
 			this.map.put("content", new String(bytes, "utf8"));
 			return;
 		}
@@ -155,16 +156,15 @@ public abstract class StrestJsonBase implements StrestPacketBase {
 	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getContentEncoding()
 	 */
 	@Override
-	public String getContentEncoding() {
-		// TODO Auto-generated method stub
-		return null;
+	public ContentEncoding getContentEncoding() {
+		return ContentEncoding.STRING;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getContentLength()
 	 */
 	@Override
-	public long getContentLength() {
+	public int getContentLength() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
