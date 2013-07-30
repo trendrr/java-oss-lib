@@ -25,7 +25,9 @@ import com.trendrr.oss.strest.models.StrestHeader.Name;
  * @author Dustin Norlander
  * @created Jun 20, 2012
  * 
+ * @deprecate dont use, this shit never really worked
  */
+@Deprecated
 public class HttpRequest implements StrestPacketBase {
 
 	protected static Log log = LogFactory.getLog(HttpRequest.class);
@@ -259,6 +261,14 @@ public class HttpRequest implements StrestPacketBase {
 	@Override
 	public InputStream getContent() throws Exception {
 		// TODO Auto-generated method stub
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.DynMapConvertable#toDynMap()
+	 */
+	@Override
+	public DynMap toDynMap() {
+		log.warn("To dynmap not implemented int httprequest");
 		return null;
 	}
 }

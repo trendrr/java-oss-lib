@@ -50,7 +50,9 @@ import com.trendrr.oss.networking.SocketChannelWrapper;
  * @author Dustin Norlander
  * @created Jun 13, 2012
  * 
+ * @deprecate dont use, this shit never really worked
  */
+@Deprecated
 public class Http {
 
 	protected static Log log = LogFactory.getLog(Http.class);

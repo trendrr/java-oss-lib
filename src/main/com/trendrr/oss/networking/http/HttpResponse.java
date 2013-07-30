@@ -16,16 +16,20 @@ import com.trendrr.oss.Regex;
 import com.trendrr.oss.TypeCast;
 import com.trendrr.oss.exceptions.TrendrrParseException;
 import com.trendrr.oss.strest.models.StrestHeader.ContentEncoding;
+import com.trendrr.oss.strest.models.StrestHeader.TxnStatus;
 import com.trendrr.oss.strest.models.StrestPacketBase;
+import com.trendrr.oss.strest.models.StrestResponse;
 import com.trendrr.oss.strest.models.StrestHeader.Name;
+import com.trendrr.oss.strest.models.json.StrestJsonResponse;
 
 
 /**
  * @author Dustin Norlander
  * @created Jun 20, 2012
- * 
+ * @deprecate dont use, this shit never really worked
  */
-public class HttpResponse implements StrestPacketBase {
+@Deprecated
+public class HttpResponse implements StrestResponse {
 
 	protected static Log log = LogFactory.getLog(HttpResponse.class);
 
@@ -222,4 +226,44 @@ public class HttpResponse implements StrestPacketBase {
 		return 0;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.DynMapConvertable#toDynMap()
+	 */
+	@Override
+	public DynMap toDynMap() {
+		try {
+			StrestJsonResponse response = new StrestJsonResponse(this);
+			return response.toDynMap();
+		} catch (Exception x) {
+			log.error("caught", x);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestResponse#setStatus(int, java.lang.String)
+	 */
+	@Override
+	public void setStatus(int code, String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestResponse#setTxnStatus(com.trendrr.oss.strest.models.StrestHeader.TxnStatus)
+	 */
+	@Override
+	public void setTxnStatus(TxnStatus status) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestResponse#getTxnStatus()
+	 */
+	@Override
+	public TxnStatus getTxnStatus() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
