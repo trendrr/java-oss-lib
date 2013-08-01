@@ -79,6 +79,7 @@ public class TimeAmountFile {
 		if (this.gzip) {
 			this.os = new GZIPOutputStream(this.os);
 		}
+		log.warn("Created new TimeAmountFile: "+file.getAbsolutePath());
 	}
 	
 	/**
