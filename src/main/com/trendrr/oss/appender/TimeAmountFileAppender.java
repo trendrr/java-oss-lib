@@ -94,12 +94,16 @@ public class TimeAmountFileAppender {
 			for (File file : f) {
 				try {
 					TimeAmountFile taf = new TimeAmountFile(file, maxBytes);
-					
+					log.warn("Adding file : " + file.getAbsolutePath() + " to appender ");
 					//make sure we dont upload both a gz and non-gz file with the same name
 					if (file.getName().endsWith(".gz")) {
 						if (new File(StringHelper.trim(file.getAbsolutePath(), ".gz")).exists()) {
 							log.warn("Deleting gz file, keeping original. " + file.getAbsolutePath());
 							file.delete();
+							continue;
+						} else {
+							//just upload that shit
+							staleFile(taf);
 							continue;
 						}
 					}
