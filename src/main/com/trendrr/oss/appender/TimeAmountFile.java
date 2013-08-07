@@ -49,6 +49,14 @@ public class TimeAmountFile {
 //	private FileWriter writer = null;
 	private Date lastWrite = new Date();
 	
+
+	@Override
+	public synchronized String toString() {
+		return "TAF: filename:" + file.getName() + " stale: " + stale;
+	}
+
+	
+	
 	public TimeAmountFile(TimeAmount ta, long epoch, String dir, long maxBytes, boolean gzip) throws Exception {
 		if (!dir.endsWith(File.separator)) {
 			dir = dir + File.separator;
@@ -203,5 +211,4 @@ public class TimeAmountFile {
 		return lastWrite;
 	}
 	
-
 }
