@@ -5,6 +5,7 @@ package com.trendrr.oss.appender;
 
 import java.io.File;
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,16 +48,17 @@ public class TimeAmountFileAppender {
 
 	protected static Log log = LogFactory.getLog(TimeAmountFileAppender.class);
 	
-	TimeAmount amount;
+	protected TimeAmount amount;
+	protected TimeAmount staleFileCheck;
 	
-	LoadingCache<Long, TimeAmountFile> cache;
+	protected LoadingCache<Long, TimeAmountFile> cache = null;
 	
-	TimeAmountFileCallback callback;
+	protected TimeAmountFileCallback callback;
 	
-	long maxBytes;
-	String directory;
+	protected long maxBytes;
+	protected String directory;
 	
-	boolean gzip = false;
+	protected boolean gzip = false;
 	
 	public TimeAmountFileAppender(TimeAmountFileCallback callback, TimeAmount amount, TimeAmount staleFileCheck, String dir, long maxBytes) {
 		this(callback, amount, staleFileCheck, dir, maxBytes, false);
@@ -68,52 +70,77 @@ public class TimeAmountFileAppender {
 		this.directory = dir;
 		this.maxBytes = maxBytes;
 		this.gzip = gzip;
-		
+		this.staleFileCheck = staleFileCheck;
+	}
+	
+	/**
+	 * initializes the appender.  this can only be called once, and is automatically called during the 
+	 * first append operation.
+	 */
+	public synchronized void init() {
+		if (this.cache != null) {
+			return;
+		}
+		log.warn("Creating expiration cache " + staleFileCheck.getAmount() + " " + staleFileCheck.getTimeframe().getTimeUnit());
 		this.cache = CacheBuilder.newBuilder()
-	       .maximumSize(1000)
-	       .expireAfterAccess(staleFileCheck.getAmount(), staleFileCheck.getTimeframe().getTimeUnit())
-	       .removalListener(
-	    		   new RemovalListener<Long, TimeAmountFile>() {
-						@Override
-						public void onRemoval(RemovalNotification<Long, TimeAmountFile> rn) {
-							staleFile(rn.getValue());
+			       .expireAfterAccess(staleFileCheck.getAmount(), staleFileCheck.getTimeframe().getTimeUnit())
+			       .removalListener(
+			    		   new RemovalListener<Long, TimeAmountFile>() {
+								@Override
+								public void onRemoval(RemovalNotification<Long, TimeAmountFile> rn) {
+									
+									log.warn("onRemoval! " + rn.getKey() + " " + rn.getValue());
+									staleFile(rn.getValue());
+								}
+			    		   })
+			       .build(
+			    		   new CacheLoader<Long, TimeAmountFile>() {
+			    			   public TimeAmountFile load(Long epoch) throws Exception {
+			    				   System.out.println("LOADIGN EPOCH: " + epoch);
+			    				   return newFile(epoch);
+			    			   }
+			    		   });
+				
+			//now load any files already in the directory.
+			File f[] = new File(this.directory).listFiles();
+			long currentEpoch = this.amount.toTrendrrEpoch(new Date()).longValue();
+			if (f != null) {
+				for (File file : f) {
+					try {
+						TimeAmountFile taf = new TimeAmountFile(file, maxBytes);
+						log.warn("Adding file : " + file.getAbsolutePath() + " to appender ");
+						//make sure we dont upload both a gz and non-gz file with the same name
+						if (file.getName().endsWith(".gz")) {
+							if (new File(StringHelper.trim(file.getAbsolutePath(), ".gz")).exists()) {
+								log.warn("Deleting gz file, keeping original. " + file.getAbsolutePath());
+								file.delete();
+								continue;
+							}
 						}
-	    		   })
-	       .build(
-	    		   new CacheLoader<Long, TimeAmountFile>() {
-	    			   public TimeAmountFile load(Long epoch) throws Exception {
-	    				   System.out.println("LOADIGN EPOCH: " + epoch);
-	    				   return newFile(epoch);
-	    			   }
-	    		   });
-		
-		//now load any files already in the directory.
-		File f[] = new File(dir).listFiles();
-		
-		if (f != null) {
-			for (File file : f) {
-				try {
-					TimeAmountFile taf = new TimeAmountFile(file, maxBytes);
-					log.warn("Adding file : " + file.getAbsolutePath() + " to appender ");
-					//make sure we dont upload both a gz and non-gz file with the same name
-					if (file.getName().endsWith(".gz")) {
-						if (new File(StringHelper.trim(file.getAbsolutePath(), ".gz")).exists()) {
-							log.warn("Deleting gz file, keeping original. " + file.getAbsolutePath());
-							file.delete();
-							continue;
-						} else {
-							//just upload that shit
+						if (taf.getEpoch() != currentEpoch) {
 							staleFile(taf);
 							continue;
 						}
+						this.cache.put(taf.getEpoch(), taf);
+					} catch (Exception x) {
+						log.error("Caught", x);
 					}
-					
-					this.cache.put(taf.getEpoch(), taf);
-				} catch (Exception x) {
-					log.error("Caught", x);
 				}
 			}
-		}	
+			
+	}
+	
+	public String toString() {
+		StringBuilder str = new StringBuilder();
+		str.append("*** Timeamount file appender * ");
+		Map<Long, TimeAmountFile> mp = this.cache.asMap();
+		for (Long epoch : mp.keySet()) {
+			str.append(epoch);
+			str.append(",");
+		}
+		str.append(" ** /n");
+		return str.toString();
+		
 	}
 	
 	public void staleFile(TimeAmountFile f) {
@@ -130,6 +157,11 @@ public class TimeAmountFileAppender {
 	}
 		
 	public synchronized void append(Date date, String str) throws Exception {
+		if (this.cache == null) {
+			this.init();
+		}
+		
+		
 		long epoch = this.amount.toTrendrrEpoch(date).longValue();
 		//Try to get the file max 5 times.
 		for (int i=0; i < 5; i++) {
