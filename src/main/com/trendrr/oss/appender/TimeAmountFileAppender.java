@@ -103,7 +103,7 @@ public class TimeAmountFileAppender {
 				
 			//now load any files already in the directory.
 			File f[] = new File(this.directory).listFiles();
-			long currentEpoch = this.amount.toTrendrrEpoch(new Date()).longValue();
+			
 			if (f != null) {
 				for (File file : f) {
 					try {
@@ -115,11 +115,11 @@ public class TimeAmountFileAppender {
 								log.warn("Deleting gz file, keeping original. " + file.getAbsolutePath());
 								file.delete();
 								continue;
+							} else {
+								//need to upload it since we cant append to a gz file
+								staleFile(taf);
+								continue;
 							}
-						}
-						if (taf.getEpoch() != currentEpoch) {
-							staleFile(taf);
-							continue;
 						}
 						this.cache.put(taf.getEpoch(), taf);
 					} catch (Exception x) {
@@ -127,7 +127,6 @@ public class TimeAmountFileAppender {
 					}
 				}
 			}
-			
 	}
 	
 	public String toString() {
