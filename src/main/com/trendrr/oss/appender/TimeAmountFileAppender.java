@@ -121,11 +121,17 @@ public class TimeAmountFileAppender {
 								continue;
 							}
 						}
-						if (taf.getEpoch() != currentEpoch) {
-							staleFile(taf);
-							continue;
-						}
-						this.cache.put(taf.getEpoch(), taf);
+						
+						//stale all the files in the directory.
+						// we dont know if the previous shutdown was safe, so
+						// we dont want to continue writing to the file in case
+						// a partial json packet was written or something..
+						staleFile(taf);
+//						if (taf.getEpoch() != currentEpoch) {
+//							staleFile(taf);
+//							continue;
+//						}
+//						this.cache.put(taf.getEpoch(), taf);
 					} catch (Exception x) {
 						log.error("Caught", x);
 					}
