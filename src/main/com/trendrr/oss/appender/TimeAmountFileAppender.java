@@ -6,6 +6,8 @@ package com.trendrr.oss.appender;
 import java.io.File;
 import java.util.Date;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -59,6 +61,8 @@ public class TimeAmountFileAppender {
 	protected String directory;
 	
 	protected boolean gzip = false;
+	
+	protected Timer cleaner = null;
 	
 	public TimeAmountFileAppender(TimeAmountFileCallback callback, TimeAmount amount, TimeAmount staleFileCheck, String dir, long maxBytes) {
 		this(callback, amount, staleFileCheck, dir, maxBytes, false);
@@ -128,6 +132,18 @@ public class TimeAmountFileAppender {
 				}
 			}
 			
+		//set up a timer to periodically clean out the cache.
+		// does this every 5 minutes.  
+			
+		// TODO: set this for the staleFileCheck timeamount 
+		this.cleaner = new Timer(true);
+		this.cleaner.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				log.warn("Cache cleanup timer for " + directory);
+				cache.cleanUp();
+			}
+		}, 5 * ((int)(Math.random() * 60*1000)), 5*60*1000);
 	}
 	
 	public String toString() {
@@ -155,7 +171,7 @@ public class TimeAmountFileAppender {
 	public void appendLine(Date date, String str) throws Exception {
 		this.append(date, str + "\n");
 	}
-		
+	
 	public synchronized void append(Date date, String str) throws Exception {
 		if (this.cache == null) {
 			this.init();
