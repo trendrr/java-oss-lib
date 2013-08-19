@@ -5,17 +5,22 @@ package com.trendrr.oss;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import java.io.*;
 import java.util.zip.*;
+
 /**
  * @author dustin
  *
@@ -68,6 +73,40 @@ public class FileHelper {
 	
 	public static String toSystemDependantFilename(String filename) {
 		return filename.replace('/', File.separatorChar);
+	}
+	
+	public static String unzip(String filename,String zip_extension,String file_extension){
+		FileInputStream instream;
+		try {
+
+			instream = new FileInputStream(filename + "." + file_extension + "." + zip_extension);
+			GZIPInputStream ginstream =new GZIPInputStream(instream);
+
+			FileOutputStream outstream = new FileOutputStream(filename + "." + file_extension);
+
+			byte[] buf = new byte[1024];
+			int len=0;
+
+			while ((len = ginstream.read(buf)) > 0) 
+			{
+
+				outstream.write(buf, 0, len);
+			}
+
+			ginstream.close();
+			outstream.close();
+			return filename + "." + file_extension;
+		}catch(EOFException e){
+			System.out.println("File is ended");
+		} catch (FileNotFoundException e) {
+			System.out.println("File not found");
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println("IO Errors");
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 	
 	/**
