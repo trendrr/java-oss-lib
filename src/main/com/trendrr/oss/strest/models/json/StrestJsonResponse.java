@@ -99,12 +99,20 @@ public class StrestJsonResponse extends StrestJsonBase implements StrestResponse
 	public TxnStatus getTxnStatus() {
 		return TxnStatus.instance(this.getHeader(StrestHeader.Name.TXN_STATUS));
 	}
-	
-//	/* (non-Javadoc)
-//	 * @see com.trendrr.oss.strest.models.StrestPacketBase#toMap()
-//	 */
-//	@Override
-//	public Map<String, Object> toMap() {
-//		return this.map;
-//	}
+
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#setParams(com.trendrr.oss.DynMap)
+	 */
+	@Override
+	public void setParams(DynMap params) {
+		this.map.putAll(params);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getParams()
+	 */
+	@Override
+	public DynMap getParams() {
+		return this.map;
+	}
 }

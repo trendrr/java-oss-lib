@@ -5,6 +5,7 @@ package com.trendrr.oss.strest.models;
 
 import java.io.InputStream;
 
+import com.trendrr.oss.DynMap;
 import com.trendrr.oss.DynMapConvertable;
 import com.trendrr.oss.strest.models.StrestHeader.ContentEncoding;
 
@@ -30,6 +31,8 @@ public interface StrestPacketBase extends DynMapConvertable {
 	public ContentEncoding getContentEncoding();
 	public int getContentLength();
 	
+	public void setParams(DynMap params);
+	public DynMap getParams();
 	
 	/**
 	 * this packet is done with, clean up anything that needs it.

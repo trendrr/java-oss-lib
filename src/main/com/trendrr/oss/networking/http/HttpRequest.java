@@ -271,4 +271,20 @@ public class HttpRequest implements StrestPacketBase {
 		log.warn("To dynmap not implemented int httprequest");
 		return null;
 	}
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#setParams(com.trendrr.oss.DynMap)
+	 */
+	@Override
+	public void setParams(DynMap params) {
+		// TODO Auto-generated method stub
+		
+	}
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getParams()
+	 */
+	@Override
+	public DynMap getParams() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

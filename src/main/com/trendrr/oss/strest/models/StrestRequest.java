@@ -28,7 +28,4 @@ public interface StrestRequest extends StrestPacketBase{
 	
 	public void setTxnAccept(StrestHeader.TxnAccept accept);
 	public StrestHeader.TxnAccept getTxnAccept();
-	
-	public void setParams(DynMap params);
-	public DynMap getParams();
 }
