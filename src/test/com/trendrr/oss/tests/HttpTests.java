@@ -44,7 +44,7 @@ public class HttpTests {
 		request.setUrl(GET_url);
 		request.setMethod("GET");
 		HttpResponse response = Http.request(request);
-		String html = new String(response.getContent(), "utf8").trim();
+		String html = new String(response.getContentBytes(), "utf8").trim();
 		System.out.println(html);
 		//check that we read the whole html content
 		Assert.assertTrue(html.endsWith("</html>"));

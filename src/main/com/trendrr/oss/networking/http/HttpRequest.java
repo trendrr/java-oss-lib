@@ -3,6 +3,7 @@
  */
 package com.trendrr.oss.networking.http;
 
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.ByteBuffer;
@@ -14,6 +15,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.DynMap;
 import com.trendrr.oss.strest.models.StrestHeader;
+import com.trendrr.oss.strest.models.StrestHeader.ContentEncoding;
 import com.trendrr.oss.strest.models.StrestPacketBase;
 import com.trendrr.oss.strest.models.StrestHeader.Method;
 import com.trendrr.oss.strest.models.StrestHeader.Name;
@@ -23,7 +25,9 @@ import com.trendrr.oss.strest.models.StrestHeader.Name;
  * @author Dustin Norlander
  * @created Jun 20, 2012
  * 
+ * @deprecate dont use, this shit never really worked
  */
+@Deprecated
 public class HttpRequest implements StrestPacketBase {
 
 	protected static Log log = LogFactory.getLog(HttpRequest.class);
@@ -71,7 +75,7 @@ public class HttpRequest implements StrestPacketBase {
 		HttpRequest test = new HttpRequest();
 		test.setUrl("http://strest.trendrr.com?test=test2");
 		test.addHeader("Etag", "3f80f-1b6-3e1cb03b");
-		test.setContent("text", "THIS IS SOME CONTENT".getBytes());
+//		test.setContent("text", "THIS IS SOME CONTENT".getBytes());
 		System.out.println(new String(test.toByteArray(), "utf8"));
 		
 		
@@ -104,34 +108,18 @@ public class HttpRequest implements StrestPacketBase {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see com.trendrr.oss.networking.strest.v2.models.StrestPacketBase#addHeader(java.lang.String, java.lang.String)
-	 */
-	@Override
 	public void addHeader(String header, String value) {
 		headers.put(header, value);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.trendrr.oss.networking.strest.v2.models.StrestPacketBase#addHeader(com.trendrr.oss.networking.strest.v2.models.StrestHeader.Name, java.lang.String)
-	 */
-	@Override
 	public void addHeader(Name header, String value) {
 		this.addHeader(header.getHttpName(), value);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.trendrr.oss.networking.strest.v2.models.StrestPacketBase#getHeader(com.trendrr.oss.networking.strest.v2.models.StrestHeader.Name)
-	 */
-	@Override
 	public String getHeader(Name header) {
 		return this.getHeader(header.getHttpName());
 	}
 
-	/* (non-Javadoc)
-	 * @see com.trendrr.oss.networking.strest.v2.models.StrestPacketBase#getHeader(java.lang.String)
-	 */
-	@Override
 	public String getHeader(String header) {
 		return this.headers.get(header);
 	}
@@ -175,35 +163,6 @@ public class HttpRequest implements StrestPacketBase {
 	@Override
 	public String getTxnId() {
 		return this.getHeader(Name.TXN_ID);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.trendrr.oss.networking.strest.v2.models.StrestPacketBase#setContent(com.trendrr.oss.DynMap)
-	 */
-	@Override
-	public void setContent(DynMap content) {
-		try {
-			this.setContent("application/json", content.toJSONString().getBytes("utf8"));
-		} catch (UnsupportedEncodingException e) {
-			log.error("Caught", e);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see com.trendrr.oss.networking.strest.v2.models.StrestPacketBase#setContent(java.lang.String, byte[])
-	 */
-	@Override
-	public void setContent(String contentType, byte[] bytes) {
-		this.addHeader("Content-Type", contentType);
-		this.content = bytes;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.trendrr.oss.networking.strest.v2.models.StrestPacketBase#getContent()
-	 */
-	@Override
-	public byte[] getContent() {
-		return this.content;
 	}
 
 	/* (non-Javadoc)
@@ -270,14 +229,62 @@ public class HttpRequest implements StrestPacketBase {
 		return null;
 	}
 	
-//	public void addHeader(String
-	
+
 	/* (non-Javadoc)
-	 * @see com.trendrr.oss.strest.models.StrestPacketBase#toMap()
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#setContent(java.lang.String, long, java.io.InputStream)
 	 */
 	@Override
-	public Map<String, Object> toMap() {
-		log.warn("toMap not implemented: " + this);
+	public void setContent(ContentEncoding contentEncoding, int contentLength,
+			InputStream stream) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getContentEncoding()
+	 */
+	@Override
+	public ContentEncoding getContentEncoding() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getContentLength()
+	 */
+	@Override
+	public int getContentLength() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getContent()
+	 */
+	@Override
+	public InputStream getContent() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.DynMapConvertable#toDynMap()
+	 */
+	@Override
+	public DynMap toDynMap() {
+		log.warn("To dynmap not implemented int httprequest");
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#setParams(com.trendrr.oss.DynMap)
+	 */
+	@Override
+	public void setParams(DynMap params) {
+		// TODO Auto-generated method stub
+		
+	}
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getParams()
+	 */
+	@Override
+	public DynMap getParams() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }

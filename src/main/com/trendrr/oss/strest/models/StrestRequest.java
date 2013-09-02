@@ -13,6 +13,13 @@ import com.trendrr.oss.DynMap;
  */
 public interface StrestRequest extends StrestPacketBase{
 
+	/**
+	 * optional shard packet.
+	 * @param shard
+	 */
+	public void setShardRequest(ShardRequest shard);
+	public ShardRequest getShardRequest();
+	
 	public void setMethod(StrestHeader.Method method);
 	public StrestHeader.Method getMethod();
 	
@@ -21,7 +28,4 @@ public interface StrestRequest extends StrestPacketBase{
 	
 	public void setTxnAccept(StrestHeader.TxnAccept accept);
 	public StrestHeader.TxnAccept getTxnAccept();
-	
-	public void setParams(DynMap params);
-	public DynMap getParams();
 }

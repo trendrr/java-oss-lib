@@ -3,6 +3,8 @@
  */
 package com.trendrr.oss.strest.models.json;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
@@ -11,6 +13,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.DynMap;
 
+import com.trendrr.oss.strest.models.ShardRequest;
 import com.trendrr.oss.strest.models.StrestHeader;
 import com.trendrr.oss.strest.models.StrestRequest;
 import com.trendrr.oss.strest.models.StrestHeader.Method;
@@ -25,6 +28,7 @@ import com.trendrr.oss.strest.models.StrestHeader.TxnAccept;
  */
 public class StrestJsonRequest extends StrestJsonBase implements StrestRequest {
 
+	private ShardRequest shard = null;
 	/**
 	 * @param map
 	 */
@@ -116,11 +120,30 @@ public class StrestJsonRequest extends StrestJsonBase implements StrestRequest {
 		super.cleanup();
 	}
 
+//	/* (non-Javadoc)
+//	 * @see com.trendrr.oss.strest.models.StrestPacketBase#toMap()
+//	 */
+//	@Override
+//	public Map<String, Object> toMap() {
+//		return this.map;
+//	}
+
 	/* (non-Javadoc)
-	 * @see com.trendrr.oss.strest.models.StrestPacketBase#toMap()
+	 * @see com.trendrr.oss.strest.models.StrestRequest#setShardRequest(com.trendrr.oss.strest.models.ShardRequest)
 	 */
 	@Override
-	public Map<String, Object> toMap() {
-		return this.map;
+	public void setShardRequest(ShardRequest shard) {
+		this.shard = shard;
+		this.map.putWithDot("strest.shard.partition", shard.getPartition());
+		this.map.putWithDot("strest.shard.key", shard.getKey());
+		this.map.putWithDot("strest.shard.revision", shard.getRevision());
+	}
+
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestRequest#getShardRequest()
+	 */
+	@Override
+	public ShardRequest getShardRequest() {
+		return this.shard;
 	}
 }

@@ -3,6 +3,7 @@
  */
 package com.trendrr.oss.strest.models.json;
 
+import java.io.DataInputStream;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -10,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.DynMap;
 import com.trendrr.oss.strest.models.StrestHeader;
+import com.trendrr.oss.strest.models.StrestHeader.ContentEncoding;
 import com.trendrr.oss.strest.models.StrestResponse;
 import com.trendrr.oss.strest.models.StrestHeader.TxnStatus;
 
@@ -30,6 +32,28 @@ public class StrestJsonResponse extends StrestJsonBase implements StrestResponse
 
 	public StrestJsonResponse() {
 		super();
+	}
+	
+	
+	/**
+	 * creates a new json response from the passed in response.
+	 * @param response
+	 */
+	public StrestJsonResponse(StrestResponse response) throws Exception {
+		super();
+		
+		if (response.getContentEncoding() == ContentEncoding.JSON && response.getContentLength() > 0) {
+			byte[] json = new byte[response.getContentLength()];
+			DataInputStream dataIs = new DataInputStream(response.getContent());
+			dataIs.readFully(json);
+			this.map.putAll(DynMap.instance(new String(json, "utf8")));
+		} else {
+			this.setContent(response.getContentEncoding(), response.getContentLength(), response.getContent());	
+		}
+		this.setProtocol(response.getProtocolName(), response.getProtocolVersion());
+		this.setStatus(response.getStatusCode(), response.getStatusMessage());
+		this.setTxnId(response.getTxnId());
+		this.setTxnStatus(response.getTxnStatus());
 	}
 	
 	protected static Log log = LogFactory.getLog(StrestJsonResponse.class);
@@ -75,12 +99,20 @@ public class StrestJsonResponse extends StrestJsonBase implements StrestResponse
 	public TxnStatus getTxnStatus() {
 		return TxnStatus.instance(this.getHeader(StrestHeader.Name.TXN_STATUS));
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see com.trendrr.oss.strest.models.StrestPacketBase#toMap()
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#setParams(com.trendrr.oss.DynMap)
 	 */
 	@Override
-	public Map<String, Object> toMap() {
+	public void setParams(DynMap params) {
+		this.map.putAll(params);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getParams()
+	 */
+	@Override
+	public DynMap getParams() {
 		return this.map;
 	}
 }

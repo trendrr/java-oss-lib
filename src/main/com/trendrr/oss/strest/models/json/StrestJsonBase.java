@@ -3,6 +3,10 @@
  */
 package com.trendrr.oss.strest.models.json;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 
@@ -10,7 +14,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.trendrr.oss.DynMap;
+import com.trendrr.oss.DynMapConvertable;
+import com.trendrr.oss.exceptions.TrendrrException;
 import com.trendrr.oss.strest.models.StrestHeader;
+import com.trendrr.oss.strest.models.StrestHeader.ContentEncoding;
 import com.trendrr.oss.strest.models.StrestPacketBase;
 import com.trendrr.oss.strest.models.StrestHeader.Method;
 import com.trendrr.oss.strest.models.StrestHeader.Name;
@@ -22,7 +29,7 @@ import com.trendrr.oss.strest.models.StrestHeader.TxnAccept;
  * @created May 1, 2012
  * 
  */
-public abstract class StrestJsonBase implements StrestPacketBase {
+public abstract class StrestJsonBase implements StrestPacketBase, DynMapConvertable {
 
 	protected static Log log = LogFactory.getLog(StrestJsonBase.class);
 
@@ -42,38 +49,26 @@ public abstract class StrestJsonBase implements StrestPacketBase {
 	public DynMap getMap() {
 		return this.map;
 	}
+
 	/* (non-Javadoc)
-	 * @see com.trendrr.strest.server.v2.models.StrestPacketBase#addHeader(java.lang.String, java.lang.String)
+	 * @see com.trendrr.oss.DynMapConvertable#toDynMap()
 	 */
 	@Override
-	public void addHeader(String header, String value) {
-		this.map.putWithDot("strest." + header.toLowerCase(), value);
-		
+	public DynMap toDynMap() {
+		return this.map;
 	}
-	/* (non-Javadoc)
-	 * @see com.trendrr.strest.server.v2.StrestRequest#addHeader(com.trendrr.strest.server.v2.StrestHeaders, java.lang.String)
-	 */
-	@Override
+	
+//	public void addHeader(String header, String value) {
+//		this.map.putWithDot("strest." + header.toLowerCase(), value);
+//		
+//	}
+	
 	public void addHeader(StrestHeader.Name header, String value) {
 		this.map.putWithDot("strest." + header.getJsonName(), value);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.trendrr.strest.server.v2.StrestRequest#getHeader(com.trendrr.strest.server.v2.StrestHeaders)
-	 */
-	@Override
 	public String getHeader(StrestHeader.Name header) {
-//		System.out.println("MAP: " + this.map);
-//		System.out.println("header: " + header);
 		return this.map.getString("strest." + header.getJsonName());
-	}
-
-	/* (non-Javadoc)
-	 * @see com.trendrr.strest.server.v2.StrestRequest#getHeader(com.trendrr.strest.server.v2.StrestHeaders)
-	 */
-	@Override
-	public String getHeader(String header) {
-		return this.map.getString("strest." + header.toLowerCase());
 	}
 		
 	/* (non-Javadoc)
@@ -111,35 +106,6 @@ public abstract class StrestJsonBase implements StrestPacketBase {
 		return this.getHeader(Name.TXN_ID);
 	}
 
-	/**
-	 * 
-	 * This actually merges the content into this packet, instead of putting into a 'content' field
-	 * This is done for backward compatibilty with cheshire requests. 
-	 */
-	@Override
-	public void setContent(DynMap content) {
-		this.map.putAll(content);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.trendrr.strest.server.v2.StrestRequest#setContent(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void setContent(String contentType, byte[] content) {
-		log.warn("Setting byte content. no good, need a better way -Dustin");
-		this.map.put("content", content); //TODO: this ain't right
-		this.addHeader(Name.CONTENT_TYPE, contentType);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.trendrr.strest.server.v2.StrestRequest#getContent()
-	 */
-	@Override
-	public Object getContent() {
-		
-		return this.map.get("content");
-	}
-
 	/* (non-Javadoc)
 	 * @see com.trendrr.strest.server.v2.StrestRequest#toByteArray()
 	 */
@@ -165,5 +131,53 @@ public abstract class StrestJsonBase implements StrestPacketBase {
 	@Override
 	public void cleanup() {
 		this.map = null;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#setContent(java.lang.String, long, java.io.InputStream)
+	 */
+	@Override
+	public void setContent(ContentEncoding contentEncoding, int contentLength,
+			InputStream stream) throws Exception {
+		if (contentLength < 1) {
+			return; //do nothing..
+		}
+		System.out.println(contentEncoding);
+		this.map.putWithDot("content_encoding", contentEncoding);
+		
+		byte[] bytes = new byte[(int)contentLength];
+		DataInputStream dataIs = new DataInputStream(stream);
+		dataIs.readFully(bytes);
+		if (contentEncoding == ContentEncoding.STRING) {
+			this.map.put("content", new String(bytes, "utf8"));
+			return;
+		}
+		throw new TrendrrException("Json request only supports string encoding atm");
+	}
+
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getContent()
+	 */
+	@Override
+	public InputStream getContent() throws Exception {
+		return new ByteArrayInputStream(this.map.getString("content", "").getBytes("utf8"));
+	}
+
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getContentEncoding()
+	 */
+	@Override
+	public ContentEncoding getContentEncoding() {
+		return ContentEncoding.STRING;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.strest.models.StrestPacketBase#getContentLength()
+	 */
+	@Override
+	public int getContentLength() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }
