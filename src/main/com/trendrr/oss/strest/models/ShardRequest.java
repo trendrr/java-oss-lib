@@ -6,13 +6,16 @@ package com.trendrr.oss.strest.models;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.trendrr.oss.DynMap;
+import com.trendrr.oss.DynMapConvertable;
+
 
 /**
  * @author Dustin Norlander
  * @created Jul 29, 2013
  * 
  */
-public class ShardRequest {
+public class ShardRequest implements DynMapConvertable {
 
 	protected static Log log = LogFactory.getLog(ShardRequest.class);
 	
@@ -38,4 +41,23 @@ public class ShardRequest {
 	public synchronized void setRevision(long revision) {
 		this.revision = revision;
 	}
+	/* (non-Javadoc)
+	 * @see com.trendrr.oss.DynMapConvertable#toDynMap()
+	 */
+	@Override
+	public synchronized DynMap toDynMap() {
+		DynMap mp = new DynMap();
+		if (partition >= 0) {
+			mp.put("_p", this.partition);
+		}
+		
+		if (key != null) {
+			mp.put("_sk", this.key);
+		}
+		if (revision >= 0) {
+			mp.put("_v", this.revision);
+		}
+		return mp;
+	}
+	
 }
