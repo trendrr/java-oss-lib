@@ -107,7 +107,7 @@ public class TimeAmountFileAppender {
 				
 			//now load any files already in the directory.
 			File f[] = new File(this.directory).listFiles();
-			long currentEpoch = this.amount.toTrendrrEpoch(new Date()).longValue();
+			
 			if (f != null) {
 				for (File file : f) {
 					try {
@@ -118,6 +118,10 @@ public class TimeAmountFileAppender {
 							if (new File(StringHelper.trim(file.getAbsolutePath(), ".gz")).exists()) {
 								log.warn("Deleting gz file, keeping original. " + file.getAbsolutePath());
 								file.delete();
+								continue;
+							} else {
+								//need to upload it since we cant append to a gz file
+								staleFile(taf);
 								continue;
 							}
 						}
@@ -136,8 +140,7 @@ public class TimeAmountFileAppender {
 						log.error("Caught", x);
 					}
 				}
-			}
-			
+			}			
 		//set up a timer to periodically clean out the cache.
 		// does this every 5 minutes.  
 			
