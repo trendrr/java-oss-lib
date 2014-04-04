@@ -20,6 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
+
 import com.trendrr.json.simple.JSONAware;
 import com.trendrr.json.simple.JSONFormatter;
 import com.trendrr.json.simple.JSONObject;
@@ -848,7 +850,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 						collection += this
 								.toXMLStringCollection((java.util.Collection) b);
 					else
-						collection += b.toString();
+						collection += escapeHtml4(b.toString());
 					collection += "</item>";
 				}
 			} else if (o instanceof java.util.Map) {
@@ -856,7 +858,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 				dm.putAll((java.util.Map) o);
 				collection += dm.toXMLString();
 			} else
-				collection += o.toString();
+				collection += escapeHtml4(o.toString());
 			collection += "</item>";
 		}
 		return collection;
@@ -890,7 +892,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 			} else if ((entry.getValue()) instanceof Date) {
 				buf.append(IsoDateUtil.getIsoDateNoMillis(((Date)entry.getValue())));
 			} else {
-				buf.append(entry.getValue());
+				buf.append(escapeHtml4(entry.getValue().toString()));
 			}
 			buf.append("</" + element + ">");
 		}
