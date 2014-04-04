@@ -875,7 +875,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		Iterator iter = this.entrySet().iterator();
 		while (iter.hasNext()) {
 			Map.Entry entry = (Map.Entry) iter.next();
-			String element = String.valueOf(entry.getKey()).replace(" ", "_");
+			String element = String.valueOf(entry.getKey()).replaceAll(" ", "_");
 			buf.append("<" + element + ">");
 			if (entry.getValue() instanceof DynMap) {
 				buf.append(((DynMap) entry.getValue())
