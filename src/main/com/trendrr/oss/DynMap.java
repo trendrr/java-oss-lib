@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -54,7 +53,6 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	
 	private ConcurrentHashMap<String, Object> cache = new ConcurrentHashMap<String, Object>();
 	private boolean cacheEnabled = false;
-    private Callable<String> str;
 
 
     public DynMap () {
