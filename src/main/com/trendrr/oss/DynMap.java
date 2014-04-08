@@ -903,7 +903,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	 * @return
 	 */
 	protected String processXMLKey(String str) {
-		return str;
+		return str.replaceAll(" ", "_");
 	}
 
 	/**
