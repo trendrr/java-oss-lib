@@ -830,10 +830,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		return StringHelper.trim(str.toString(), "&");
 	}
 
-	public String toXMLStringCollection(java.util.Collection c) {
-		return toXMLString(new SimpleXmlFormatter());
-	}
-	public String toXMLStringCollection(java.util.Collection c, XMLFormatter xmlFormatter) {
+	private String toXMLStringCollection(java.util.Collection c, XMLFormatter xmlFormatter) {
 		if (c == null)
 			return "";
 
@@ -847,7 +844,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 					collection += "<item>";
 					if (b instanceof java.util.Collection)
 						collection += this
-								.toXMLStringCollection((java.util.Collection) b);
+								.toXMLStringCollection((java.util.Collection) b, xmlFormatter);
 					else
 						collection += xmlFormatter.cleanValue(b.toString());
 					collection += "</item>";
@@ -887,7 +884,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 			} else if ((entry.getValue()) instanceof java.util.Collection) {
 				buf.append(this
 						.toXMLStringCollection((java.util.Collection) entry
-								.getValue()));
+								.getValue(), xmlFormatter));
 			} else if ((entry.getValue()) instanceof java.util.Map) {
 				DynMap dm = DynMapFactory.instance(entry.getValue());
 				buf.append(dm.toXMLString());
