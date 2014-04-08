@@ -891,11 +891,11 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 			} else if ((entry.getValue()) instanceof Date) {
 				buf.append(IsoDateUtil.getIsoDateNoMillis(((Date)entry.getValue())));
 			} else {
-                if (entry.getValue() != null) {
-                    buf.append(xmlFormatter.cleanValue(entry.getValue().toString()));
-                } else {
-                    buf.append(entry.getValue());
-                }
+				if (entry.getValue() != null) {
+					buf.append(xmlFormatter.cleanValue(entry.getValue().toString()));
+				} else {
+					buf.append(entry.getValue());
+				}
 
 			}
 			buf.append("</" + element + ">");
