@@ -830,11 +830,11 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		return StringHelper.trim(str.toString(), "&");
 	}
 
-    public String toXMLStringCollection(java.util.Collection c) {
-        return toXMLString(new SimpleXmlFormatter());
-    }
-    public String toXMLStringCollection(java.util.Collection c, XMLFormatter xmlFormatter) {
-    	if (c == null)
+	public String toXMLStringCollection(java.util.Collection c) {
+		return toXMLString(new SimpleXmlFormatter());
+	}
+	public String toXMLStringCollection(java.util.Collection c, XMLFormatter xmlFormatter) {
+		if (c == null)
 			return "";
 
 		String collection = "";
@@ -869,9 +869,9 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	 * @return
 	 */
 	public String toXMLString() {
-        return toXMLString(new SimpleXmlFormatter());
-    }
-    public String toXMLString(XMLFormatter xmlFormatter) {
+		return toXMLString(new SimpleXmlFormatter());
+	}
+	public String toXMLString(XMLFormatter xmlFormatter) {
 		if (this.isEmpty())
 			return null;
 
