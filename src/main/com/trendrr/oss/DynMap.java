@@ -53,8 +53,8 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	
 	private ConcurrentHashMap<String, Object> cache = new ConcurrentHashMap<String, Object>();
 	private boolean cacheEnabled = false;
-	
-	
+
+
 	public DynMap () {
 		super();
 	}
@@ -160,7 +160,6 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	 * like the regular putAll but honors dot notation.
 	 * passed in keys
 	 * @param mp
-	 * @param keys
 	 */
 	public void putAllWithDot(Map mp) {
 		if (mp == null)
@@ -299,7 +298,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	 * 
 	 * map.get("key1.key2.key3");
 	 * 
-	 * @param key
+	 * @param k
 	 * @return
 	 */
 	@Override
@@ -831,7 +830,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		//trim trailing amp?
 		return StringHelper.trim(str.toString(), "&");
 	}
-	
+
 	private String toXMLStringCollection(java.util.Collection c) {
 		if (c == null)
 			return "";
@@ -848,7 +847,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 						collection += this
 								.toXMLStringCollection((java.util.Collection) b);
 					else
-						collection += b.toString();
+						collection += processXMLValue(b.toString());
 					collection += "</item>";
 				}
 			} else if (o instanceof java.util.Map) {
@@ -856,7 +855,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 				dm.putAll((java.util.Map) o);
 				collection += dm.toXMLString();
 			} else
-				collection += o.toString();
+				collection += processXMLValue(o.toString());
 			collection += "</item>";
 		}
 		return collection;
@@ -875,7 +874,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		Iterator iter = this.entrySet().iterator();
 		while (iter.hasNext()) {
 			Map.Entry entry = (Map.Entry) iter.next();
-			String element = String.valueOf(entry.getKey()).replaceAll(" ", "_");
+			String element = processXMLKey(String.valueOf(entry.getKey()));
 			buf.append("<" + element + ">");
 			if (entry.getValue() instanceof DynMap) {
 				buf.append(((DynMap) entry.getValue())
@@ -890,11 +889,29 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 			} else if ((entry.getValue()) instanceof Date) {
 				buf.append(IsoDateUtil.getIsoDateNoMillis(((Date)entry.getValue())));
 			} else {
-				buf.append(entry.getValue());
+				buf.append(processXMLValue(entry.getValue().toString()));
 			}
 			buf.append("</" + element + ">");
 		}
 
 		return buf.toString();
+	}
+
+	/**
+	 * Simple key processing.  Extend DynMap to override how xml keys are processed
+	 * @param str
+	 * @return
+	 */
+	protected String processXMLKey(String str) {
+		return str.replaceAll(" ", "_");
+	}
+
+	/**
+	 * Simple value processing.  Extend DynMap to override how xml values are processed
+	 * @param str
+	 * @return
+	 */
+	protected String processXMLValue(String str) {
+		return str;
 	}
 }
