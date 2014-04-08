@@ -847,7 +847,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 						collection += this
 								.toXMLStringCollection((java.util.Collection) b);
 					else
-						collection += processXMLString(b.toString());
+						collection += processXMLValue(b.toString());
 					collection += "</item>";
 				}
 			} else if (o instanceof java.util.Map) {
@@ -855,7 +855,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 				dm.putAll((java.util.Map) o);
 				collection += dm.toXMLString();
 			} else
-				collection += processXMLString(o.toString());
+				collection += processXMLValue(o.toString());
 			collection += "</item>";
 		}
 		return collection;
@@ -874,7 +874,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		Iterator iter = this.entrySet().iterator();
 		while (iter.hasNext()) {
 			Map.Entry entry = (Map.Entry) iter.next();
-			String element = String.valueOf(entry.getKey()).replaceAll(" ", "_");
+			String element = processXMLKey(String.valueOf(entry.getKey()));
 			buf.append("<" + element + ">");
 			if (entry.getValue() instanceof DynMap) {
 				buf.append(((DynMap) entry.getValue())
@@ -889,7 +889,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 			} else if ((entry.getValue()) instanceof Date) {
 				buf.append(IsoDateUtil.getIsoDateNoMillis(((Date)entry.getValue())));
 			} else {
-				buf.append(processXMLString(entry.getValue().toString()));
+				buf.append(processXMLValue(entry.getValue().toString()));
 			}
 			buf.append("</" + element + ">");
 		}
@@ -898,11 +898,20 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	}
 
     /**
-     * Simple string process for xml output
+     * Simple key processing.  Extend DynMap to override how xml keys are processed
      * @param str
      * @return
      */
-    private String processXMLString(String str) {
+    protected String processXMLKey(String str) {
+        return str;
+    }
+
+    /**
+     * Simple value processing.  Extend DynMap to override how xml values are processed
+     * @param str
+     * @return
+     */
+    protected String processXMLValue(String str) {
         return str;
     }
 }
