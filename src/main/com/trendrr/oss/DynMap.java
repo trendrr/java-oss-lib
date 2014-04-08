@@ -832,7 +832,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	}
 
 	private String toXMLStringCollection(java.util.Collection c) {
-        if (c == null)
+		if (c == null)
 			return "";
 
 		String collection = "";
@@ -897,21 +897,21 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		return buf.toString();
 	}
 
-    /**
-     * Simple key processing.  Extend DynMap to override how xml keys are processed
-     * @param str
-     * @return
-     */
-    protected String processXMLKey(String str) {
-        return str;
-    }
+	/**
+	 * Simple key processing.  Extend DynMap to override how xml keys are processed
+	 * @param str
+	 * @return
+	 */
+	protected String processXMLKey(String str) {
+		return str;
+	}
 
-    /**
-     * Simple value processing.  Extend DynMap to override how xml values are processed
-     * @param str
-     * @return
-     */
-    protected String processXMLValue(String str) {
-        return str;
-    }
+	/**
+	 * Simple value processing.  Extend DynMap to override how xml values are processed
+	 * @param str
+	 * @return
+	 */
+	protected String processXMLValue(String str) {
+		return str;
+	}
 }
