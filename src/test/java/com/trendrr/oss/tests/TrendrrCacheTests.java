@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.trendrr.oss.cache;
+package com.trendrr.oss.tests;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,6 +18,7 @@ import org.junit.Test;
 
 import com.trendrr.oss.DynMap;
 import com.trendrr.oss.Timeframe;
+import com.trendrr.oss.cache.TrendrrCache;
 import com.trendrr.oss.concurrent.Sleep;
 import com.trendrr.oss.exceptions.TrendrrException;
 import com.trendrr.oss.exceptions.TrendrrTimeoutException;
