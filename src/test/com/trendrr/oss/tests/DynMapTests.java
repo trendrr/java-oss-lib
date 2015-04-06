@@ -107,16 +107,16 @@ public class DynMapTests {
 		Assert.assertNotNull(mp.getMap("map1"));
 	}
 
-    @Test
-    public void putIfAbsentTest() {
-        DynMap mp = new DynMap();
-        mp.put("has", 1);
-        Integer has = (Integer)mp.putIfAbsent("has", 2);
-        Assert.assertEquals(1, has.intValue());
+	@Test
+	public void putIfAbsentTest() {
+		DynMap mp = new DynMap();
+		mp.put("has", 1);
+		Integer has = (Integer) mp.putIfAbsent("has", 2);
+		Assert.assertEquals(1, has.intValue());
 
-        Object hasNot = mp.putIfAbsent("hasNot", 3);
-        Assert.assertEquals(null, hasNot);
-    }
+		Object hasNot = mp.putIfAbsent("hasNot", 3);
+		Assert.assertEquals(null, hasNot);
+	}
 
 
 	@Test
