@@ -114,7 +114,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	 * puts the value if the key is absent (or null).
 	 * @param key
 	 * @param val
-	 * @return the val for the key if it is not null, else returns null (as in java 8 java.util.HashMap)
+	 * @return null if the key is absent, else returns the existing val for that key (as in java 8 java.util.HashMap)
 	 */
 	public Object putIfAbsent(String key, Object val) {
 		if (this.get(key) == null) {
