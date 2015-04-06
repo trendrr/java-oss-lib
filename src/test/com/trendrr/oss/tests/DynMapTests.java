@@ -115,7 +115,7 @@ public class DynMapTests {
 		Assert.assertEquals(1, has.intValue());
 
 		Object hasNot = mp.putIfAbsent("hasNot", 3);
-		Assert.assertEquals(null, hasNot);
+		Assert.assertNull(hasNot);
 	}
 
 
