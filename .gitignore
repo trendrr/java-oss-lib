@@ -2,6 +2,8 @@
 #
 tmp/
 build/
+.idea/
+*.iml
 *.class
 *.project
 *.settings
