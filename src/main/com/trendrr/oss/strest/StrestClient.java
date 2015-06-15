@@ -153,7 +153,7 @@ public class StrestClient {
 			
 			
  			
-			if (request.getHeader(StrestHeader.Name.TXN_ACCEPT) == null) {
+			if (request.getTxnAccept() == null) {
 				request.setTxnAccept(TxnAccept.MULTI);
 			}
 			if (request.getTxnId() == null) {

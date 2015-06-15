@@ -49,6 +49,14 @@ public class TimeAmountFile {
 //	private FileWriter writer = null;
 	private Date lastWrite = new Date();
 	
+
+	@Override
+	public synchronized String toString() {
+		return "TAF: filename:" + file.getName() + " stale: " + stale;
+	}
+
+	
+	
 	public TimeAmountFile(TimeAmount ta, long epoch, String dir, long maxBytes, boolean gzip) throws Exception {
 		if (!dir.endsWith(File.separator)) {
 			dir = dir + File.separator;
@@ -124,6 +132,7 @@ public class TimeAmountFile {
 		if (this.callbackreturn)
 			return; //do nothing..
 		this.callbackreturn = true;
+		this.setStale();
 		callback.staleFile(this);
 	}
 	
@@ -138,7 +147,7 @@ public class TimeAmountFile {
 	}
 	
 	/**
-	 * Append to this file.  The string will be utf8 encoded.
+	 * Append to this file.
 	 * @param str
 	 * @throws FileClosedException
 	 * @throws IOException
@@ -154,19 +163,19 @@ public class TimeAmountFile {
 			throw new FileClosedException();
 		}
 		
-		//Just count the chars for speed.  
 		this.curBytes += bytes.length;
 //		System.out.println(this.curBytes + " " + maxBytes);
 		this.lastWrite = new Date();
 		this.os.write(bytes);
 		this.os.flush();
-		
-//		this.writer.append(str);
-//		this.writer.flush();
 	}
 	
 	
 	public synchronized void setStale() {
+		if (stale) {
+			return;
+		}
+		
 		stale = true;
 		try {
 			this.os.flush();
@@ -203,5 +212,4 @@ public class TimeAmountFile {
 		return lastWrite;
 	}
 	
-
 }

@@ -6,7 +6,6 @@ package com.trendrr.oss;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -53,8 +52,8 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	
 	private ConcurrentHashMap<String, Object> cache = new ConcurrentHashMap<String, Object>();
 	private boolean cacheEnabled = false;
-	
-	
+
+
 	public DynMap () {
 		super();
 	}
@@ -160,7 +159,6 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	 * like the regular putAll but honors dot notation.
 	 * passed in keys
 	 * @param mp
-	 * @param keys
 	 */
 	public void putAllWithDot(Map mp) {
 		if (mp == null)
@@ -299,7 +297,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	 * 
 	 * map.get("key1.key2.key3");
 	 * 
-	 * @param key
+	 * @param k
 	 * @return
 	 */
 	@Override
@@ -831,8 +829,8 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		//trim trailing amp?
 		return StringHelper.trim(str.toString(), "&");
 	}
-	
-	private String toXMLStringCollection(java.util.Collection c) {
+
+	private String toXMLStringCollection(java.util.Collection c, XMLFormatter xmlFormatter) {
 		if (c == null)
 			return "";
 
@@ -840,23 +838,23 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		for (Object o : c) {
 			collection += "<item>";
 			if (o instanceof DynMap)
-				collection += ((DynMap) o).toXMLString();
+				collection += ((DynMap) o).toXMLString(xmlFormatter);
 			else if (o instanceof java.util.Collection) {
 				for (Object b : (java.util.Collection) o) {
 					collection += "<item>";
 					if (b instanceof java.util.Collection)
 						collection += this
-								.toXMLStringCollection((java.util.Collection) b);
+								.toXMLStringCollection((java.util.Collection) b, xmlFormatter);
 					else
-						collection += b.toString();
+						collection += xmlFormatter.cleanValue(b.toString());
 					collection += "</item>";
 				}
 			} else if (o instanceof java.util.Map) {
 				DynMap dm = new DynMap();
 				dm.putAll((java.util.Map) o);
-				collection += dm.toXMLString();
+				collection += dm.toXMLString(xmlFormatter);
 			} else
-				collection += o.toString();
+				collection += xmlFormatter.cleanValue(o.toString());
 			collection += "</item>";
 		}
 		return collection;
@@ -868,6 +866,9 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 	 * @return
 	 */
 	public String toXMLString() {
+		return toXMLString(new SimpleXmlFormatter());
+	}
+	public String toXMLString(XMLFormatter xmlFormatter) {
 		if (this.isEmpty())
 			return null;
 
@@ -875,22 +876,27 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		Iterator iter = this.entrySet().iterator();
 		while (iter.hasNext()) {
 			Map.Entry entry = (Map.Entry) iter.next();
-			String element = String.valueOf(entry.getKey());
+			String element = xmlFormatter.cleanKey(String.valueOf(entry.getKey()));
 			buf.append("<" + element + ">");
 			if (entry.getValue() instanceof DynMap) {
 				buf.append(((DynMap) entry.getValue())
-						.toXMLString());
+						.toXMLString(xmlFormatter));
 			} else if ((entry.getValue()) instanceof java.util.Collection) {
 				buf.append(this
 						.toXMLStringCollection((java.util.Collection) entry
-								.getValue()));
+								.getValue(), xmlFormatter));
 			} else if ((entry.getValue()) instanceof java.util.Map) {
 				DynMap dm = DynMapFactory.instance(entry.getValue());
-				buf.append(dm.toXMLString());
+				buf.append(dm.toXMLString(xmlFormatter));
 			} else if ((entry.getValue()) instanceof Date) {
 				buf.append(IsoDateUtil.getIsoDateNoMillis(((Date)entry.getValue())));
 			} else {
-				buf.append(entry.getValue());
+				if (entry.getValue() != null) {
+					buf.append(xmlFormatter.cleanValue(entry.getValue().toString()));
+				} else {
+					buf.append(entry.getValue());
+				}
+
 			}
 			buf.append("</" + element + ">");
 		}
