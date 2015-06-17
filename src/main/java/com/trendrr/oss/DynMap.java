@@ -842,7 +842,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 		for (Object o : c) {
 			collection += "<item>";
 			if (o instanceof DynMap)
-				collection += ((DynMap) o).toXMLString();
+				collection += ((DynMap) o).toXMLString(xmlFormatter);
 			else if (o instanceof java.util.Collection) {
 				for (Object b : (java.util.Collection) o) {
 					collection += "<item>";
@@ -856,7 +856,7 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 			} else if (o instanceof java.util.Map) {
 				DynMap dm = new DynMap();
 				dm.putAll((java.util.Map) o);
-				collection += dm.toXMLString();
+				collection += dm.toXMLString(xmlFormatter);
 			} else
 				collection += xmlFormatter.cleanValue(o.toString());
 			collection += "</item>";
@@ -884,14 +884,14 @@ public class DynMap extends HashMap<String,Object> implements JSONAware{
 			buf.append("<" + element + ">");
 			if (entry.getValue() instanceof DynMap) {
 				buf.append(((DynMap) entry.getValue())
-						.toXMLString());
+						.toXMLString(xmlFormatter));
 			} else if ((entry.getValue()) instanceof java.util.Collection) {
 				buf.append(this
 						.toXMLStringCollection((java.util.Collection) entry
 								.getValue(), xmlFormatter));
 			} else if ((entry.getValue()) instanceof java.util.Map) {
 				DynMap dm = DynMapFactory.instance(entry.getValue());
-				buf.append(dm.toXMLString());
+				buf.append(dm.toXMLString(xmlFormatter));
 			} else if ((entry.getValue()) instanceof Date) {
 				buf.append(IsoDateUtil.getIsoDateNoMillis(((Date)entry.getValue())));
 			} else {
