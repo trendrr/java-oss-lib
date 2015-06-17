@@ -159,7 +159,7 @@ public class DynMapTests {
 		
 		mp.put("list", test2);
 		mp.put("set", test);
-		Assert.assertEquals("{\"set\":[\"str1\",\"str2\",\"str0\"],\"list\":[\"2str0\",\"2str1\",\"2str2\"]}", mp.toJSONString());
+		Assert.assertEquals("{\"set\":[\"str2\",\"str1\",\"str0\"],\"list\":[\"2str0\",\"2str1\",\"2str2\"]}", mp.toJSONString());
 	}
 	
 	@Test
