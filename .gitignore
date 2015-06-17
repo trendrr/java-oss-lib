@@ -1,9 +1,11 @@
 # IGNORED FILES 
 #
+target/
 tmp/
 build/
 *.class
 *.project
 *.settings
 *.classpath
-target/
+*.iml
+*.idea
